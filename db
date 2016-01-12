@@ -1,0 +1,14 @@
+<?php
+include_once("src/back/db/DB.php");
+include_once("src/back/db/DBConnection.php");
+include_once("src/back/db/DescriptionKeys.php");
+include_once("src/back/db/types/DBType.php");
+include_once("src/back/db/types/DBGoodsType.php");
+include_once("src/back/db/types/DBNavKeyType.php");
+include_once("src/back/db/types/DBAddressType.php");
+include_once("src/back/db/types/DBPreferencesType.php");
+include_once("src/back/db/types/DBGoodsTypesType.php");
+include_once("src/back/db/types/DBUsersType.php");
+include_once("src/back/db/types/DBNewsType.php");
+include_once("src/back/db/types/DBBookletsType.php");
+include_once("src/back/model/Address.php");

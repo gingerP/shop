@@ -1,0 +1,10 @@
+<?php
+include_once("src/back/api/PriceService.php");
+include_once("src/back/api/AddressService.php");
+include_once("src/back/api/EmailService.php");
+include_once("src/back/api/GoodsService.php");
+include_once("src/back/api/GoodsKeysService.php");
+include_once("src/back/api/BookletService.php");
+
+include_once("src/back/managers/AuthManager.php");
+include_once("src/back/managers/SessionManager.php");

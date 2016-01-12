@@ -1,0 +1,55 @@
+
+
+/*********************************/
+
+.line_items {
+    background-color: #77CC55;
+    /*border: 1px solid #ADE681;*/
+    box-shadow: 0 0 5px rgba(85, 204, 85, 0.5);
+    display: table;
+    float: left;
+    margin: 1px;
+    position: relative;
+    right: 0;
+
+    background: #deeac2; /* Old browsers */
+    background: -moz-linear-gradient(top,  #deeac2 0%, #d1ea96 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deeac2), color-stop(100%,#d1ea96)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #deeac2 0%,#d1ea96 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #deeac2 0%,#d1ea96 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #deeac2 0%,#d1ea96 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #deeac2 0%,#d1ea96 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deeac2', endColorstr='#d1ea96',GradientType=0 ); /* IE6-9 */
+}
+
+.line_items img {
+    margin-top: 2px;
+}
+
+.line_items div div {
+    color: #414141;
+    cursor: pointer;
+    float: left;
+    font-size: 12px;
+    padding: 0px 5px;
+    margin: 1px;
+    line-height: 16px;
+    height: 16px;
+}
+
+.line_items div div:hover {
+    background-color: #88cc55;
+}
+
+#store_mode_container {
+    position: absolute;
+    right: 0;
+}
+
+/*.line_items div:first-child {
+    border-radius: 6px 0 0 6px;
+}
+
+.line_items div:last-child {
+    border-radius: 0 6px 6px 0;
+}*/
