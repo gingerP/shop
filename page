@@ -13,8 +13,6 @@ include_once("src/back/pages/elements/StoreMode.php");
 include_once("src/back/pages/elements/TopNavigationLinks.php");
 include_once("src/back/pages/APagesCreator.php");
 include_once("src/back/pages/CatalogPage.php");
-include_once("src/back/pages/DownloadPage.php");
-include_once("src/back/pages/MainContainer.php");
 include_once("src/back/pages/MainPage.php");
 include_once("src/back/pages/ContactsPage.php");
 include_once("src/back/pages/SingleItemPage.php");

@@ -21,6 +21,6 @@ include_once("src/back/labels/TagLabels.php");
 
 include_once("src/back/VEcho.php");
 
-include_once("src/back/AuthManager.php");
+include_once("src/back/managers/AuthManager.php");
 include_once("src/back/managers/SessionManager.php");
 

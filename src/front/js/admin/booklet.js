@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     initHandlebarsExtensions();
     initHandlebarsTemplates();
     if (U.hasContent(URL_PARAMS.id)) {
@@ -6,14 +6,15 @@ $(document).ready(function() {
     } else {
         initPage();
     }
-})
+});
 
 function initFullPreviewPage(id) {
     var sizeRatio = 4;
     var initialViewportSize = {
         width: 1000,
         height: 720
-    }
+    };
+
     function updateItemSize(dom, size) {
         dom.style.width = (size.width * sizeRatio || 0) + 'px';
         dom.style.height = (size.height * sizeRatio || 0) + 'px';
@@ -25,7 +26,7 @@ function initFullPreviewPage(id) {
             y: position.y * sizeRatio
         });
     };
-    serviceWrapper.getBooklet(id, {}, function(booklet) {
+    serviceWrapper.getBooklet(id, {}, function (booklet) {
         document.body.style.overflow = 'initial';
         var container = document.createElement('DIV');
         container.id = 'fullpreview';
@@ -36,7 +37,7 @@ function initFullPreviewPage(id) {
         viewport.style.width = (initialViewportSize.width * sizeRatio) + 'px';
         viewport.style.height = (initialViewportSize.height * sizeRatio) + 'px';
         if (booklet.listItems && booklet.listItems.length) {
-            booklet.listItems.forEach(function(item) {
+            booklet.listItems.forEach(function (item) {
                 var itemDOM = document.getElementById(item.id);
                 if (itemDOM) {
                     updateItemPosition(itemDOM, item.position);
@@ -124,11 +125,11 @@ function initBookletsList(layout, booklet) {
     grid.setColSorting("int,str");
     grid.init();
 
-    grid.attachEvent("onSelectStateChanged", function(id){
+    grid.attachEvent("onSelectStateChanged", function (id) {
         var entity = this.getUserData(id, 'entity');
         var gridState = {
             hasSelection: true
-        }
+        };
         app.bookletsToolbar.onStateChange(gridState);
         app.bookletDetailsToolbar.onStateChange(gridState);
         if (!app.booklet.isEmpty() && app.booklet.isNew()) {
@@ -136,23 +137,23 @@ function initBookletsList(layout, booklet) {
         }
         app.booklet.controller.load(id);
         /*serviceWrapper.getBooklet(id, {}, function(data) {
-            app.booklet.clear();
-            if (U.hasContent(data)) {
-                app.booklet.populate(data);
-            }
-        })*/
+         app.booklet.clear();
+         if (U.hasContent(data)) {
+         app.booklet.populate(data);
+         }
+         })*/
     });
 
 
-    grid.reload = function() {
-        serviceWrapper.listBooklets({id: 'booklet_id', name: 'name'}, function(booklets) {
+    grid.reload = function () {
+        serviceWrapper.listBooklets({id: 'booklet_id', name: 'name'}, function (booklets) {
             components.reloadGrid(grid, booklets, ['id', 'name']);
             app.bookletsToolbar.onStateChange({hasSelection: false});
             app.bookletDetailsToolbar.onStateChange(unSelectionStateDetails);
         })
     }
 
-    grid.addNewBooklet = function() {
+    grid.addNewBooklet = function () {
         var newBooklet = app.booklet.createNewBooklet();
         var rowArray = components.prepareEntityToGrid(newBooklet, ['id', 'name']);
         this.addRow(newBooklet.id, rowArray, 0);
@@ -164,30 +165,30 @@ function initBookletsList(layout, booklet) {
 
 function initBookletsToolbar(layout, grid) {
     var handlers = {
-        reload: function() {
+        reload: function () {
             app.bookletsList.reload();
             app.booklet.clear();
         },
-        add: function() {
+        add: function () {
             if (app.booklet.canCreateNew()) {
                 app.bookletsList.addNewBooklet();
                 app.bookletsToolbar.onStateChange(selectionState);
                 app.bookletDetailsToolbar.onStateChange(selectionStateDetails);
             }
         },
-        save: function() {
-            app.booklet.save(function(oldId, newId) {
+        save: function () {
+            app.booklet.save(function (oldId, newId) {
                 app.bookletsToolbar.onStateChange(selectionState);
                 app.bookletDetailsToolbar.onStateChange(selectionStateDetails);
-                serviceWrapper.getBooklet(newId, {id: 'booklet_id', name: 'name'}, function(data) {
+                serviceWrapper.getBooklet(newId, {id: 'booklet_id', name: 'name'}, function (data) {
                     components.updateGridRow(app.bookletsList, oldId, data, ['id', 'name'], newId);
                     app.bookletsList.clearSelection();
                     app.bookletsList.selectRowById(newId);
                 })
             });
         },
-        delete: function() {
-            app.booklet.delete(function() {
+        delete: function () {
+            app.booklet.delete(function () {
                 app.bookletsList.deleteSelectedRows();
                 app.bookletsToolbar.onStateChange(unSelectionState);
                 app.bookletDetailsToolbar.onStateChange(unSelectionStateDetails);
@@ -201,13 +202,13 @@ function initBookletsToolbar(layout, grid) {
 
 function initBookletToolbar(layout) {
     var handlers = {
-        add: function() {
+        add: function () {
             app.booklet.addNewItem();
         },
-        loadBackground: function() {
+        loadBackground: function () {
             bookletBackgroundWindow.show();
         },
-        preview: function() {
+        preview: function () {
             var entity = app.booklet.controller.getEntity();
             if (!entity._isNew) {
                 window.open(window.location + '?id=' + entity.id);
@@ -215,14 +216,63 @@ function initBookletToolbar(layout) {
         }
     }
 
-    bookletBackgroundWindow.addSelectCallback(function(imageObject) {
+    bookletBackgroundWindow.addSelectCallback(function (imageObject) {
         if (imageObject) {
             app.booklet.updateBackground(imageObject.image);
         }
     });
     var toolbar = components.createToolbar(layout, handlers, ['add', 'loadBackground', 'preview'], 'b');
     toolbar.onStateChange(unSelectionStateDetails);
+    initTemplatesList(toolbar);
     return toolbar;
+}
+
+function initTemplatesList(toolbar) {
+    var cfg = [
+        get2ColumnConfig(),
+        get3ColumnConfig()
+    ];
+    var index = 0;
+    var item;
+    toolbar.addButtonSelect('templates', null, "Шаблоны", [], null, null, true);
+    while (index <= cfg.length - 1) {
+        item = cfg[index];
+        toolbar.addListOption(
+            'templates',
+            item.id,
+            index,
+            item.type,
+            item.text
+        );
+        toolbar.attachEvent('onClick', item.handler);
+        index++;
+    }
+}
+
+function get2ColumnConfig() {
+    return {
+        id: '2-col',
+        type: 'button',
+        text: '2 колонки',
+        handler: function handler2Column(id) {
+            if (id === '2-col') {
+                app.booklet.setTemplate('2c3c');
+            }
+        }
+    }
+}
+
+function get3ColumnConfig() {
+    return {
+        id: '3-col',
+        type: 'button',
+        text: '3 колонки',
+        handler: function handler3Column(id) {
+            if (id === '3-col') {
+                app.booklet.setTemplate('3c2c');
+            }
+        }
+    }
 }
 
 function initBookletPreview(layout, grid) {
@@ -233,7 +283,7 @@ function initBookletPreview(layout, grid) {
 }
 
 /***************************************************************/
-BookletComponent = function(domParentContainer, controller) {
+BookletComponent = function (domParentContainer, controller) {
     this.$domParentContainer = $(domParentContainer);
     this.$bookletDOM = null;
     this.$bookletItemsDOM = null;
@@ -243,13 +293,13 @@ BookletComponent = function(domParentContainer, controller) {
     this.controller.owner = this;
     this.items = [];
     this.editorWindow = undefined;
-    this.gridRyleCode = '3c2c';
+    this.template = '3c2c';
     this.itemSizeCode = '135x225';
     this.initGridRules();
     this.initSizeRules();
 };
 
-BookletComponent.prototype.init = function() {
+BookletComponent.prototype.init = function () {
     var editorWindowController = new BookletEditorController();
     this.editorWindow = new BookletEditorComponent(this).init(editorWindowController);
 
@@ -257,13 +307,13 @@ BookletComponent.prototype.init = function() {
     return this;
 };
 
-BookletComponent.prototype.render = function() {
+BookletComponent.prototype.render = function () {
     var entity = this.controller.getEntity();
     if (!this.$bookletDOM) {
         this.$bookletDOM = U.compilePrefillHandlebar("previewContainer", entity);
         this.$domParentContainer.append(this.$bookletDOM);
         this.$bookletDOM = $(this.$bookletDOM);
-        this.gridRules[this.gridRyleCode].preRender();
+        this.gridRules[this.template].preRender();
         this.$bookletItemsDOM = $('.viewport', this.$bookletDOM);
     } else {
         this.renderBorders(entity.bordersTemplate);
@@ -272,7 +322,7 @@ BookletComponent.prototype.render = function() {
     $('.viewport', this.$bookletDOM).html('');
     if (entity.listItems && entity.listItems.length) {
         var bookletInstance = this;
-        entity.listItems.forEach(function(bookletItemEntity) {
+        entity.listItems.forEach(function (bookletItemEntity) {
             var bookletItem = new BookletItem(bookletInstance, bookletInstance.$bookletItemsDOM, bookletInstance.editorWindow).init(bookletItemEntity);
             bookletInstance.bookletItems.push(bookletItem);
             bookletItem.render();
@@ -280,59 +330,67 @@ BookletComponent.prototype.render = function() {
     }
 };
 
-BookletComponent.prototype.updateBackground = function(image) {
+BookletComponent.prototype.updateBackground = function (image) {
     this.controller.updateBackground(image);
-    $('.background img',this.$bookletDOM).attr('src', image);
+    $('.background img', this.$bookletDOM).attr('src', image);
 };
 
-BookletComponent.prototype.renderBorders = function(bordersTemplate) {
-    $('.borders', this.$bookletDOM).html(Handlebars.compile($('#' + bordersTemplate).html())());
+BookletComponent.prototype.renderBorders = function (bordersTemplate) {
+    $('.borders', this.$bookletDOM).html(Handlebars.compile($('#borders-default').html())());
 };
 
-BookletComponent.prototype.renderPalls = function() {
+BookletComponent.prototype.renderPalls = function () {
 
 };
 
-BookletComponent.prototype.prepareItem = function(item, data) {
+BookletComponent.prototype.updateTemlate = function (template) {
+    var borders = $('.borders', this.$bookletDOM);
+    borders.empty();
+    this.gridRules[this.template].preRender();
+    borders.html(borders.html() + Handlebars.compile($('#borders-default').html())());
+};
+
+
+BookletComponent.prototype.prepareItem = function (item, data) {
     var result = item;
     if (typeof data != 'undefined' && Object.keys(data).length) {
         for (var key in data) {
-            result = result.replace(new RegExp('({{' + key + '}})+'), U.hasContent(data[key])? data[key]: '');
+            result = result.replace(new RegExp('({{' + key + '}})+'), U.hasContent(data[key]) ? data[key] : '');
         }
     }
     return result;
 };
 
-BookletComponent.prototype.clearTemplate = function(template) {
+BookletComponent.prototype.clearTemplate = function (template) {
     if (typeof template == 'string') {
         return template.replace(/({{[^}]*}})+/g, '');
     }
     return '';
 };
 
-BookletComponent.prototype.enable = function(state) {
-    state = typeof state == 'undefined'? true: state;
-    this.$bookletDOM.removeClass(state ? 'disable': 'enable').addClass(state? 'enable': 'disable');
+BookletComponent.prototype.enable = function (state) {
+    state = typeof state == 'undefined' ? true : state;
+    this.$bookletDOM.removeClass(state ? 'disable' : 'enable').addClass(state ? 'enable' : 'disable');
     return this;
 };
 
-BookletComponent.prototype.showEditor = function(itemId) {
+BookletComponent.prototype.showEditor = function (itemId) {
     this.editorWindow.show();
     this.editorWindow.populateData(this.controller.horizontalEntity[itemId]);
 };
 
-BookletComponent.prototype.clearItem = function(id) {
+BookletComponent.prototype.clearItem = function (id) {
     var entity = this.controller.clearItem(id);
     this.render(entity);
 };
 
-BookletComponent.prototype.clear = function() {
+BookletComponent.prototype.clear = function () {
     this.$domParentContainer.html("");
     this.$bookletDOM = null;
     this.$bookletItemsDOM = null;
     this.controller.clear();
     if (this.bookletItems && this.bookletItems.length) {
-        this.bookletItems.forEach(function(value, index) {
+        this.bookletItems.forEach(function (value, index) {
             value.unload();
         })
     }
@@ -340,15 +398,15 @@ BookletComponent.prototype.clear = function() {
     return this;
 };
 
-BookletComponent.prototype.save = function(callback) {
+BookletComponent.prototype.save = function (callback) {
     this.controller.save(callback);
 };
 
-BookletComponent.prototype.delete = function(callback) {
+BookletComponent.prototype.delete = function (callback) {
     this.controller.delete(callback);
 };
 
-BookletComponent.prototype.populate = function(entity) {
+BookletComponent.prototype.populate = function (entity) {
     app.layout.progressOn();
     this.clear();
     this.controller.setEntity(entity);
@@ -358,136 +416,103 @@ BookletComponent.prototype.populate = function(entity) {
     return entity;
 };
 
-BookletComponent.prototype.createNewBooklet = function() {
+BookletComponent.prototype.createNewBooklet = function () {
     this.clear();
     var entity = this.controller.createNewBooklet();
-/*    this.propertyChange('state', [entity]);*/
+    /*    this.propertyChange('state', [entity]);*/
     this.render(entity);
     return entity;
 };
 
-BookletComponent.prototype.canCreateNew = function() {
+BookletComponent.prototype.canCreateNew = function () {
     return this.controller.canCreateNew();
 };
 
-/*BookletComponent.prototype._getHtml = function(entity, items, template) {
-    var result = '';
-    template = this.prepareItem(template, entity);
-    var templates = template.split('{{content}}');
-    if (templates.length > 1) {
-        result += templates[0];
-        if (items && items.length) {
-            for (var itemIndex = 0; itemIndex < items.length; itemIndex++) {
-                result += this.getEntityHtmlObj(items[itemIndex]).htmlString;
-            }
-        }
-        result += templates[1];
-    } else {
-        result = template;
-    }
-    return result;
-};*/
+BookletComponent.prototype.initGridRules = function () {
+    var inst = this;
+    var common = {
+        x: function (x, width) {
+            var cfg = inst.gridRules[inst.template]._additional;
+            return this._additional.xyHandle(
+                x, width,
+                cfg.xLeft,
+                cfg.xRight,
+                cfg.xMagnetize
+            );
+        },
+        y: function (y, height) {
+            var cfg = inst.gridRules[inst.template]._additional;
+            return this._additional.xyHandle(
+                y, height,
+                cfg.yTop,
+                cfg.yBottom,
+                cfg.yMagnetize
+            );
+        },
+        highLightX: function (leftX, rightX) {
+            var cfg = inst.gridRules[inst.template]._additional;
+            var $verticalTop = $('.vertical-border-1');
+            var $verticalBottom = $('.vertical-border-2');
 
-/*BookletComponent.prototype.getEntityHtmlObj = function(entity) {
-    var result = '';
-    if (U.hasContent(entity)) {
-        var type = this.getType(entity);
-        switch(type) {
-            case this.controller.itemTypes.booklet:
-                result = this._getHtml(entity, entity.listColumns, this.templates[type]);
-                break;
-            case this.controller.itemTypes.item:
-                var clone = entity;
-                if (entity.image && entity.image.length > 0 && entity.image.indexOf('data:image') != 0) {
-                    clone = $.extend({}, entity);
-                    clone.image = formatBookletImage(clone.image);
-                }
-                result = this._getHtml(clone, clone.listLabels, this.templates[type]);
-                break;
-            case this.controller.itemTypes.label:
-                result = this._getHtml(entity, [], this.templates[type]);
-                break;
-        }
-    }
-    //TODO next line throw exception when entity undefined - its just because double handling clear, edit and delete events(
-    return {
-        id: entity.id,
-        htmlString: result
-    }
-};*/
+            $verticalTop.finish();
+            $verticalTop.css('left', (leftX ? leftX : 0) + 'px');
+            $verticalTop[cfg.xLeft.indexOf(leftX) > -1 ? 'show' : 'hide'](100);
 
-BookletComponent.prototype.initGridRules = function() {
+            $verticalBottom.finish();
+            $verticalBottom.css('left', (rightX ? rightX : 0) + 'px');
+            $verticalBottom[cfg.xRight.indexOf(rightX) > -1 ? 'show' : 'hide'](100);
+        },
+        highLightY: function (topY, bottomY) {
+            var cfg = inst.gridRules[inst.template]._additional;
+            var $horizontalLeft = $('.horizontal-border-1');
+            var $horizontalRight = $('.horizontal-border-2');
+            $horizontalLeft.finish();
+            $horizontalLeft.css('top', (topY ? topY : 0) + 'px');
+            $horizontalLeft[cfg.yTop.indexOf(topY) > -1 ? 'show' : 'hide'](100);
+
+            $horizontalRight.finish();
+            $horizontalRight.css('top', (bottomY ? bottomY : 0) + 'px');
+            $horizontalRight[cfg.yBottom.indexOf(bottomY) > -1 ? 'show' : 'hide'](100);
+        },
+        preRender: function () {
+            var cfg = inst.gridRules[inst.template]._additional;
+            var $container = $('#preview_container .borders');
+            var horBordersPositions = cfg.yTop.concat(cfg.yBottom);
+            var verBordersPositions = cfg.xLeft.concat(cfg.xRight);
+            horBordersPositions.forEach(function (position) {
+                var border = document.createElement('DIV');
+                border.setAttribute('class', 'vertical-border shadow-item-border item-border vertical');
+                border.style.top = position + 'px';
+                $container.prepend(border);
+            });
+            verBordersPositions.forEach(function (position) {
+                var border = document.createElement('DIV');
+                border.setAttribute('class', 'horizontal-border shadow-item-border item-border horizontal');
+                border.style.left = position + 'px';
+                $container.prepend(border);
+            });
+        },
+        clearHightLight: function () {
+            $('.vertical-border-1, .vertical-border-2, .horizontal-border-1 ,.horizontal-border-2').hide();
+        }
+    };
     this.gridRules = {
         '3c2c': {
-            x: function(x, width) {
-                return this._additional.xyHandle(
-                    x, width,
-                    this._additional.xLeft,
-                    this._additional.xRight,
-                    this._additional.xMagnetize
-                );
-            },
-            y: function(y, height) {
-                return this._additional.xyHandle(
-                    y, height,
-                    this._additional.yTop,
-                    this._additional.yBottom,
-                    this._additional.yMagnetize
-                );
-            },
-            highLightX: function(leftX, rightX) {
-                var $verticalTop = $('.vertical-border-1');
-                var $verticalBottom = $('.vertical-border-2');
-
-                $verticalTop.finish();
-                $verticalTop.css('left', (leftX? leftX: 0) + 'px');
-                $verticalTop[this._additional.xLeft.indexOf(leftX) > -1? 'show': 'hide'](100);
-
-                $verticalBottom.finish();
-                $verticalBottom.css('left', (rightX? rightX: 0) + 'px');
-                $verticalBottom[this._additional.xRight.indexOf(rightX) > -1? 'show': 'hide'](100);
-            },
-            highLightY: function(topY, bottomY) {
-                var $horizontalLeft = $('.horizontal-border-1');
-                var $horizontalRight = $('.horizontal-border-2');
-                $horizontalLeft.finish();
-                $horizontalLeft.css('top', (topY? topY: 0) + 'px');
-                $horizontalLeft[this._additional.yTop.indexOf(topY) > -1? 'show': 'hide'](100);
-
-                $horizontalRight.finish();
-                $horizontalRight.css('top', (bottomY? bottomY: 0) + 'px');
-                $horizontalRight[this._additional.yBottom.indexOf(bottomY) > -1? 'show': 'hide'](100);
-            },
-            preRender: function() {
-                var $container = $('#preview_container .borders');
-                var vars = this._additional;
-                var horBordersPositions = vars.yTop.concat(vars.yBottom);
-                var verBordersPositions = vars.xLeft.concat(vars.xRight);
-                horBordersPositions.forEach(function(position) {
-                    var border = document.createElement('DIV');
-                    border.setAttribute('class', 'vertical-border shadow-item-border item-border vertical');
-                    border.style.top = position + 'px';
-                    $container.prepend(border);
-                });
-                verBordersPositions.forEach(function(position) {
-                    var border = document.createElement('DIV');
-                    border.setAttribute('class', 'horizontal-border shadow-item-border item-border horizontal');
-                    border.style.left = position + 'px';
-                    $container.prepend(border);
-                });
-            },
-            clearHightLight: function() {
-                $('.vertical-border-1, .vertical-border-2, .horizontal-border-1 ,.horizontal-border-2').hide();
-            },
+            x: common.x,
+            y: common.y,
+            highLightX: common.highLightX,
+            highLightY: common.highLightY,
+            preRender: common.preRender,
+            clearHightLight: common.clearHightLight,
             _additional: {
-                xyHandle: function(pos, size, poss1, poss2, magnetize) {
+                xyHandle: function (pos, size, poss1, poss2, magnetize) {
                     var pos1 = pos;
                     var pos2 = pos + size;
                     pos1 = this.checkCoordinates(pos1, poss1, magnetize);
                     pos2 = this.checkCoordinates(pos2, poss2, magnetize);
                     return [pos1, pos2];
                 },
-                checkCoordinates: function(pos, poss, magnetize) {
+                checkCoordinates: function (pos, poss, magnetize) {
                     for (var posIndex = 0; posIndex < poss.length; posIndex++) {
                         var poz = poss[posIndex];
                         if (pos >= poz - magnetize && pos <= poz + magnetize) {
@@ -503,19 +528,51 @@ BookletComponent.prototype.initGridRules = function() {
                 yTop: [15, 245, 475],
                 yBottom: [240, 470, 700]
             }
+        },
+        '2c3c': {
+            x: common.x,
+            y: common.y,
+            highLightX: common.highLightX,
+            highLightY: common.highLightY,
+            preRender: common.preRender,
+            clearHightLight: common.clearHightLight,
+            _additional: {
+                xyHandle: function (pos, size, poss1, poss2, magnetize) {
+                    var pos1 = pos;
+                    var pos2 = pos + size;
+                    pos1 = this.checkCoordinates(pos1, poss1, magnetize);
+                    pos2 = this.checkCoordinates(pos2, poss2, magnetize);
+                    return [pos1, pos2];
+                },
+                checkCoordinates: function (pos, poss, magnetize) {
+                    for (var posIndex = 0; posIndex < poss.length; posIndex++) {
+                        var poz = poss[posIndex];
+                        if (pos >= poz - magnetize && pos <= poz + magnetize) {
+                            return poz;
+                        }
+                    }
+                    return null;
+                },
+                xMagnetize: 30,
+                yMagnetize: 30,
+                xRight: [157,314,471,658,815,972],
+                xLeft: [22,179,336,523,680,837],
+                yTop: [15, 245, 475],
+                yBottom: [240, 470, 700]
+            }
         }
     }
 };
 
-BookletComponent.prototype.initSizeRules = function() {
+BookletComponent.prototype.initSizeRules = function () {
     this.sizeRules = {
         '135x225': {
-            width: function(width) {
+            width: function (width) {
                 return Math.min(
                     Math.round(width / this._additional.basicWidth) * this._additional.basicWidth || this._additional.basicWidth,
                     this._additional.maxWidth);
             },
-            height: function(height) {
+            height: function (height) {
                 return Math.min(
                     Math.round(height / this._additional.basicHeight) * this._additional.basicHeight || this._additional.basicHeight,
                     this._additional.maxHeight);
@@ -523,58 +580,63 @@ BookletComponent.prototype.initSizeRules = function() {
             _additional: {
                 basicWidth: 135,
                 basicHeight: 225,
-                maxWidth: 135*2,
-                maxHeight: 225*3
+                maxWidth: 135 * 2,
+                maxHeight: 225 * 3
             }
         }
     }
 };
 
-BookletComponent.prototype.checkPosToSnapX = function(x, width) {
-    var xSnap = this.gridRules[this.gridRyleCode].x(x, width);
+BookletComponent.prototype.getTemplateTypes = function () {
+    return {
+        '3c2c': '3c2c',
+        '2c3c': '2c3c'
+    }
+};
+
+BookletComponent.prototype.setTemplate = function (template) {
+    if (this.getTemplateTypes().hasOwnProperty(template)) {
+        this.template = template;
+        this.updateTemlate(this.template);
+    } else {
+        console.warn('There is now such template "%s"', template);
+    }
+};
+
+BookletComponent.prototype.checkPosToSnapX = function (x, width) {
+    var xSnap = this.gridRules[this.template].x(x, width);
     return xSnap;
 };
 
-BookletComponent.prototype.checkPosToSnapY = function(y, height) {
-    var ySnap = this.gridRules[this.gridRyleCode].y(y, height);
+BookletComponent.prototype.checkPosToSnapY = function (y, height) {
+    var ySnap = this.gridRules[this.template].y(y, height);
     return ySnap;
 };
 
-BookletComponent.prototype.highLightX = function(xLeft, xRight) {
-    this.gridRules[this.gridRyleCode].highLightX(xLeft, xRight);
+BookletComponent.prototype.highLightX = function (xLeft, xRight) {
+    this.gridRules[this.template].highLightX(xLeft, xRight);
 };
 
-BookletComponent.prototype.highLightY = function(yTop, yBottom) {
-    this.gridRules[this.gridRyleCode].highLightY(yTop, yBottom);
+BookletComponent.prototype.highLightY = function (yTop, yBottom) {
+    this.gridRules[this.template].highLightY(yTop, yBottom);
 };
 
-BookletComponent.prototype.clearHightLight = function() {
-    this.gridRules[this.gridRyleCode].clearHightLight();
+BookletComponent.prototype.clearHightLight = function () {
+    this.gridRules[this.template].clearHightLight();
 };
 
-/*BookletComponent.prototype.renderBooklet = function(data) {
-    this.bookletItems = [];
-    if (data && data.length) {
-        for(var itemIndex = 0; itemIndex < data.length; itemIndex++) {
-            var item = new BookletItem(this.$bookletItemsDOM, this.editorWindow).init(data[itemIndex]).render();
-            item.booklet = this;
-            this.bookletItems.push(item);
-        }
-    }
-};*/
-
-BookletComponent.prototype.addNewItem = function() {
+BookletComponent.prototype.addNewItem = function () {
     var item = new BookletItem(this, this.$bookletItemsDOM, this.editorWindow).createNew().render();
     this.bookletItems.push(item);
 };
 
-BookletComponent.prototype.deleteItem = function() {
+BookletComponent.prototype.deleteItem = function () {
     if (arguments.length && U.hasContent(arguments[0])) {
         var bookletInstance = this;
         var parameter = arguments[0];
         // it's mean id
         if (typeof parameter == 'number') {
-            this.bookletItems.forEach(function(item, index) {
+            this.bookletItems.forEach(function (item, index) {
                 if (item.id == parameter) {
                     this.splice(index, 1);
                     return false;
@@ -583,7 +645,7 @@ BookletComponent.prototype.deleteItem = function() {
         }
         // it's mean item instance
         else if (U.isObject(arguments)) {
-            this.bookletItems.forEach(function(item, index) {
+            this.bookletItems.forEach(function (item, index) {
                 if (item == parameter) {
                     bookletInstance.bookletItems.splice(index, 1);
                     return false;
@@ -593,19 +655,19 @@ BookletComponent.prototype.deleteItem = function() {
     }
 };
 
-BookletComponent.prototype.isNew = function() {
+BookletComponent.prototype.isNew = function () {
     return !!this.controller.entity._isNew;
 };
 
-BookletComponent.prototype.isEmpty = function() {
+BookletComponent.prototype.isEmpty = function () {
     return !U.hasContent(this.controller.entity);
 };
 
-BookletComponent.prototype.getItemSize = function(id) {
+BookletComponent.prototype.getItemSize = function (id) {
     return this.controller.horizontalEntity[id].size;
 };
 
-BookletComponent.prototype.updateConnectors = function(id) {
+BookletComponent.prototype.updateConnectors = function (id) {
     var instance = this;
     var maxRowCount = 3;
     var maxColumnCount = 2;
@@ -671,8 +733,9 @@ BookletComponent.prototype.updateConnectors = function(id) {
                     $.extend(true, matrixItem[rowInd][colInd], data);
                 }
             }
+
             var sizeHandlers = {
-                1: function(rowInd, colInd, data) {
+                1: function (rowInd, colInd, data) {
                     matrix[rowInd][colInd].top = findPalls(rowInd - 1, colInd, 1, 'horizontal');
                     matrix[rowInd][colInd].right = findPalls(rowInd, colInd + 1, 1, 'vertical');
                     matrix[rowInd][colInd].bottom = findPalls(rowInd + 1, colInd, 1, 'horizontal');
@@ -681,7 +744,7 @@ BookletComponent.prototype.updateConnectors = function(id) {
                     matrix[rowInd][colInd].data = data;
                     return true;
                 },
-                2: function(rowInd, colInd, data) {
+                2: function (rowInd, colInd, data) {
                     var positions = getPositions(rowInd, colInd, 2);
                     if (isPositionsEmpty(positions)) {
                         matrix[rowInd][colInd].top = findPalls(rowInd - 1, colInd, 2, 'horizontal');
@@ -704,6 +767,7 @@ BookletComponent.prototype.updateConnectors = function(id) {
                 }
             }
         }
+
         for (var itemIndex = 0; itemIndex < columnItems.length; itemIndex++) {
             addToEndInMatrix(
                 instance.getItemSize(columnItems[itemIndex].id),
@@ -734,15 +798,16 @@ BookletComponent.prototype.updateConnectors = function(id) {
     buildMatrix(this.controller.entity.listColumns[0].listItems);
 };
 
-BookletComponent.prototype.updateBorder = function() {
+BookletComponent.prototype.updateBorder = function () {
 
 };
 
 /***************************************************************/
 
-BookletController = function() {}
+BookletController = function () {
+}
 
-BookletController.prototype.init = function() {
+BookletController.prototype.init = function () {
     this.horizontalEntity = {};
     var bookletEntity = {
         id: null,
@@ -760,84 +825,90 @@ BookletController.prototype.init = function() {
     return this;
 };
 
-BookletController.prototype.setEntity = function(entity) {
+BookletController.prototype.setEntity = function (entity) {
     this.entity = entity;
 };
 
-BookletController.prototype.createNewBooklet = function() {
+BookletController.prototype.createNewBooklet = function () {
     this.entity = this.bookletManager.createNewEntity();
     this.entity._isNew = true;
     return this.entity;
 };
 
-BookletController.prototype.updateHorizontalEntity = function(booklet) {
-/*
-    this.horizontalEntity = {};
-    if (U.hasContent(booklet)) {
-        for (var columnIndex = 0; columnIndex < booklet.listColumns.length; columnIndex++) {
-            var column = booklet.listColumns[columnIndex];
-            //items per column
-            for (var itemIndex = 0; itemIndex < column.listItems.length; itemIndex++) {
-                var item = column.listItems[itemIndex];
-                this.horizontalEntity[item.id] = item;
-            }
-        }
-    }
-*/
+BookletController.prototype.updateHorizontalEntity = function (booklet) {
+    /*
+     this.horizontalEntity = {};
+     if (U.hasContent(booklet)) {
+     for (var columnIndex = 0; columnIndex < booklet.listColumns.length; columnIndex++) {
+     var column = booklet.listColumns[columnIndex];
+     //items per column
+     for (var itemIndex = 0; itemIndex < column.listItems.length; itemIndex++) {
+     var item = column.listItems[itemIndex];
+     this.horizontalEntity[item.id] = item;
+     }
+     }
+     }
+     */
 };
 
-BookletController.prototype.getEntity = function() {
+BookletController.prototype.getEntity = function () {
     return this.entity;
 };
 
-BookletController.prototype.updateBackground = function(backgroundImage) {
+BookletController.prototype.updateBackground = function (backgroundImage) {
     this.entity.backgroundImage = backgroundImage;
 };
 
-BookletController.prototype.updateEntity = function() {
+BookletController.prototype.updateEntity = function () {
     this.entity.listItems = [];
+    this.entity.bordersTemplate = this.owner.template;
     var instance = this;
     if (this.owner.bookletItems && this.owner.bookletItems.length) {
-        this.owner.bookletItems.forEach(function(bookletItem) {
+        this.owner.bookletItems.forEach(function (bookletItem) {
             instance.entity.listItems.push(bookletItem.controller.getEntity());
         })
     }
     return this.entity;
 };
 
-BookletController.prototype.canCreateNew = function() {
+BookletController.prototype.canCreateNew = function () {
     return true;
 };
 
-BookletController.prototype.load = function(id, callback) {
+BookletController.prototype.load = function (id, callback) {
     var instance = this;
-    serviceWrapper.getBooklet(id, {}, function(data) {
+    serviceWrapper.getBooklet(id, {}, function (data) {
         instance.owner.clear();
         instance.owner.controller.setEntity(data);
         instance.owner.render();
+        if (data.bordersTemplate) {
+            instance.owner.setTemplate(data.bordersTemplate);
+        }
         if (typeof callback == 'function') {
             callback(data);
         }
     });
 };
 
-BookletController.prototype.save = function(callback) {
+BookletController.prototype.save = function (callback) {
     var entity = this.updateEntity();
     var id = entity.id;
-    entity.id = entity._isNew? null: entity.id;
+    entity.id = entity._isNew ? null : entity.id;
     components.prepareEntity(entity);
-    serviceWrapper.saveBooklet(entity, function(result) {
+    serviceWrapper.saveBooklet(entity, function (result) {
         callback(id, result);
     });
 };
 
-BookletController.prototype.delete = function(callback) {
+BookletController.prototype.delete = function (callback) {
     var instance = this;
+
     function localCallback() {
         instance.owner.clear();
         instance.clear();
         callback();
     }
+
     if (!this.entity._isNew) {
         serviceWrapper.deleteBooklet(this.entity.id, localCallback);
     } else {
@@ -845,17 +916,17 @@ BookletController.prototype.delete = function(callback) {
     }
 };
 
-BookletController.prototype.clear = function() {
+BookletController.prototype.clear = function () {
     this.bookletManager.removeAll();
     this.entity = null;
 };
 
-BookletController.prototype.clearItem = function(id) {
+BookletController.prototype.clearItem = function (id) {
     this._clearItem(this.horizontalEntity[id]);
     return this.horizontalEntity[id];
 };
 
-BookletController.prototype._clearItem = function(entity) {
+BookletController.prototype._clearItem = function (entity) {
     if (U.hasContent(entity)) {
         for (var key in entity) {
             if (['id', 'itemType', '_isNew', 'type'].indexOf(key) > -1) {
@@ -874,7 +945,7 @@ BookletController.prototype._clearItem = function(entity) {
 };
 /*********************************************************************************************/
 
-BookletItem = function(booklet, $parentContainer, editor) {
+BookletItem = function (booklet, $parentContainer, editor) {
     this.booklet = booklet;
     this.$parentContainer = $parentContainer;
     this.controller = new BookletItemController();
@@ -883,18 +954,18 @@ BookletItem = function(booklet, $parentContainer, editor) {
 };
 
 //constructor
-BookletItem.prototype.init = function(entity) {
+BookletItem.prototype.init = function (entity) {
     this.controller.setEntity(entity);
     return this;
 };
 
 //constructor
-BookletItem.prototype.createNew = function() {
+BookletItem.prototype.createNew = function () {
     var entity = this.controller.createNew();
     return this;
 };
 
-BookletItem.prototype.render = function() {
+BookletItem.prototype.render = function () {
     if (U.hasContent(this.$itemDOM)) {
         var htmlDOM = Handlebars.compile($('#bookletItemContent').html())(this.controller.getEntity());
         $('.content', this.$itemDOM).html(htmlDOM);
@@ -909,25 +980,25 @@ BookletItem.prototype.render = function() {
     return this;
 };
 
-BookletItem.prototype.getId = function() {
+BookletItem.prototype.getId = function () {
     var entity = this.controller.getEntity();
-    return entity? entity.id: '';
+    return entity ? entity.id : '';
 };
 
-BookletItem.prototype.initEvents = function() {
+BookletItem.prototype.initEvents = function () {
     var itemInstance = this;
     //EDIT
-    this.$itemDOM.on('click', '.edit_item', function() {
+    this.$itemDOM.on('click', '.edit_item', function () {
         itemInstance.editor.updateRelations(itemInstance);
         itemInstance.editor.show();
         itemInstance.editor.populateData(itemInstance.controller.getEntity());
     })
     //CLEAR
-    this.$itemDOM.on('click', '.clear_item', function() {
+    this.$itemDOM.on('click', '.clear_item', function () {
         itemInstance.clear();
     })
     //DELETE
-    this.$itemDOM.on('click', '.delete_item', function() {
+    this.$itemDOM.on('click', '.delete_item', function () {
         itemInstance.booklet.deleteItem(itemInstance);
         itemInstance.unload();
     })
@@ -937,60 +1008,60 @@ BookletItem.prototype.initEvents = function() {
         var selector = "#" + this.getId();
         this.resizable = $(selector).resizable({
             delay: 0,
-            resize: function(event, ui) {
+            resize: function (event, ui) {
                 ui.size.width = itemInstance.booklet.sizeRules[itemInstance.booklet.itemSizeCode].width(ui.size.width);
                 ui.size.height = itemInstance.booklet.sizeRules[itemInstance.booklet.itemSizeCode].height(ui.size.height);
                 itemInstance.controller.updateEntity({size: {width: ui.size.width, height: ui.size.height}});
             }
-        }).on('mouseup', function() {
+        }).on('mouseup', function () {
             itemInstance.booklet.clearHightLight();
         })
 
         $('.ui-resizable-handle', this.resizable).attr('data-clickable', true);
         this.draggable = Draggable.create(selector, {
-            type:"x,y",
-            edgeResistance:0.5,
+            type: "x,y",
+            edgeResistance: 0.5,
             autoScroll: 0.5,
             bounds: this.$parentContainer,
-            lockedAxis:true,
-            throwProps:true,
+            lockedAxis: true,
+            throwProps: true,
             snap: {
-                x: function(endValue) {
+                x: function (endValue) {
                     return endValue;
                 },
-                y: function(endValue) {
+                y: function (endValue) {
                     return endValue;
                 }
             },
             liveSnap: {
-                x: function(end) {
+                x: function (end) {
                     var poss = itemInstance.booklet.checkPosToSnapX(end, itemInstance.controller.getSize().width);
                     itemInstance.booklet.highLightX(poss[0], poss[1]);
-                    var res = U.hasContent(poss[0])? poss[0]: end;
+                    var res = U.hasContent(poss[0]) ? poss[0] : end;
                     itemInstance.controller.updateEntity({position: {x: res}});
                     return res;
                 },
-                y: function(end) {
+                y: function (end) {
                     var poss = itemInstance.booklet.checkPosToSnapY(end, itemInstance.controller.getSize().height);
                     itemInstance.booklet.highLightY(poss[0], poss[1]);
-                    var res = U.hasContent(poss[0])? poss[0]: end;
+                    var res = U.hasContent(poss[0]) ? poss[0] : end;
                     itemInstance.controller.updateEntity({position: {y: res}});
                     return res;
                 }
             },
-            onDragEnd: function() {
+            onDragEnd: function () {
                 itemInstance.booklet.clearHightLight();
             }
         })
     }
 };
 
-BookletItem.prototype.clear = function() {
+BookletItem.prototype.clear = function () {
     this.controller.clear();
     this.render();
 };
 
-BookletItem.prototype.unload = function() {
+BookletItem.prototype.unload = function () {
     this.$parentContainer = null;
     this.controller = null;
     this.editor = null;
@@ -1001,7 +1072,7 @@ BookletItem.prototype.unload = function() {
     this.booklet = null;
 };
 
-BookletItem.prototype.updateSize = function() {
+BookletItem.prototype.updateSize = function () {
     if (this.$itemDOM) {
         var size = this.controller.getSize();
         this.$itemDOM.css('width', size.width);
@@ -1009,7 +1080,7 @@ BookletItem.prototype.updateSize = function() {
     }
 };
 
-BookletItem.prototype.updatePosition = function() {
+BookletItem.prototype.updatePosition = function () {
     if (this.$itemDOM) {
         var position = this.controller.getPosition();
         TweenLite.to(this.$itemDOM, 0, {
@@ -1019,7 +1090,7 @@ BookletItem.prototype.updatePosition = function() {
     }
 };
 
-BookletItemController = function() {
+BookletItemController = function () {
     this.entity = null;
     this.itemTypes = {
         item: 'item',
@@ -1073,7 +1144,7 @@ BookletItemController = function() {
     };
 };
 
-BookletItemController.prototype.createNew = function() {
+BookletItemController.prototype.createNew = function () {
     this.entity = this.bookletItemManager.createNewEntity();
     //labels per item
     var labelsTypes = Object.keys(this.labelTypes);
@@ -1085,40 +1156,40 @@ BookletItemController.prototype.createNew = function() {
     return this.entity;
 };
 
-BookletItemController.prototype.setEntity = function(entity) {
+BookletItemController.prototype.setEntity = function (entity) {
     this.entity = entity;
-    this.entity.position.x = isNaN(this.entity.position.x)? 0: parseFloat(this.entity.position.x);
-    this.entity.position.y = isNaN(this.entity.position.y)? 0: parseFloat(this.entity.position.y);
-    this.entity.size.width = isNaN(this.entity.size.width)? 135: parseFloat(this.entity.size.width);
-    this.entity.size.height = isNaN(this.entity.size.height)? 225: parseFloat(this.entity.size.height);
+    this.entity.position.x = isNaN(this.entity.position.x) ? 0 : parseFloat(this.entity.position.x);
+    this.entity.position.y = isNaN(this.entity.position.y) ? 0 : parseFloat(this.entity.position.y);
+    this.entity.size.width = isNaN(this.entity.size.width) ? 135 : parseFloat(this.entity.size.width);
+    this.entity.size.height = isNaN(this.entity.size.height) ? 225 : parseFloat(this.entity.size.height);
 };
 
-BookletItemController.prototype.updateEntity = function(entity) {
+BookletItemController.prototype.updateEntity = function (entity) {
     $.extend(true, this.entity || {}, entity || {});
 };
 
-BookletItemController.prototype.getEntity = function() {
+BookletItemController.prototype.getEntity = function () {
     return this.entity;
 };
 
-BookletItemController.prototype.getPosition = function() {
+BookletItemController.prototype.getPosition = function () {
     return this.entity.position;
 };
 
-BookletItemController.prototype.getSize = function() {
+BookletItemController.prototype.getSize = function () {
     return this.entity.size;
 };
 
-BookletItemController.prototype.clear = function() {
+BookletItemController.prototype.clear = function () {
     var itemInstance = this;
     $.extend(this.entity, this.clearItemTemplate);
-    this.entity.listLabels.forEach(function(label) {
+    this.entity.listLabels.forEach(function (label) {
         $.extend(label, itemInstance.clearLabelTemplate);
     })
 };
 
 /*********************************************************************************************/
-BookletEditorComponent = function(parent) {
+BookletEditorComponent = function (parent) {
     this.parent = null;
     this.imageLoaderId = 'file_upload';
     this.imageLoader = '<div id="' + this.imageLoaderId + '"><input class="' + this.imageLoaderId + '" type="file"></div>';
@@ -1144,27 +1215,27 @@ BookletEditorComponent = function(parent) {
     </div>";
 };
 
-BookletEditorComponent.prototype.init = function(controller) {
+BookletEditorComponent.prototype.init = function (controller) {
     this.controller = controller;
     this.labelTemplates = undefined;
     this.window = undefined;
     return this;
 };
 
-BookletEditorComponent.prototype.updateRelations = function(parent) {
+BookletEditorComponent.prototype.updateRelations = function (parent) {
     this.clear();
     this.parent = parent;
 };
 
-BookletEditorComponent.prototype.initEvents = function() {
+BookletEditorComponent.prototype.initEvents = function () {
     var instance = this;
-    this.window.attachEvent('onClose', function() {
+    this.window.attachEvent('onClose', function () {
         instance.clear();
         this.hide();
     })
 };
 
-BookletEditorComponent.prototype.show = function() {
+BookletEditorComponent.prototype.show = function () {
     if (typeof this.window == 'undefined') {
         var myWins = new dhtmlXWindows('dhx_blue');
         this.window = myWins.createWindow('item_editor', 500, 450, 660, 565);
@@ -1177,19 +1248,19 @@ BookletEditorComponent.prototype.show = function() {
     var x = position.x - size[0] / 2;
     var y = position.y - size[1] / 2;
     this.window.setPosition(
-        x >= 0? x: 0,
-        y >= 0? y: 0
+        x >= 0 ? x : 0,
+        y >= 0 ? y : 0
     );
     this.window.show();
 };
 
-BookletEditorComponent.prototype._resetImageLoader = function() {
+BookletEditorComponent.prototype._resetImageLoader = function () {
     var instance = this;
     $('#' + this.imageLoaderId).replaceWith(this.imageLoader);
-    $('#' + this.imageLoaderId).on('change', '.' + this.imageLoaderId, function() {
+    $('#' + this.imageLoaderId).on('change', '.' + this.imageLoaderId, function () {
         var file = this.files[0];
         var reader = new FileReader();
-        reader.onload = function() {
+        reader.onload = function () {
             instance.form.setItemValue('_image', reader.result);
             $('.booklet_item_image').attr('src', reader.result).data('isbase64', true);
             instance._resetImageLoader();
@@ -1198,10 +1269,11 @@ BookletEditorComponent.prototype._resetImageLoader = function() {
     })
 };
 
-BookletEditorComponent.prototype._initForm = function() {
+BookletEditorComponent.prototype._initForm = function () {
     var instance = this;
+
     function initEvents(form) {
-        form.attachEvent('onButtonClick', function(name) {
+        form.attachEvent('onButtonClick', function (name) {
             switch (name) {
                 case 'image_load':
                     $('#' + instance.imageLoaderId + ' .' + instance.imageLoaderId).trigger('click');
@@ -1214,7 +1286,7 @@ BookletEditorComponent.prototype._initForm = function() {
                     break;
             }
         })
-        form.attachEvent('onButtonClick', function(name) {
+        form.attachEvent('onButtonClick', function (name) {
             if (name == 'image_inputs_templates') {
                 if (!instance.popup.isVisible()) {
                     instance.popup.show('image_inputs_templates');
@@ -1225,25 +1297,35 @@ BookletEditorComponent.prototype._initForm = function() {
             }
         })
 
-        $('.text_fields_container textarea').focus(function() {
+        $('.text_fields_container textarea').focus(function () {
             $('.text_fields_sub_container').css('z-index', 100);
             $(this).parents('.text_fields_sub_container').css('z-index', 101);
         })
         instance._resetImageLoader();
     }
+
     var config = [
         {type: 'settings', labelWidth: 50, labelAlign: 'right', inputWidth: 250},
-        {type: 'template', name: '_image_preview', className: 'image_preview', value: this.imagePreviewTemplate, inputWidth: 320, inputHeight: 500},
+        {
+            type: 'template',
+            name: '_image_preview',
+            className: 'image_preview',
+            value: this.imagePreviewTemplate,
+            inputWidth: 320,
+            inputHeight: 500
+        },
         {type: 'newcolumn'},
         {type: 'input', name: 'id', label: 'ID', readonly: true},
         {type: 'input', name: 'number', label: 'Номер'},
         {type: 'template', name: '_file_loader', value: this.imageLoader, hidden: true},
         {type: 'container', name: 'labelsTemplates', inputWidth: 200, inputHeight: 300},
-        {type: 'block', width: 300, blockOffset: 0, offsetTop: 80, list: [
+        {
+            type: 'block', width: 300, blockOffset: 0, offsetTop: 80, list: [
             {type: 'button', name: 'image_load', value: '', className: 'image_loader'},
             {type: 'newcolumn'},
             {type: 'button', name: 'ok', value: 'Ok', offsetTop: 30, offsetLeft: 180}
-        ]}
+        ]
+        }
     ]
     var form = this.window.attachForm(config);
     initEvents(form);
@@ -1251,30 +1333,30 @@ BookletEditorComponent.prototype._initForm = function() {
     return form;
 };
 
-BookletEditorComponent.prototype.populateData = function(entity) {
+BookletEditorComponent.prototype.populateData = function (entity) {
     this.controller.setEntity(entity);
     this._populateEntity(entity);
 };
 
-BookletEditorComponent.prototype.getData = function() {
+BookletEditorComponent.prototype.getData = function () {
     var instance = this;
     var customUpdater = {
-        image: function(form, entity) {
+        image: function (form, entity) {
             var $image = $('#booklet_item_image');
             var data = $image.data();
             if (data.isbase64) {
                 entity.image = $image.attr('src');
             }
         },
-        listLabels: function(form, entity) {
+        listLabels: function (form, entity) {
             var notExcistingTypes = Object.keys(instance.parent.controller.labelTypes);
-            for(var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
+            for (var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
                 var label = entity.listLabels[labelIndex];
                 notExcistingTypes.splice(notExcistingTypes.indexOf(label.type), 1);
                 label.text = $('#' + label.type).val();
             }
             if (notExcistingTypes.length) {
-                for(var labelIndex = 0; labelIndex < notExcistingTypes.length; labelIndex++) {
+                for (var labelIndex = 0; labelIndex < notExcistingTypes.length; labelIndex++) {
                     var label = instance.parent.controller.bookletItemLabel.createNewEntity();
                     label.type = notExcistingTypes[labelIndex];
                     label.text = $('#' + notExcistingTypes[labelIndex]).val();
@@ -1288,15 +1370,15 @@ BookletEditorComponent.prototype.getData = function() {
     return entity;
 };
 
-BookletEditorComponent.prototype.close = function() {
+BookletEditorComponent.prototype.close = function () {
     this.window.close();
     this.clear();
 };
 
-BookletEditorComponent.prototype._populateEntity = function(entity) {
+BookletEditorComponent.prototype._populateEntity = function (entity) {
     var instance = this;
     var customUpdater = {
-        image: function(form, entity) {
+        image: function (form, entity) {
             if (entity.image && entity.image.length > 0) {
                 var $image = $('#booklet_item_image');
                 if (entity.image.indexOf('data:image') != 0) {
@@ -1307,9 +1389,9 @@ BookletEditorComponent.prototype._populateEntity = function(entity) {
                 }
             }
         },
-        listLabels: function(form, entity) {
+        listLabels: function (form, entity) {
             if (entity.listLabels) {
-                for(var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
+                for (var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
                     var label = entity.listLabels[labelIndex];
                     if (U.hasContent(label.type) && U.hasContent(label.text)) {
                         var matches = /(.*){1}_\d{1}$/.exec(label.type);
@@ -1325,8 +1407,8 @@ BookletEditorComponent.prototype._populateEntity = function(entity) {
     components.updateFormData(this.form, entity, customUpdater);
 };
 
-BookletEditorComponent.prototype._updateImageTextareas = function(ids) {
-    ids = dhx.isArray(ids)? ids: [ids];
+BookletEditorComponent.prototype._updateImageTextareas = function (ids) {
+    ids = dhx.isArray(ids) ? ids : [ids];
     $('.text_fields_sub_container').hide();
     for (var idIndex = 0; idIndex < ids.length; idIndex++) {
         if (ids[idIndex] != '') {
@@ -1335,14 +1417,14 @@ BookletEditorComponent.prototype._updateImageTextareas = function(ids) {
     }
 };
 
-BookletEditorComponent.prototype._initTemplates = function(form) {
+BookletEditorComponent.prototype._initTemplates = function (form) {
     var instance = this;
     var formKey = 'image_inputs_templates';
     var editorFormDataView = new dhtmlXDataView({
         container: this.form.getContainer('labelsTemplates'),
         select: 'multiselect',
-        type:{
-            template:"<div><img src='#img#'/></div>",
+        type: {
+            template: "<div><img src='#img#'/></div>",
             width: 60,
             height: 100
         }
@@ -1357,24 +1439,24 @@ BookletEditorComponent.prototype._initTemplates = function(form) {
     for (var templateIndex = 0; templateIndex < templates.length; templateIndex++) {
         editorFormDataView.add(templates[templateIndex], 0);
     }
-    editorFormDataView.attachEvent('onSelectChange', function(ids) {
+    editorFormDataView.attachEvent('onSelectChange', function (ids) {
         instance._updateImageTextareas(this.getSelected());
     })
-/*    editorFormDataView.attachEvent('onBeforeSelect', function(id) {
-        if (!editorFormDataView.isSelected(id)) {
-            editorFormDataView.select(id);
-        } else {
-            editorFormDataView.unselect(id);
-        }
-    })*/
+    /*    editorFormDataView.attachEvent('onBeforeSelect', function(id) {
+     if (!editorFormDataView.isSelected(id)) {
+     editorFormDataView.select(id);
+     } else {
+     editorFormDataView.unselect(id);
+     }
+     })*/
     instance._updateImageTextareas([]);
     return editorFormDataView;
 };
 
-BookletEditorComponent.prototype._getFormData = function(form) {
+BookletEditorComponent.prototype._getFormData = function (form) {
     var formData = form.getFormData();
     $('#booklet_item_image_preview .booklet_item_image_label').each(
-        function() {
+        function () {
             var thizz = $(this);
             formData[thizz.attr('id')] = thizz.val();
         }
@@ -1382,10 +1464,10 @@ BookletEditorComponent.prototype._getFormData = function(form) {
     return {};
 };
 
-BookletEditorComponent.prototype.clear = function() {
+BookletEditorComponent.prototype.clear = function () {
     var instance = this;
     if (this.form) {
-        this.form.forEachItem(function(name) {
+        this.form.forEachItem(function (name) {
             var type = instance.form.getItemType(name);
             if (['input'].indexOf(type) >= 0 && name.indexOf('_') != 0) {
                 instance.form.setItemValue(name);
@@ -1399,26 +1481,27 @@ BookletEditorComponent.prototype.clear = function() {
     this.controller.clear();
 };
 
-BookletEditorController = function() {}
+BookletEditorController = function () {
+}
 
-BookletEditorController.prototype.init = function() {
+BookletEditorController.prototype.init = function () {
     this.id = undefined;
     this.entity = undefined;
 };
 
-BookletEditorController.prototype.setEntity = function(entity) {
+BookletEditorController.prototype.setEntity = function (entity) {
     this.entity = entity;
 };
 
-BookletEditorController.prototype.getEntity = function() {
+BookletEditorController.prototype.getEntity = function () {
     return this.entity;
 };
 
-BookletEditorController.prototype.clear = function() {
+BookletEditorController.prototype.clear = function () {
     this.entity = {};
 };
 
-BookletEditorController.prototype.updateData = function() {
+BookletEditorController.prototype.updateData = function () {
 
 };
 
@@ -1431,14 +1514,14 @@ function formatBookletImage(src) {
 
 function evaluateSizeMultiplayer(size) {
     var res = 1;
-    res *= Math.ceil(size.width/135);
-    res *= Math.ceil(size.height/225);
+    res *= Math.ceil(size.width / 135);
+    res *= Math.ceil(size.height / 225);
     return res;
 }
 
 function initHandlebarsTemplates() {
-    Handlebars.registerHelper('sizeHandler', function(size) {
-        return Math.ceil(size.width/135) * Math.ceil(size.height/225);
+    Handlebars.registerHelper('sizeHandler', function (size) {
+        return Math.ceil(size.width / 135) * Math.ceil(size.height / 225);
     })
     U.addHandlebarScript('bookletItem', '\
         <div id="{{id}}" class="item x{{sizeHandler size}}">\
@@ -1465,7 +1548,7 @@ function initHandlebarsTemplates() {
             </div>\
         {{/each}}');
     U.addHandlebarScript('itemLabel', '<div id="{{id}}" class="label {{type}}"><pre>{{text}}</pre></div>');
-    Handlebars.registerHelper('itemLabelGroup', function(labels) {
+    Handlebars.registerHelper('itemLabelGroup', function (labels) {
         var groups = {};
         if (labels.length) {
             for (var labelIndex = 0; labelIndex < labels.length; labelIndex++) {
@@ -1482,19 +1565,19 @@ function initHandlebarsTemplates() {
         }
         return '';
     })
-    Handlebars.registerHelper('renderItemImage', function(image) {
-        return image? (image.indexOf('data:image') == 0? image: '/' + app.bookletImageRoot + '/' + image ): "";
+    Handlebars.registerHelper('renderItemImage', function (image) {
+        return image ? (image.indexOf('data:image') == 0 ? image : '/' + app.bookletImageRoot + '/' + image ) : "";
     });
-    Handlebars.registerHelper('renderItemNumberVisible', function(number) {
-        return !number? "display: none;": "";
+    Handlebars.registerHelper('renderItemNumberVisible', function (number) {
+        return !number ? "display: none;" : "";
     });
-    Handlebars.registerHelper('renderBookletBorders', function(templateName) {
+    Handlebars.registerHelper('renderBookletBorders', function (templateName) {
         if (templateName) {
             return Handlebars.compile($("#" + templateName).html())();
         }
         return '';
     });
-    Handlebars.registerHelper('backgroundImage', function(imagePath) {
+    Handlebars.registerHelper('backgroundImage', function (imagePath) {
         return imagePath || '';
     });
     Handlebars.registerPartial("itemLabel", $("#itemLabel").html());
@@ -1505,7 +1588,7 @@ function initHandlebarsTemplates() {
             <div class="viewport_container">\
                 <div class="viewport_sub">\
                     <div class="background"><img src="{{backgroundImage backgroundImage}}"/></div>\
-                    <div class="borders">{{> 3c2c}}</div>\
+                    <div class="borders">{{> bordersDefault}}</div>\
                     <div class="palls"></div>\
                     <div class="viewport"></div>\
                     <div id="zoom_slider"></div>\
@@ -1521,16 +1604,16 @@ function initHandlebarsTemplates() {
             </div>\
         </div>');
     U.addHandlebarScript('booklet', '<div id="{{id}}" class="booklet"></div>');
-    U.addHandlebarScript('3c2c', '\
+    U.addHandlebarScript('borders-default', '\
         <div class="vertical-border-1 item-border horizontal highlight" style="display: none"></div>\
         <div class="vertical-border-2 item-border horizontal highlight" style="display: none"></div>\
         <div class="horizontal-border-1 item-border vertical highlight" style="display: none"></div>\
         <div class="horizontal-border-2 item-border vertical highlight" style="display: none"></div>\
     ');
-    Handlebars.registerPartial("3c2c", $("#3c2c").html());
+    Handlebars.registerPartial("bordersDefault", $("#borders-default").html());
 }
 
-bookletBackgroundWindow = (function() {
+bookletBackgroundWindow = (function () {
     var selectCallbacks = [];
     var win = null;
     var form = null;
@@ -1548,21 +1631,24 @@ bookletBackgroundWindow = (function() {
     function initForm(window) {
         var formConfig = [
             {type: 'container', name: 'images', inputWidth: 730, inputHeight: 410},
-            {type: 'block', blockOffset: 7, width: 730, list: [
+            {
+                type: 'block', blockOffset: 7, width: 730, list: [
                 {type: 'button', name: 'cancel', value: 'Закрыть'},
                 {type: 'newcolumn'},
                 {type: 'button', name: 'ok', value: 'Выбрать', offsetLeft: 520}
-            ]}
+            ]
+            }
         ];
         var form = window.attachForm(formConfig);
-        form.attachEvent('onButtonClick', function(name) {
+        form.attachEvent('onButtonClick', function (name) {
             if (name == 'ok') {
                 var selectedId = dataView.getSelected();
                 if (U.hasContent(selectedId)) {
                     selected = dataView.get(selectedId);
                 }
 
-            } if (name == 'cancel') {
+            }
+            if (name == 'cancel') {
                 unselectAll();
             }
             bookletBackgroundWindowInstance.hide();
@@ -1577,9 +1663,9 @@ bookletBackgroundWindow = (function() {
             select: true,
             template: "<img class='booklet_select_preview' src='#image#'/>"
         });
-        serviceWrapper.getBookletBackgrounds(function(backgrounds) {
+        serviceWrapper.getBookletBackgrounds(function (backgrounds) {
             if (backgrounds && backgrounds.length) {
-                backgrounds.forEach(function(image) {
+                backgrounds.forEach(function (image) {
                     view.add({id: U.getRandomString(), image: "/" + image});
                 })
             }
@@ -1589,15 +1675,15 @@ bookletBackgroundWindow = (function() {
     }
 
     function closeCallback() {
-        return function() {
-            selectCallbacks.forEach(function(_callback) {
+        return function () {
+            selectCallbacks.forEach(function (_callback) {
                 _callback(selected);
             })
         }
     }
 
     return {
-        show: function() {
+        show: function () {
             bookletBackgroundWindowInstance = this;
             if (!win) {
                 win = components.initDhtmlxWindow({
@@ -1609,11 +1695,11 @@ bookletBackgroundWindow = (function() {
             }
             win.show();
         },
-        hide: function() {
+        hide: function () {
             bookletBackgroundWindowInstance = this;
             win.close();
         },
-        addSelectCallback: function(callback) {
+        addSelectCallback: function (callback) {
             bookletBackgroundWindowInstance = this;
             if (typeof callback == 'function') {
                 selectCallbacks.push(callback);
