@@ -1,7 +1,6 @@
 <?php
 include_once("import");
 include_once("tag");
-include_once("auth");
 
 class AdminPage {
 
@@ -60,7 +59,7 @@ class AdminPage {
                 <button class='button f-20 input_hover'>Войти</button>
             </div>
             <script type='text/javascript'>
-                inputHoverModule.update();
+                /*inputHoverModule.update();*/
             </script>
         ");
         return $mainTag->addChildList([$head, $body]);

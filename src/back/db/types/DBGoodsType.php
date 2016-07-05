@@ -110,6 +110,49 @@ class DBGoodsType extends DBType{
         return $this->totalCount;
     }
 
+    public function getAdminSortedForCommon($limitBegin, $limitEnd) {
+        $this->request = "SELECT * FROM ".$this->getTableName()." AS t ";
+        $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
+        $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
+        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
+        $this->execute($this->request);
+        $this->responseSize = mysql_num_rows($this->getResponse());
+        Log::db("DBConnection.getUserSortedForCommon REQUEST: ".$this->request);
+        return $this->response;
+    }
+
+    public function getUserSortedForMenu($goodKeys, $limitBegin, $limitEnd) {
+        $regExp = "^(".implode('|', $goodKeys)."){1}";
+        $this->request = "SELECT * FROM ".$this->getTableName()." AS t".
+        $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
+        $this->request = $this->request." WHERE LOWER(t.".DB::TABLE_GOODS__KEY_ITEM.") REGEXP '$regExp'";
+        $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
+        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
+        $this->responseSize = mysql_num_rows($this->execute($this->request));
+        Log::db("DBConnection.getUserSortedForMenu REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        return $this->response;
+    }
+
+    public function getUserSortedForSearch($keyMas, $valueMas, $limitBegin, $limitEnd) {
+        $this->request = "SELECT * FROM ".$this->getTableName()." AS t ";
+        $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
+        for($i = 0; $i < count($keyMas); $i++) {
+            if ($keyMas[$i] != '' && $valueMas[$i] != '') {
+                if ($i == 0) {
+                    $this->request = $this->request." WHERE";
+                } elseif ($i != count($keyMas)) {
+                    $this->request = $this->request." OR";
+                }
+                $this->request = $this->request." LOWER(t.".$keyMas[$i].") REGEXP '".$valueMas[$i]."'";
+            }
+        }
+        $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
+        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
+        $this->responseSize = mysql_num_rows($this->execute($this->request));
+        Log::db("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        return $this->response;
+    }
+
     public function getCode($id) {
         $row = $this->get($id);
         return $row[DB::TABLE_GOODS__KEY_ITEM];

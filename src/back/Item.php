@@ -31,7 +31,7 @@ class Item {
                 [
                     "itemprop" => "image",
                     TagLabels::ON_CLICK => "openSimpleImg(arguments[0])",
-                    "src" => addslashes($images[$imgIndex]),
+                    "src" => "/".addslashes($images[$imgIndex]),
                     "alt" => $name
                 ]);
             $imgView->addStyleClass($imgIndex > 0? "simple_item_image_half": "simple_item_image");

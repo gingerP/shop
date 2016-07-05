@@ -9,11 +9,20 @@ class CatalogLoader {
     public $dataCount;
     public $data;
 
+    private function isAdminOrderEnabled() {
+        $preference = new DBPreferencesType();
+        return $preference->getPreference(Constants::USE_ADMIN_ORDER)[DB::TABLE_PREFERENCES__VALUE] == 'true';
+    }
+
     public function getItemsMainData($pageNumber, $num) {
         $goods = new DBGoodsType();
         $limitBegin = ($pageNumber - 1) * $num;
         $limitEnd = $num;
-        $goods->executeRequestWithLimit('', '', DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+        if ($this->isAdminOrderEnabled()) {
+            $goods->getAdminSortedForCommon($limitBegin, $limitEnd);
+        } else {
+            $goods->executeRequestWithLimit('', '', DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+        }
         $this->data = $goods->getResponse();
         $this->dataCount = $goods->getResponseSize();
         $goods->executeTotalCount();
@@ -27,12 +36,16 @@ class CatalogLoader {
         $navKeys->executeRequest('', '', DB::TABLE_ORDER);
         $tree = $treeUtils->buildTreeByLeafs();
         $keys = $treeUtils->getTreeLeafesForKey($tree, $key);
-        $str = implode('|', $keys);
         $goods->getGoodsKeyCount($keys);
         $this->dataTotalCount = $goods->getTotalCount();
         $limitBegin = ($pageNumber - 1) * $num;
         $limitEnd = $num;
-        $goods->executeRequestRegExpWithLimit(DB::TABLE_NAV_KEY__KEY_ITEM, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+        if ($this->isAdminOrderEnabled()) {
+            $goods->getUserSortedForMenu($keys, $limitBegin, $limitEnd);
+        } else {
+            $str = implode('|', $keys);
+            $goods->executeRequestRegExpWithLimit(DB::TABLE_NAV_KEY__KEY_ITEM, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+        }
         $this->data = $goods->getResponse();
         $this->dataCount = $goods->getResponseSize();
     }
@@ -47,7 +60,11 @@ class CatalogLoader {
         array_push($valueMas, "(".mb_convert_case($valueToSearch, MB_CASE_LOWER, "utf-8").")+");
         $limitBegin = ($pageNumber - 1) * $num;
         $limitNum = $num;
-        $goods->executeRequestRegExpArrayWithLimit($keyMas, $valueMas, DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitNum);
+        if ($this->isAdminOrderEnabled()) {
+            $goods->getUserSortedForSearch($keyMas, $valueMas, $limitBegin, $limitNum);
+        } else {
+            $goods->executeRequestRegExpArrayWithLimit($keyMas, $valueMas, DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitNum);
+        }
         $this->data = $goods->getResponse();
         $this->dataCount = $goods->getResponseSize();
         $goods->getGoodsSearchCount($keyMas, $valueMas);

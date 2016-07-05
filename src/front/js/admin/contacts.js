@@ -19,6 +19,7 @@ function init() {
 
 function initLayout() {
     var layout = new dhtmlXLayoutObject({
+        skin: components.skin,
         parent: document.body,
         pattern: "2U",
         cells: [

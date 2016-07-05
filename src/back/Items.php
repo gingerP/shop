@@ -103,6 +103,7 @@ class Items {
                 }
 
                 $cellView->addChild($item);
+                $cellView->addStyleClass("catalog_good_item");
             }
 
         }

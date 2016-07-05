@@ -7,6 +7,7 @@ if (array_key_exists('method', $_GET)) {
         $result = true;
         $securedMethods = [
             "getGoods",
+            "getAdminOrder",
             "updateGood",
             "getGood",
             "getGoodImages",
@@ -20,7 +21,8 @@ if (array_key_exists('method', $_GET)) {
             "getBooklet",
             "saveBooklet",
             "deleteBooklet",
-            "getBookletBackgrounds"
+            "getBookletBackgrounds",
+            "saveOrder"
         ];
         if (in_array($methodName, $securedMethods)) {
             $result = isset($_SERVER['HTTPS']) && SessionManager::sessionStart() && AuthManager::isAuth();
@@ -56,6 +58,13 @@ if (array_key_exists('method', $_GET)) {
                     $id = Utils::getFromPOST('id');
                     echo json_encode(GoodsService::deleteGood($id));
                     break;
+                case 'saveOrder':
+                    $data = Utils::getFromPOST('order');
+                    echo json_encode(GoodsService::saveGoodsOrder($data));
+                    break;
+                case 'getAdminOrder':
+                    echo json_encode(GoodsService::getGoodsOrder());
+                    break;
                 case 'sendFeedbackEmail':
                     $messageBody = Utils::getFromPOST('message_body');
                     $senderEmail = Utils::getFromPOST('sender_email');
@@ -81,6 +90,11 @@ if (array_key_exists('method', $_GET)) {
                 case 'updatePrices':
                     $data = $_POST['data'];
                     echo json_encode(PriceService::updatePrices($data));
+                    break;
+                case 'loadNews':
+                    $page = Utils::getFromPOST('page');
+                    $offset = Utils::getFromPOST('offset');
+                    echo json_encode(NewsService::loadNews($page, $offset));
                     break;
                 /*****************************************Booklets*************************************/
                 case 'listBooklets':

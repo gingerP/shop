@@ -2,7 +2,7 @@ $(document).ready(function() {
     U.dhtmlxDOMPreInit(document.documentElement, document.body);
     app = {};
     createPage();
-})
+});
 
 
 function createPage() {
@@ -28,13 +28,14 @@ function initServiceEntities() {
         action: null,
         size: "--",
         modification_time: "--"
-    }
+    };
     return new ServiceEntities().init(entity, 'id', 999);
 }
 
 function initLayout() {
     var layout = new dhtmlXLayoutObject({
         parent: document.body,
+        skin: components.skin,
         pattern: "1C",
         cells: [
             {id: "a", text: "Прайс-листы"}
@@ -55,7 +56,7 @@ function initToolbar() {
                 return;
             }
             var reader = new FileReader();
-            reader.onload = function(e) {
+            reader.addEventListener('load', function(e) {
                 var entity = app.serviceEntities.createNewEntity();
                 entity.action = 'add';
                 entity.name = file.name;
@@ -66,7 +67,7 @@ function initToolbar() {
                 app.grid.setUserData(entity.id, 'entity', entity);
                 app.grid.selectRowById(entity.id, false, true, true);
                 $loader.val("");
-            }
+            });
             reader.readAsDataURL(file);
         }
     });
@@ -150,7 +151,7 @@ function initGrid() {
             }
         });
         return result;
-    }
+    };
     grid.handleSameNames = function(sameNamesCallback) {
         sameNamesCallback = sameNamesCallback || function(grid, id) {
             grid.setRowColor(id, '#FC9898');
@@ -174,7 +175,7 @@ function initGrid() {
             sameNamesCallback(this, result[key]);
         }
         return Object.keys(result).length > 0;
-    }
+    };
 
     grid.init();
     grid.attachEvent("onSelectStateChanged", function(id){
@@ -182,7 +183,7 @@ function initGrid() {
         //app.form.unlock();
         var gridState = {
             hasSelection: true
-        }
+        };
         app.toolbar.onStateChange(gridState);
         //app.form.updateFormData(entity);
     });
@@ -207,7 +208,7 @@ var loader = {
         app.serviceEntities.removeAll();
         var gridState = {
             hasSelection: false
-        }
+        };
         app.toolbar.onStateChange(gridState);
         serviceWrapper.getPrices(function(prices) {
             if (prices.length) {
@@ -226,4 +227,4 @@ var loader = {
             }
         });
     }
-}
+};

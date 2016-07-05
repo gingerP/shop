@@ -783,12 +783,12 @@ function initPriceGalleryLogic() {
         var _$filtered = $priceButtons.filter('[price_code=' + oldSelectedCode + ']');
         _$filtered.removeClass('input_hover_untouchable');
         _$filtered.finish();
-        inputHoverModule.inn().hoverOut(_$filtered[0]);
+        /*inputHoverModule.inn().hoverOut(_$filtered[0]);*/
 
         $priceButtons.filter('[price_code=' + oldSelectedCode + ']')
         $newSelected.finish().addClass(selectedClass).fadeIn(600);
         _$filtered = $priceButtons.filter('[price_code=' + newSelectedCode + ']');
-        inputHoverModule.inn().hoverIn(_$filtered[0]);
+        /*inputHoverModule.inn().hoverIn(_$filtered[0]);*/
         _$filtered.addClass('input_hover_untouchable');
     };
     var selectNext = function() {
@@ -902,12 +902,12 @@ $(document).ready(function () {
 
 
     initEntryLogic();
-    initPriceListLogic(inputHoverModule.update);
+    /*initPriceListLogic(inputHoverModule.update);*/
     initTopBarScrolling(93);
     initFeedbackLogic();
     initBlackoutLogic();
     initSearchLogic();
-    inputHoverModule.update();
+    /*inputHoverModule.update();*/
     initPathLinkViewMode();
     initCatalogItemButton();
     if (pages.isMain) {
@@ -919,7 +919,7 @@ $(document).ready(function () {
         keyBoard.handle(39, function() {$('.next_link').trigger('click')});
 
     } else if (pages.isContacts) {
-        googleMapLogic.init(inputHoverModule.update);
+        googleMapLogic.init(/*inputHoverModule.update*/);
 
     } else if (pages.isSingleItem) {
         new TransparentIcons().init();

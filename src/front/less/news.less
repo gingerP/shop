@@ -1,0 +1,54 @@
+@import (reference) "./variables";
+
+.news_container {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  display: table;
+}
+
+.news_items_list {
+  display: table;
+}
+
+.news_items_container {
+  position: relative;
+}
+.news_items_block {
+  background-image: url(/images/textures/light-paper-fibers.png);
+  background-color: @tree_color_l1;
+  display: table;
+  width: 100%;
+
+  .news_item {
+    padding: 8px;
+    margin: 4px;
+    background-color: @item-offset-color;
+    box-shadow: @box-shadow;
+    width: 560px;
+    height: 315px;
+    float: left;
+  }
+}
+
+.load_more_news a {
+  background:none;
+  font-size:1.4em;
+  font-family: CaviarDreamsBold;
+  color: @font_color;
+  margin: 20px auto;
+  display: table;
+  cursor: pointer;
+  border-bottom: 2px solid @font_color;
+  text-decoration: blink;
+  padding: 0 30px;
+}
+
+.news_slogan {
+  padding-left: 10%;
+  margin-top: 0px;
+  .slogan {
+    background-image: url(/images/textures/light-paper-fibers.png);
+    background-color: #f0c170;
+  }
+}

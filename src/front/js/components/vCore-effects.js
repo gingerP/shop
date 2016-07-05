@@ -1,3 +1,4 @@
+/*
 var inputHoverModule = (function() {
     var instance = undefined;
     var createInstance = function() {
@@ -18,19 +19,19 @@ var inputHoverModule = (function() {
                 var colorAnimationObj = {};
                 animationStop($thiz);
                 animationStop($colors);
-                /*colorAnimationObj.color = '#ffffff';
-                animationObj.color = '#ffffff';*/
+                /!*colorAnimationObj.color = '#ffffff';
+                animationObj.color = '#ffffff';*!/
                 if (this.tagName != 'svg') {
                     animationObj.backgroundColor = newBackgroundColor;
                 } else {
                     animationObj.fill = newBackgroundColor;
                 }
                 //text color
-                /*if ($colors.length && (!U.hasContent($colors.attr('temp_color')) || $colors.attr('temp_color') == '')) {
+                /!*if ($colors.length && (!U.hasContent($colors.attr('temp_color')) || $colors.attr('temp_color') == '')) {
                     $colors.attr('temp_color', $colors.css('color'));
                 } else if (!U.hasContent($thiz.attr('temp_color')) || $thiz.attr('temp_color') == '') {
                     $thiz.attr('temp_color', $thiz.css('color'));
-                }*/
+                }*!/
                 //background
                 if (!U.hasContent($thiz.attr('temp_background')) || $thiz.attr('temp_background') == '') {
                     $thiz.attr('temp_background', oldBackgroundColor);
@@ -53,12 +54,12 @@ var inputHoverModule = (function() {
                 animationStop($thiz);
                 animationStop($colors);
                 //text color
-                /*if ($colors.length && (U.hasContent($colors.attr('temp_color')))) {
+                /!*if ($colors.length && (U.hasContent($colors.attr('temp_color')))) {
                     $colors.attr('temp_color', $colors.css('color'));
                     colorAnimationObj.color = $colors.attr('temp_color');
                 } else if (U.hasContent($thiz.attr('temp_color'))) {
                     animationObj.color = $thiz.attr('temp_color');
-                }*/
+                }*!/
                 //text color
                 if (U.hasContent($thiz.attr('temp_background'))) {
                     if (this.tagName != 'svg') {
@@ -137,6 +138,7 @@ var inputHoverModule = (function() {
         }
     }
 })();
+*/
 
 
 //-----------------------------------------------------------------------------------//

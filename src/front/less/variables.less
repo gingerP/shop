@@ -1,0 +1,36 @@
+@item-offset-color: #ffffff;
+@box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+.color_background(@transparent: 1) {background: rgba(136, 204, 85, @transparent)}
+.item_border_radius(@lt: 2px, @tr: 2px, @rb: 2px, @bl: 2px) { border-radius: @lt @tr @rb @bl}
+.import_font(@fontFamily, @fontName){
+  @font-face {
+    font-family: '@{fontFamily}';
+    src: url('@{fonts_path}/@{fontName}');
+  }
+}
+@color_background: #F5F5F5;
+@color_background_border: #FFFFFF;
+@color_background_bottom: #D7D7D7;
+@color_background_feedback: #E1E1E1;
+@color_background_feedback_title: #ECB14B;
+@color_active: #808080;
+@color_grey: #CCCCCC;
+@color_dark: #17A086;
+@color_ddark: #7BB94D;
+@color_mid: #32CD32;
+@color_light: #ADE681;
+@color_error: brown;
+@color_disable: #CACACA;
+@image_border_color: #D0D0D0;
+@font_color: #414141;
+@font_family: Helvetica;
+@tree_color_l0: lighten(@color_background_feedback_title, 0%)/*#72BC38*/;
+@tree_color_l1: lighten(@color_background_feedback_title, 8%)/*#88CC55*/;
+@tree_color_l2: lighten(@color_background_feedback_title, 16%)/*#B2DE91*/;
+@tree_color_l3: lighten(@color_background_feedback_title, 24%)/*#C8E8B0*/;
+@tree_color_ln: lighten(@color_background_feedback_title, 32%)/*#F4FAEF*/;
+@color_validation_error: #FFCCCC;
+@image_path: '/images';
+@fonts_path: '/fonts';
+@image_fon: 'background-dots.png';
+@shadow_color: #D8D8D8;

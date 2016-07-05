@@ -4,6 +4,7 @@ if (typeof app == 'undefined') {
 app.dhtmlxImgsPath = '/src/front/dhtmlx/imgs/';
 
 components = {
+    skin: 'material',
     reloadGrid: function(grid, list, columnKeys) {
         grid.clearAll();
         if (list.length) {
@@ -46,6 +47,7 @@ components = {
             }
         }
     },
+
 
     updateEntity: function(form, entity, customUpdater) {
         if (form && entity) {
@@ -98,7 +100,7 @@ components = {
         });
         menu.attachEvent("onClick", function(id, zoneId, cas) {
             window.open(document.location.origin + "/admin/" + id,"_self");
-        })
+        });
         var exitDOM = menu.idPull[menu.idPrefix + exitKey];
         $("#" + exitDOM.id).
             css("position", "absolute").
@@ -132,8 +134,10 @@ components = {
                 save: {type: "button", id: "save", text: "Сохранить"},
                 delete: {type: "button", id: "delete", text: "Удалить"},
                 loadBackground: {type: "button", id: "loadBackground", text: "Загрузить фон"},
+                saveOrder: {type: "button", id: "saveOrder", text: "Настроить порядок"},
+                separator: {type: "separator"},
                 preview: {type: "button", id: "preview", text: "Просмотр"}
-            }
+            };
             for (var btnIndex = 0; btnIndex < buttons.length; btnIndex++) {
                 config.push(_buttons[buttons[btnIndex]]);
             }
@@ -172,7 +176,7 @@ components = {
             } else {
 
             }
-        }
+        };
         return toolbar;
     },
 
@@ -187,7 +191,7 @@ components = {
             width: 300,
             height: 200,
             center: true,
-        }
+        };
         $.extend(true, _vars, vars || {});
         var win = myWins.createWindow(_vars);
         win.attachEvent('onClose', function() {
@@ -195,10 +199,10 @@ components = {
                 closeCallback();
             }
             this.hide();
-        })
+        });
         return win;
     }
-}
+};
 
 
 Handlers = function(callback){
@@ -235,6 +239,9 @@ serviceWrapper = (function() {
         getGoods: function(id, callback) {
             load('getGoods', {id: -1}, new Handlers(callback));
         },
+        saveGoodsOrder: function(data, callback) {
+            load('saveOrder', data, new Handlers(callback));
+        },
         getNextGoodCode: function(code, callback) {
             load('getNextGoodCode', {code: code}, new Handlers(callback));
         },
@@ -252,6 +259,9 @@ serviceWrapper = (function() {
         },
         getGood: function(id, callback) {
             load('getGood', {id: id}, new Handlers(callback));
+        },
+        getGoodsAdminOrder: function(callback) {
+            load('getAdminOrder', null, new Handlers(callback));
         },
         getGoodImages: function(id, callback) {
             load('getGoodImages', {id: id}, new Handlers(callback));

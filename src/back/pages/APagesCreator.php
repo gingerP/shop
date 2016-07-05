@@ -77,9 +77,13 @@ abstract class APagesCreator {
             <script type='text/javascript' src='/src/front/js/ext/jquery-2.1.4.min.js'></script>
             <script type='text/javascript' src='/src/front/js/ext/jquery.actual.min.js'></script>
             <script type='text/javascript' src='/src/front/js/ext/jquery.imageloader.js'></script>
+            <script type='text/javascript' src='/src/front/js/ext/require.js'></script>
+            <script>
+              require(['/src/front/js/require.config.js'], function(){
+                require(['./components/components.module'])
+              });
+            </script>
             <script type='text/javascript' src='/src/front/js/ext/animo.min.js'></script>
-            <script type='text/javascript' src='/src/front/js/ext/TweenMax.min.js'></script>
-            <script type='text/javascript' src='/src/front/js/ext/tinycolor.js'></script>
             <script type='text/javascript' src='/src/front/js/custom.js'></script>
             <script type='text/javascript' src='/src/front/js/v-utils.js'></script>
             <script type='text/javascript' src='/src/front/js/changePage.js'></script>
@@ -91,8 +95,10 @@ abstract class APagesCreator {
             <script type='text/javascript' src='/src/front/js/components/vCore-effects.js'></script>
             ");
         $head->addChild(SearchEngines::getGoogleAnalyticScript());
+        $head->addChild(SearchEngines::getYandexMetricScript());
         return $head;
     }
+
 
     public function createBody() {
         $body = new Body();

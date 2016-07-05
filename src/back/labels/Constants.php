@@ -32,6 +32,7 @@ class Constants {
     static $BOOKLET_IMAGE_SIZE_X2 = [700, 1000];
     static $BOOKLET_IMAGE_SIZE_X3 = [700, 1000];
 
+    const USE_ADMIN_ORDER = 'USE_ADMIN_ORDER';
     const DEFAULT_FIRST_IMAGE_PREFIX = '001';
     const DEFAULT_ITEM_DESCRIPTION_KEY = 'k_main';
     const DEFAULT_HOME_PAGE_BIG_VIEW_GALLERY_ITEM = "SC";

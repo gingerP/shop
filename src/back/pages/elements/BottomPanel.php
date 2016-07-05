@@ -35,9 +35,7 @@ class BottomPanel {
         $containerChild = new Div();
         $containerChild->addStyleClasses(["catalog"]);
         $container->addChild($containerChild);
-        $container2 = new Div();
-        $container2->addStyleClasses(["bottom_panel_item", "w-31p"]);
-        $div01->addChildList([$container, $container2]);
+        $div01->addChildList([$container]);
         $mainTitle = new A();
         $mainTitle->addChild("Каталог");
         $mainTitle->addAttribute("href", Labels::$TOP_NAVIGATION_LINKS["catalog"]);

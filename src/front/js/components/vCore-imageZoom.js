@@ -181,13 +181,13 @@ ImageZoom.prototype.initEvents = function() {
     );
 
     this.obj.$closeButton.hover(
-        function() {
+    /*    function() {
             TweenLite.to(thiz.obj.$closeButtonImage[0], 0.2, {rotation: 90});
         },
         function() {
             TweenLite.to(thiz.obj.$closeButtonImage[0], 0.2, {rotation: 0});
-        }
-    )
+        }*/
+    );
     this.obj.$closeButton.mouseup(function() {
         thiz.zoomInState = !thiz.zoomInState;
         thiz.makeZoomState();

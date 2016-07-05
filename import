@@ -1,6 +1,7 @@
 <?php
 include_once("src/back/Object.php");
 include_once("src/back/Num.php");
+include_once("src/back/Dao.php");
 
 include_once("src/back/log/Log.php");
 include_once("src/back/log/LogLevel.php");

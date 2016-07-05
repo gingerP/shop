@@ -84,38 +84,4 @@ class BookletService {
         $imageEditor->saveImage($bookletImagePath);
         return FileUtils::buildPath($bookletCode, $imageName);
     }
-
-
-
-    /*
- var bookletEntity = {
-        id: null,
-        name: null,
-        listColumns: [],
-        itemType: this.itemTypes.booklet,
-        created: null,
-        updated: null
-    }
-    var bookletColumn = {
-        id: null,
-        listItems: [],
-        itemType: 'column'
-    }
-    var bookletItemEntity = {
-        id: null,
-        image: null,
-        listLabels: [],
-        number: null,
-        position: null,
-        size: null,
-        itemType: this.itemTypes.item
-    }
-    var bookletItemLabelEntity = {
-        id: null,
-        type: null,
-        text: null,
-        itemType: this.itemTypes.label
-    }
-     * */
-
 }

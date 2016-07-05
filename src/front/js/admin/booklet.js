@@ -100,6 +100,7 @@ function initPage() {
 
 function initLayout() {
     var layout = new dhtmlXLayoutObject({
+        skin: components.skin,
         parent: document.body,
         pattern: "2U",
         cells: [
@@ -836,19 +837,6 @@ BookletController.prototype.createNewBooklet = function () {
 };
 
 BookletController.prototype.updateHorizontalEntity = function (booklet) {
-    /*
-     this.horizontalEntity = {};
-     if (U.hasContent(booklet)) {
-     for (var columnIndex = 0; columnIndex < booklet.listColumns.length; columnIndex++) {
-     var column = booklet.listColumns[columnIndex];
-     //items per column
-     for (var itemIndex = 0; itemIndex < column.listItems.length; itemIndex++) {
-     var item = column.listItems[itemIndex];
-     this.horizontalEntity[item.id] = item;
-     }
-     }
-     }
-     */
 };
 
 BookletController.prototype.getEntity = function () {

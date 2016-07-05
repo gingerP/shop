@@ -147,6 +147,13 @@ abstract class DBType {
         return $rowsCount;
     }
 
+    public function clear() {
+        $this->request = "TRUNCATE TABLE ".$this->getTableName();
+        $this->execute($this->request);
+        Log::db("DBConnection.update REQUEST: ".$this->request);
+        return true;
+    }
+
     protected function execute($sqlCommand) {
 
         $this->connection = new DBConnection();
@@ -171,6 +178,14 @@ abstract class DBType {
 
     public function setRequest($request) {
         $this->request = $request;
+    }
+
+    public function removeAll() {
+        $this->request = "DELETE * FROM ".$this->getTableName();
+        $this->execute($this->request);
+        $rowsCount = $this->connection->affectedRows;
+        Log::db("DBConnection.removeAll ".$this->getTableName()." REQUEST: ".$this->request." RESPONSE: ".$rowsCount);
+        return $rowsCount;
     }
 
     protected function getTable() {
