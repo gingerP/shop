@@ -30,10 +30,10 @@ class BottomPanel {
         $mainDiv->addChild($div01);
         $div01->addStyleClasses(["bottom_panel_window"]);
         $container = new Div();
-        $container->addStyleClasses(["bottom_panel_item", "w-31p"]);
+        $container->addStyleClasses(["bottom_panel_item", "w-33p"]);
         $container->updateId("bottom_catalog_tree");
         $containerChild = new Div();
-        $containerChild->addStyleClasses(["catalog"]);
+        $containerChild->addStyleClasses(["catalog", "content"]);
         $container->addChild($containerChild);
         $div01->addChildList([$container]);
         $mainTitle = new A();
@@ -43,9 +43,26 @@ class BottomPanel {
         $containerChild->addChild($mainTitle);
 
         $treeContainer = new Div();
-        $treeContainer->addStyleClass("content");
+        $treeContainer->addStyleClass('bottom_panel_item_placeholder');
         $containerChild->addChild($treeContainer);
         $this->treeProcessBottom($this->mainTree, $treeContainer);
+
+        $vkContainer = new Div();
+        $vkContainer->addStyleClasses(["bottom_panel_item", "w-33p"]);
+
+        $subVk = new Div();
+        $subVk->addStyleClass("content");
+        $vkContainer->addChild($subVk);
+
+        $vkTitle = new A();
+        $vkTitle->addAttribute("href", "https://vk.com/club143927701");
+        $vkTitle->addAttribute("target=", "_blank");
+        $vkTitle->addChild("Вконтакте");
+        $vkTitle->addStyleClasses(["f-16", "title", "bottom_panel_title"]);
+
+        $subVk->addChildren($vkTitle);
+        $this->bottomVkRender($this->mainTree, $subVk);
+        $div01->addChild($vkContainer);
 
         return $mainDiv;
     }
@@ -91,6 +108,21 @@ class BottomPanel {
         }*/
         $mainDiv->addChild($tree->value);
         return $span;
+    }
+
+    private function bottomVkRender(Tree &$tree, Tag &$tag) {
+        $mainDiv = new Div();
+        $mainDiv->addStyleClasses(["f-17", "cursor_pointer", "bottom_panel_item_placeholder", "label"]);
+        $mainDiv->addChild("
+            <script type=\"text/javascript\" src=\"//vk.com/js/api/openapi.js?144\"></script>
+                <!-- VK Widget -->
+                <div id=\"vk_groups\" style='height: 320px;'></div>
+                <script type=\"text/javascript\">
+                VK.Widgets.Group(\"vk_groups\", {mode: 0, width: 'auto'}, 143927701);
+            </script>
+        ");
+        $tag->addChild($mainDiv);
+        return $mainDiv;
     }
 
     private function remainingLinks() {

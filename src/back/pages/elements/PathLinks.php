@@ -64,7 +64,7 @@ class PathLinks {
         return $mainTag;
     }
 
-    public static function getDOMForTreeCatalog($treeKey, $pageIstance) {
+    public static function getDOMForTreeCatalog($treeKey, $pageInstance) {
         $mainTag = new Div();
         $mainTag->addStyleClasses(["catalog_tree"]);
         $treeUtils = new TreeUtils();
@@ -77,19 +77,26 @@ class PathLinks {
             array_push($data,
                 [
                     Utils::trimStr($path[$pathIndex]->value, Constants::DEFAULT_TEXT_LENGTH_FOR_CATALOG_PATH_LINK),
-                    URLBuilder::getCatalogLinkForTree($path[$pathIndex]->key)
+                    URLBuilder::getCatalogLinkForTree($path[$pathIndex]->key),
+                    $path[$pathIndex]->key
                 ]
             );
         }
         $keys = array_reverse($keys);
-        $pageIstance->updateTitleTagChildren($keys);
+        $pageInstance->updateTitleTagChildren($keys);
         return $mainTag->addChildList(self::buildPathLink($data));
     }
 
     public static function getDOMForCatalog() {
         $mainTag = new Div();
         $mainTag->addStyleClasses(["catalog_tree"]);
-        $mainTag->addChildList(self::buildPathLink([[Utils::trimStr("Каталог", Constants::DEFAULT_TEXT_LENGTH_FOR_CATALOG_PATH_LINK)]]));
+        $mainTag->addChildList(self::buildPathLink([
+            [
+                Utils::trimStr("Каталог", Constants::DEFAULT_TEXT_LENGTH_FOR_CATALOG_PATH_LINK),
+                "",
+                "GN"
+            ]
+        ]));
         return $mainTag;
     }
 
@@ -114,7 +121,7 @@ class PathLinks {
 
     public static function getDOMForSingleItemPageFromCatalog() {
         $mainTag = new Div();
-        $mainTag->addStyleClasses(["catalog_tree"]);
+        $mainTag->addStyleClasses(["catalog_tree", "path_single_page"]);
         $mainTag->addChildList(self::buildPathLink([self::getArrayItemForDefaultLink()]));
         return $mainTag;
     }
@@ -124,7 +131,11 @@ class PathLinks {
     }
 
     public static function getArrayItemForDefaultLink() {
-        return [Utils::trimStr("Каталог", Constants::DEFAULT_TEXT_LENGTH_FOR_CATALOG_PATH_LINK), Labels::$TOP_NAVIGATION_LINKS[catalog]];
+        return [
+            Utils::trimStr("Каталог", Constants::DEFAULT_TEXT_LENGTH_FOR_CATALOG_PATH_LINK),
+            Labels::$TOP_NAVIGATION_LINKS[catalog],
+            "GN"
+        ];
     }
 
     public static function getDOMForSingleItemPageFromTree($key) {
@@ -162,9 +173,11 @@ class PathLinks {
         if (array_key_exists(UrlParameters::ITEMS_COUNT, $_GET) && in_array(Utils::getFromGET(UrlParameters::ITEMS_COUNT), Labels::$VIEW_MODE_NUMERIC)) {
             $rt_numeric_view_mode = Utils::getFromGET(UrlParameters::ITEMS_COUNT);
         }
-        if (array_key_exists(UrlParameters::VIEW_MODE, $_GET) && array_key_exists(Utils::getFromGET(UrlParameters::VIEW_MODE), Labels::$VIEW_MODE_COMPACT)) {
+/*        if (array_key_exists(UrlParameters::VIEW_MODE, $_GET) && array_key_exists(Utils::getFromGET(UrlParameters::VIEW_MODE), Labels::$VIEW_MODE_COMPACT)) {
             $rt_compact_view_mode = Utils::getFromGET(UrlParameters::VIEW_MODE);
-        }
+        }*/
+
+        $rt_compact_view_mode = Labels::VIEW_MODE_COMPACT_DEF;
         $mainTag = new Div();
         $mainTag->addStyleClass("view_mode");
 
@@ -197,7 +210,7 @@ class PathLinks {
             }
             $selectCompact->addChild($option);
         }
-        return $mainTag->addChildList([$line->addChild($selectCompact), $numeric->addChild($selectNumeric)]);
+        return $mainTag->addChildList([/*$line->addChild($selectCompact),*/ $numeric->addChild($selectNumeric)]);
     }
 
 
@@ -213,12 +226,18 @@ class PathLinks {
             $node->addAttribute("style", "z-index: ".$zIndex--);
             $node->addStyleClass("level".($index + 1));
             if (count($data[$index]) > 1 && strlen(trim($data[$index][1])) > 0) {
-                $pathNode = new A();
-                $pathNode->addAttributes(["rel" => "v:url", "property" => "v:title"]);
-                $pathNode->addAttribute("href", $data[$index][1]);
+                if (count($data[$index]) > 2 && $data[$index][2] == "GN") {
+                    $pathNode = new Div();
+                    $pathNode->addAttribute("data-href", $data[$index][1]);
+                } else {
+                    $pathNode = new A();
+                    $pathNode->addAttributes(["rel" => "v:url", "property" => "v:title"]);
+                    $pathNode->addAttribute("href", $data[$index][1]);
+                }
             } else {
                 $pathNode = new Div();
             }
+            $pathNode->addAttribute('data-code', $data[$index][2]);
             $trimText = Utils::trimStr($data[$index][0], Constants::DEFAULT_TEXT_LENGTH_FOR_CATALOG_PATH_LINK);
             $pathNode->addChild($trimText);
             $pathNode->addStyleClasses(["path_link_item_text", $index > 0? "not_level_first_level": ""]);

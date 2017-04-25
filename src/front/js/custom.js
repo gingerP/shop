@@ -2,8 +2,9 @@ var APP = {
     GOOGLE_MAPS_API_KEY: 'AIzaSyDzIFbxpxA5fnsZ4EPQGYHNzycoi2GdU1U',
     COLOR_ACTIVE: '#808080',
     COLOR_UN_ACTIVE: '#88cc55',
-    COLOR_MOUSE_DOWN: '#737373'
-}
+    COLOR_MOUSE_DOWN: '#737373',
+    SIDEBAR_WIN_WIDTH_POINT: '1280'
+};
 
 if (typeof(console) == 'undefined') {
     var console = (function() {
@@ -47,7 +48,7 @@ var _colors = {
     mid: '#32CD32',
     light: '#ade681',
     font: '#414141'
-}
+};
 
 function buildUrl() {
     var url = new String("?");
@@ -118,7 +119,6 @@ if (document.getElementsByClassName == undefined) {
         return retnode;
     }
 }
-;
 
 function pause(ms) {
     var date = new Date();
@@ -168,7 +168,7 @@ $.fn.centered_popup = function () {
     console.log("this.width: " + this.width());
     console.log("height: " + document.body.clientHeight);
     console.log("width: " + document.body.clientWidth);
-}
+};
 
 function initBlackoutLogic() {
     var opacity = 0.2;
@@ -201,7 +201,7 @@ function initBlackoutLogic() {
             }
         }
     );
-};
+}
 
 function initTreeLogic() {
     var animationSpeed = 200;
@@ -210,24 +210,24 @@ function initTreeLogic() {
     var images_desc = images_asc.slice(0);
     images_desc.reverse();
     function openTree($node) {
-        $image = $('.tree_btn>img', $node);
+        var $image = $('.tree_btn>img', $node);
         $('>ul', $node).slideDown(animationSpeed, function() {
             $('>ul', $node).removeClass('tree_node_close').addClass('tree_node_open');
         });
         if ($image.length) {
             rotateIcon($image, images_asc, animationSpeed / images_asc.length);
         }
-    };
+    }
 
     function closeTree($node) {
-        $image = $('.tree_btn>img', $node);
+        var $image = $('.tree_btn>img', $node);
         $('>ul', $node).slideUp(animationSpeed, function() {
             $('>ul', $node).removeClass('tree_node_open').addClass('tree_node_close');
         });
         if ($image.length) {
             rotateIcon($image, images_desc, animationSpeed / images_desc.length);
         }
-    };
+    }
 
     function rotateIcon(imgObject, images, timeStep) {
         var imageIndex = 0;
@@ -238,11 +238,20 @@ function initTreeLogic() {
                 clearInterval(animation);
             }
         }, timeStep);
-    };
+    }
 
+    function initCloseNav() {
+        $('.nav-close-btn').click(function() {
+            $('.nav-tree-container').removeClass('opened');
+        });
+    }
+
+
+    initCloseNav();
 
     $('.tree .tree_btn').click(function () {
-        var $node = $(this).closest('li')
+        var $node = $(this).closest('li');
+
         if ($('>ul', $node).css('display') == 'none') {
             openTree($node);
         } else {
@@ -256,7 +265,23 @@ function initTreeLogic() {
             }
         }
     });
-};
+}
+
+function initPathLinkSideBar() {
+    var navBar = $('.nav-tree-container');
+    $('[data-code=GN]').click(function(event) {
+        if ($(window).width() <= APP.SIDEBAR_WIN_WIDTH_POINT) {
+            if (navBar.hasClass('opened')) {
+                navBar.removeClass('opened');
+            } else {
+                navBar.addClass('opened');
+            }
+        } else {
+            navBar.removeClass('opened');
+            window.location.href = $(this).data('href');
+        }
+    });
+}
 
 function initPathLinkViewMode() {
     $('.view_mode>.numeric li>div').mouseup(function() {
@@ -274,7 +299,7 @@ function initPathLinkViewMode() {
         var url = U.getModifiedCurrentUrl(conf);
         window.location.href = url;
     });
-};
+}
 
 function initPreviewImage() {
     if ($('.s_images img').length) {
@@ -300,7 +325,7 @@ function initPreviewImage() {
         });
         var imageZoom = new ImageZoom().init('.squareX', '#main_gallery_image', imageNamePrepare, zoomCallback);
     }
-};
+}
 
 function initSearchLogic() {
     var searchHandle = function(valueToSearch) {
@@ -308,7 +333,7 @@ function initSearchLogic() {
             var urlObj = {
                 page_name: 'search',
                 search_value: encodeURIComponent(valueToSearch)
-            }
+            };
             window.location.href = U.getModifiedCurrentUrl(urlObj);
         }
     };
@@ -373,7 +398,7 @@ function initPriceListLogic(callback) {
 
 function initFeedbackLogic() {
     var popupContentTemplate = "\
-                <div id='feedback' class='bottom_panel_item w-31p'>\
+                <div id='feedback' class='bottom_panel_item w-33p'>\
                     <div class='feedback_blocker'></div>\
                     <div class='feedback_title f-16'>Напишите нам письмо</div>\
                     <div class='feedback_container'>\
@@ -415,7 +440,7 @@ function initFeedbackLogic() {
             email_placeholder: "placeholder='Мой e-mail'"
         })
     }
-    $('.bottom_panel_window').append(popupContentTemplate);
+    $('.bottom_panel_window').prepend(popupContentTemplate);
     var $feedback = $('#feedback');
     var $feedbackBlocker = $('.feedback_blocker' , $feedback);
     var $feedbackSendBtn = $('.send' , $feedback);
@@ -476,7 +501,7 @@ function initFeedbackLogic() {
 
     var isEmptyMessage = function() {
         return $('.message', $feedback).val() == '';
-    }
+    };
     initFormValidation();
     $feedbackSendBtn.on('click', function() {
         isFormSubmit = true;
@@ -522,7 +547,7 @@ function initFeedbackLogic() {
     }).focusout(function() {
         $(this).trigger('mouseleave');
     });
-};
+}
 
 var googleMapLogic = (function() {
     var data_ = undefined;
@@ -546,7 +571,7 @@ var googleMapLogic = (function() {
                         updateView(data_, callback);
                     }
             });
-        };
+        }
     };
 
     var updateView = function(data, callback) {
@@ -869,7 +894,7 @@ function initCatalogItemButton() {
 }
 
 function initEntryLogic() {
-    $template = "\
+    var $template = "\
         <div class='admin_auth_container' >\
             <label class='f-15' for='user'>Пользователь</label>\
             <input id='user'>\
@@ -905,9 +930,9 @@ $(document).ready(function () {
     /*initPriceListLogic(inputHoverModule.update);*/
     initTopBarScrolling(93);
     initFeedbackLogic();
-    initBlackoutLogic();
     initSearchLogic();
     /*inputHoverModule.update();*/
+    initPathLinkSideBar();
     initPathLinkViewMode();
     initCatalogItemButton();
     if (pages.isMain) {

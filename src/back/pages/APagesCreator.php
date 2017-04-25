@@ -176,11 +176,7 @@ abstract class APagesCreator {
         $blockForTree->addStyleClasses(["w-18p"]);*/
         $blockForCatalog = new Div();
         $blockForCatalog->addStyleClasses(["path_link_chain"]);
-        $mainTag->addChildList([
-            /*$blockForTree->addChild($this->getPathLinkForTree()),*/
-            $blockForCatalog->addChild($this->getPathLinkForMainBlock()),
-            $this->getViewModeBlock()
-        ]);
+        $mainTag->addChild($blockForCatalog->addChildren($this->getPathLinkForMainBlock(), $this->getViewModeBlock()));
         return $mainTag;
     }
 

@@ -13,24 +13,26 @@ class Labels {
     const MAP = "map";
     const CONTACTS = "contacts";
     const BLANK = "blank";
-    public static $TOP_NAVIGATION_KEYS = array('main', 'catalog', 'download', 'contacts', 'search');
+    public static $TOP_NAVIGATION_KEYS = array('main', 'catalog', 'contacts', 'delivery', 'search');
     public static $BOTTOM_NAVIGATION_KEYS = array('catalog', 'contacts');
     public static $TOP_NAVIGATION_LINKS = array(
         "main" => "?page_name=main",
         "catalog" => "?page_name=catalog",
         "search" => "?page_name=search",
+        "delivery" => "?page_name=delivery",
         "download" => "",
         "contacts" => "?page_name=contacts",
     );
     public static $TOP_NAVIGATION_TITLE = array(
         "main" => "Главная",
         "catalog" => "Каталог",
+        "delivery" => "Доставка",
         "search" => "Поиск",
         "download" => "Прайс-лист",
         "contacts" => "Контакты"
     );
-    public static $VIEW_MODE_NUMERIC = array(6, 12, 24, 48, 96, 192);
-    const VIEW_MODE_NUMERIC_DEF = 6;
+    public static $VIEW_MODE_NUMERIC = array(10, 30, 100);
+    const VIEW_MODE_NUMERIC_DEF = 10;
     /*public static $VIEW_MODE_COMPACT = array("list" => "список", "compact" => "компактный", "extend" => "расширенный");*/
     public static $VIEW_MODE_COMPACT = array("compact" => "компактный", "extend" => "расширенный", "metro" => "metro");
     const VIEW_MODE_COMPACT_DEF = "metro";

@@ -18,6 +18,7 @@ include_once("src/back/pages/ContactsPage.php");
 include_once("src/back/pages/SingleItemPage.php");
 include_once("src/back/pages/SearchPage.php");
 include_once("src/back/pages/AdminPage.php");
+include_once("src/back/pages/DeliveryPage.php");
 
 include_once("src/back/Item.php");
 include_once("src/back/ItemB.php");

@@ -13,6 +13,9 @@ switch ($pageName) {
     case UrlParameters::PAGE__MAIN:
         $page = new MainPage();
         break;
+    case UrlParameters::PAGE__DELIVERY:
+        $page = new DeliveryPage();
+        break;
     case UrlParameters::PAGE__CATALOG:
         $page = new CatalogPage();
         break;

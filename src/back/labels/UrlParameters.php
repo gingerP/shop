@@ -28,5 +28,6 @@ class UrlParameters {
     const PAGE__MAIN = 'main';
     const PAGE__SEARCH = 'search';
     const PAGE__CONTACTS = 'contacts';
+    const PAGE__DELIVERY = 'delivery';
 
 }

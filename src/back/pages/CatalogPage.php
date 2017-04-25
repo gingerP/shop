@@ -45,7 +45,6 @@ class CatalogPage extends APagesCreator{
 
     protected function createGeneralContent() {
         $mainTag = new Div();
-        $mainTag->addAttribute("style", "margin: 1px 0px 0px 3px;");
         $items = new Items();
         $catalogLinks = new CatalogLinks();
         if (array_key_exists(UrlParameters::PAGE_NAME, $_GET)) {
