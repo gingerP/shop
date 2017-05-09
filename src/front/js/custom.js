@@ -270,16 +270,16 @@ function initTreeLogic() {
 function initPathLinkSideBar() {
     var navBar = $('.nav-tree-container');
     $('[data-code=GN]').click(function(event) {
-        if ($(window).width() <= APP.SIDEBAR_WIN_WIDTH_POINT) {
+/*        if ($(window).width() <= APP.SIDEBAR_WIN_WIDTH_POINT) {*/
             if (navBar.hasClass('opened')) {
                 navBar.removeClass('opened');
             } else {
                 navBar.addClass('opened');
             }
-        } else {
+/*        } else {
             navBar.removeClass('opened');
             window.location.href = $(this).data('href');
-        }
+        }*/
     });
 }
 

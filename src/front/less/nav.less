@@ -2,76 +2,74 @@
   display: none;
 }
 
-@media (max-width: 1280px) {
-  .nav-tree-container {
-    position: fixed;
-    width: 300px;
-    height: 100vh;
-    z-index: 50;
-    background-color: #f0c170;
-    transition: left .3s;
+.nav-tree-container {
+  position: fixed;
+  width: 300px;
+  height: 100vh;
+  z-index: 50;
+  background-color: #f0c170;
+  transition: left .3s;
+  top: 0;
+  left: -300px;
+
+  &.opened {
+    left: 0px;
+    box-shadow: 0 1px 4px #6d6d6d;
+  }
+
+  .nav-close-btn {
+    display: block;
     top: 0;
-    left: -300px;
-
-    &.opened {
-      left: 0px;
-      box-shadow: 0 1px 4px #6d6d6d;
-    }
-
-    .nav-close-btn {
-      display: block;
-      top: 0;
-      right: 0;
-      position: absolute;
+    right: 0;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    svg {
       width: 40px;
       height: 40px;
-      cursor: pointer;
-      svg {
-        width: 40px;
-        height: 40px;
-      }
-      &:hover {
-        background-color: darken(#f0c170, 5%) !important;
-      }
     }
+    &:hover {
+      background-color: darken(#f0c170, 5%) !important;
+    }
+  }
 
-    ul {
-      padding-left: 0;
-      margin-left: 0 !important;
-    }
+  ul {
+    padding-left: 0;
+    margin-left: 0 !important;
+  }
 
-    .tree_btn {
-      display: none;
-    }
+  .tree_btn {
+    display: none;
+  }
 
-    .tree_text {
-      line-height: 30px;
-    }
+  .tree_text {
+    line-height: 30px;
+  }
 
-    .selected_node {
-      &>.tree_text_node {
-        background-color: darken(#f0c170, 5%) !important;
-      }
+  .selected_node {
+    & > .tree_text_node {
+      background-color: darken(#f0c170, 5%) !important;
     }
-    .tree_text_node {
-      margin: 0;
-      box-sizing: border-box;
-      background-color: #f0c170 !important;
-      &:hover {
-        background-color: darken(#f0c170, 5%) !important;
-      }
+  }
+  .tree_text_node {
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #f0c170 !important;
+    &:hover {
+      background-color: darken(#f0c170, 5%) !important;
     }
-    .nav-level-1 .tree_text_node {
-      padding-left: 10px;
-    }
-    .nav-level-2 .tree_text_node {
-      padding-left: 20px;
-    }
-    .nav-level-3 .tree_text_node {
-      padding-left: 30px;
-    }
-    .nav-level-4 .tree_text_node {
-      padding-left: 40px;
-    }
+  }
+  .nav-level-1 .tree_text_node {
+    padding-left: 10px;
+  }
+  .nav-level-2 .tree_text_node {
+    padding-left: 20px;
+  }
+  .nav-level-3 .tree_text_node {
+    padding-left: 30px;
+  }
+  .nav-level-4 .tree_text_node {
+    padding-left: 40px;
   }
 }
