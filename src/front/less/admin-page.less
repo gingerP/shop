@@ -1,0 +1,287 @@
+// Color variables (appears count calculates by raw css)
+@color0: #fd5c50; // Appears 3 times
+@color1: #fd5f5f; // Appears 3 times
+@color2: #fd7173; // Appears 3 times
+@color3: #ff8d8d; // Appears 3 times
+@color4: #ffffff; // Appears 2 times
+@color5: #f04b4b; // Appears 2 times
+
+// Width variables (appears count calculates by raw css)
+@width0: 130px; // Appears 2 times
+@width1: 100%; // Appears 3 times
+@width2: 20px; // Appears 3 times
+
+// Height variables (appears count calculates by raw css)
+@height0: 220px; // Appears 2 times
+@height1: 100%; // Appears 2 times
+@height2: 20px; // Appears 3 times
+
+input[readonly=true] {
+  background: rgb(226, 241, 255);
+}
+.dhx_dataview.enable {
+  .image_template {
+    background-color: #a1cef4;
+    height: @height0;
+    position: relative;
+    width: @width0;
+  }
+}
+.dhx_dataview {
+  .exist_image {
+    height: @height0;
+    width: @width0;
+  }
+  .dhx_dataview_default_item {
+    padding: 0px !important;
+  }
+  .dhx_dataview_default_item_selected {
+    padding: 0px !important;
+  }
+  .image_template {
+    .move_prev {
+      display: none;
+      left: 0;
+    }
+    .move_next {
+      display: none;
+      left: 21px;
+    }
+    .delete_btn {
+      display: none;
+    }
+    &:hover {
+      .move_prev {
+        background: @color3;
+        color: white;
+        display: block;
+        font-size: 15px;
+        font-weight: bold;
+        height: @height2;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        text-shadow: 1px 1px 0 @color1;
+        top: 0;
+        width: @width2;
+        &:hover {
+          background-color: @color2;
+        }
+        &:checked {
+          background-color: @color0;
+        }
+      }
+      .move_next {
+        background: @color3;
+        color: white;
+        display: block;
+        font-size: 15px;
+        font-weight: bold;
+        height: @height2;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        text-shadow: 1px 1px 0 @color1;
+        top: 0;
+        width: @width2;
+        &:hover {
+          background-color: @color2;
+        }
+        &:checked {
+          background-color: @color0;
+        }
+      }
+      .delete_btn {
+        background: @color3;
+        color: white;
+        display: block;
+        font-size: 15px;
+        font-weight: bold;
+        height: @height2;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        text-shadow: 1px 1px 0 @color1;
+        top: 0;
+        width: @width2;
+        &:hover {
+          background-color: @color2;
+        }
+        &:checked {
+          background-color: @color0;
+        }
+      }
+    }
+  }
+}
+.dhx_dataview.disable {
+  .image_template {
+    background-color: #dadae8;
+  }
+}
+.image_template_add_btn {
+  background-color: rgb(217, 234, 255);
+  color: @color4;
+  font-size: 120px;
+  line-height: 202px;
+  text-align: -webkit-center;
+  text-shadow: 3px 3px 0 rgb(67, 191, 236);
+}
+.tree_value {
+  float: left;
+  max-width: 50%;
+}
+.dhx_dataview_default_item_selected {
+  border: none !important;
+  padding: 0px !important;
+}
+.dhx_dataview_default_item {
+  border: none !important;
+}
+.dhx_dataview_item {
+  margin: 3px !important;
+}
+.disable {
+  .image_template_add_btn {
+    text-shadow: 3px 3px 0 #aaaaaa;
+  }
+}
+.enable {
+  .image_template_add_btn {
+    &:hover {
+      color: #B4DDFF;
+      cursor: pointer;
+      text-shadow: 3px 3px 0 rgb(35, 174, 236);
+    }
+  }
+}
+.image_template {
+  img {
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    max-height: @height1;
+    max-width: @width1;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .title {
+    background: rgba(0, 0, 0, 0.24);
+    bottom: 0;
+    color: white;
+    display: table;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 2px 0;
+    position: absolute;
+    text-align: center;
+    width: @width1;
+    z-index: 111;
+  }
+}
+.admin_auth_container {
+  input[type=submit] {
+    border: 1px solid rgb(17, 178, 146) !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) inset;
+  }
+}
+.exit_btn {
+  background-color: @color5;
+  border-radius: 3px;
+  border: 1px solid @color5;
+  box-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5) inset;
+  color: @color4;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+}
+.dhtmlx_dom {
+  background-color: #ebebeb;
+  height: @height1;
+  margin: 0px;
+  overflow: hidden;
+  padding: 0px;
+  width: @width1;
+}
+
+
+.dhxwin_active {
+  .goods-order- {
+    &config {
+      .dhx_cell_cont_wins .dhx_dataview.goods-order-data-view {
+        background-color: #f1f1f1;
+      }
+      background-color: #f1f1f1;
+      .dhx_dataview_item {
+        background-color: #ffffff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      }
+      .dhx_drag_over {
+        box-shadow: 0 0 0 2px #39c;
+      }
+      .dragged {
+        background-color: rgba(235, 252, 255, 1);
+      }
+    }
+    &item {
+      width: 100%;
+      height: 100%;
+      padding: 0 !important;
+
+      &-index {
+        background-color: #D3F5FF;
+        position: relative;
+        float: left;
+        padding: 0px 5px;
+        text-align: center;
+        height: 100%;
+        width: 30px;
+        .index {
+          font-size: 1.5em;
+          color: #39c;
+        }
+        .note {
+          font-size: .6em;
+          color: #929292;
+        }
+        .id-value {
+          font-size: 1.1em;
+          color: #929292;
+        }
+      }
+      &-name {
+        height: 100%;
+        overflow-y: auto;
+        position: relative;
+        float: left;
+        word-break: break-word;
+        padding: 0 5px;
+        width: 150px;
+      }
+      &-img {
+        position: absolute;
+        margin: 5px;
+        width: 60px;
+        height: 100px;
+      }
+    }
+  }
+}
+.text-non-select {
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
+}
+
+.goods-order-search {
+  width: 500px !important;
+  height: 22px;
+}

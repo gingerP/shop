@@ -1,0 +1,234 @@
+.top_bottom_main_menu {
+  .search {
+    &-input-container {
+      overflow: hidden;
+    }
+    &_button_container {
+      cursor: text;
+      position: absolute;
+      right: 0;
+      width: 40%;
+      .search-blackout {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        top: 0;
+        z-index: -1;
+        display: none;
+      }
+    }
+    &_label {
+      padding: 0 3px;
+      line-height: 40px;
+      height: 40px;
+    }
+    &_input {
+      border: 0;
+      height: 40px;
+      padding: 0 10px;
+      background-color: @background_color_4;
+      width: 100%;
+      box-sizing: border-box;
+      &:focus {
+        border: none !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+      }
+      &-close {
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 44px;
+        border: none;
+        background-color: #f5f5f5;
+        padding: 0;
+        width: 40px;
+        height: 40px;
+        display: none;
+        overflow: hidden;
+        svg {
+          margin: 8px;
+        }
+      }
+    }
+    &-button-desk {
+      overflow: hidden;
+      cursor: pointer;
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 40px;
+      width: 60px;
+      background-color: #e2e2e2;
+      display: block;
+      border: none;
+      padding: 0;
+      svg {
+        margin: 8px 18px;
+        fill: #414141;
+      }
+    }
+
+    &-button-mob {
+      display: none;
+      cursor: pointer;
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 40px;
+      width: 44px;
+      background-color: #e2e2e2;
+      border: none;
+      padding: 0;
+      svg {
+        margin: 8px;
+        fill: #414141;
+      }
+    }
+    &-result {
+
+      &-container {
+        background-color: #fff;
+        border-radius: 0 0 2px 2px;
+        box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        max-height: ~'calc(100vh - 40px)';
+        overflow-y: auto;
+        &-height {
+        }
+      }
+      &-placeholder {
+        z-index: 1;
+      }
+
+      &-products {
+        padding: 5px 0px;
+      }
+
+      &-title {
+        padding: 10px;
+        font-weight: bold;
+        font-family: Helvetica;
+        color: gray;
+      }
+
+      &-nav,
+      &-contact {
+        padding: 10px 10px 10px 30px !important;
+        font-weight: bold;
+      }
+      &-nav,
+      &-contact,
+      &-product {
+        &:hover {
+          background-color: #f5f5f5;
+        }
+        &:not(:last-child) {
+          border-bottom: 1px solid #f5f5f5;
+        }
+      }
+
+      &-nav,
+      &-contact {
+        display: block;
+        padding: 10px;
+        font-family: Helvetica;
+        text-decoration: none;
+        color: #414141;
+        &:hover {
+          text-decoration: underline;
+        }
+
+      }
+
+      &-product {
+        display: block;
+        height: 100px;
+        padding: 5px 10px;
+        background-color: #fff;
+        &:hover {
+          .search-result-product-text {
+            text-decoration: underline;
+          }
+        }
+
+        &-icon {
+          height: 100px;
+          float: left;
+        }
+        &-text {
+          margin: 0 10px;
+          width: ~'calc(100% - 90px)';
+          float: left;
+          font-family: Helvetica;
+          font-weight: bold;
+        }
+        &-description {
+
+        }
+      }
+
+      &-empty {
+        line-height: 40px;
+        font-family: Helvetica;
+        color: #888888;
+        padding: 10px 20px;
+      }
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .top_bottom_main_menu {
+    .search {
+      &_input,
+      &_button {
+        display: none;
+      }
+      &_button_container {
+        float: left;
+        width: 44px;
+      }
+      &_icon {
+        width: 44px;
+        height: 40px;
+        svg {
+          margin: 8px;
+        }
+      }
+
+      &-button-desk {
+        display: none;
+      }
+      &-button-mob {
+        display: block;
+      }
+
+      &_button_container.input-opened {
+        width: 100%;
+        .search_input {
+          display: block;
+          &-close {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+  body.search-input-visible {
+    overflow: hidden;
+  }
+  .search-input-visible {
+    .top_bottom_main_menu {
+      .search-blackout {
+        display: block;
+      }
+    }
+  }
+}
+
+@media (max-width: 960px) {
+  body .filling-width-top #top_panel_fixed .top_catalog {
+    width: 100%;
+  }
+}

@@ -1,0 +1,9 @@
+<?php
+include_once("src/back/pages/admin/AdminPagesCreator.php");
+include_once("src/back/pages/admin/AdminPage_Contacts.php");
+include_once("src/back/pages/admin/AdminPage_Goods.php");
+include_once("src/back/pages/admin/AdminPage_Login.php");
+include_once("src/back/pages/admin/AdminPage_Prices.php");
+include_once("src/back/pages/admin/AdminPage_Tree.php");
+include_once("src/back/pages/admin/AdminPage_Booklet.php");
+include_once("src/back/pages/admin/Components.php");
