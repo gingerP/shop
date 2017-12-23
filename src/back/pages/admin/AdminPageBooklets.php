@@ -1,4 +1,5 @@
 <?php
+
 include_once("src/back/import/db");
 
 class AdminPage_Booklet extends AdminPagesCreator {

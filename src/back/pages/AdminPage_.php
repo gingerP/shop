@@ -14,7 +14,7 @@ class AdminPage {
             <title>Admin page</title>
             <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
             <link rel='shortcut icon' href='images/system/favicon.ico' type='image/x-icon'/>
-            <link rel='stylesheet' type='text/css' href='/src/front/style/style-less.css'/>
+            <link rel='stylesheet' type='text/css' href='/dist/admin-style.css'/>
             <script type='text/javascript' src='/src/front/js/ext/jquery.js'></script>
             <script type='text/javascript' src='/src/front/js/admin.js'></script>
             ");

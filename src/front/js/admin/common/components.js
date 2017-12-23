@@ -5,7 +5,7 @@ app.dhtmlxImgsPath = '/src/front/dhtmlx/imgs/';
 
 components = {
     skin: 'material',
-    reloadGrid: function(grid, list, columnKeys) {
+    reloadGrid: function (grid, list, columnKeys) {
         grid.clearAll();
         if (list.length) {
             for (var itemIndex = 0; itemIndex < list.length; itemIndex++) {
@@ -15,7 +15,7 @@ components = {
             }
         }
     },
-    confirm: function(text, callback) {
+    confirm: function (text, callback) {
         dhtmlx.confirm({
             ok: "Да",
             cancel: "Отмена",
@@ -23,9 +23,9 @@ components = {
             callback: callback
         });
     },
-    updateGridRow: function(grid, rowId, entity, keys, newRowId) {
+    updateGridRow: function (grid, rowId, entity, keys, newRowId) {
         var rowData = components.prepareEntityToGrid(entity, keys);
-        grid.forEachCell(rowId, function(cellObj, colIndx) {
+        grid.forEachCell(rowId, function (cellObj, colIndx) {
             cellObj.setValue(rowData[colIndx]);
         });
         if (U.hasContent(newRowId)) {
@@ -33,7 +33,7 @@ components = {
         }
     },
 
-    updateFormData: function(form, entity, customUpdater) {
+    updateFormData: function (form, entity, customUpdater) {
         if (form && entity) {
             for (var key in entity) {
                 if (key.indexOf('_') == 0) {
@@ -49,7 +49,7 @@ components = {
     },
 
 
-    updateEntity: function(form, entity, customUpdater) {
+    updateEntity: function (form, entity, customUpdater) {
         if (form && entity) {
             for (var key in entity) {
                 if (customUpdater && typeof customUpdater[key] == 'function') {
@@ -61,13 +61,13 @@ components = {
         }
     },
 
-    prepareEntity: function(entity) {
+    prepareEntity: function (entity) {
         if (entity) {
-            for(var key in entity) {
+            for (var key in entity) {
                 if (key.indexOf('_') == 0) {
                     delete entity[key];
                 } else if (entity[key] instanceof Array) {
-                    for(var arrIndex = 0; arrIndex < entity[key].length; arrIndex++) {
+                    for (var arrIndex = 0; arrIndex < entity[key].length; arrIndex++) {
                         components.prepareEntity(entity[key][arrIndex]);
                     }
                 }
@@ -76,7 +76,7 @@ components = {
 
     },
 
-    prepareEntityToGrid: function(entity, keys) {
+    prepareEntityToGrid: function (entity, keys) {
         var row = [];
         for (var keyIndex = 0; keyIndex < keys.length; keyIndex++) {
             row.push(entity[keys[keyIndex]]);
@@ -84,41 +84,30 @@ components = {
         return row;
     },
 
-    createMenu: function(layout) {
+    createMenu: function (layout) {
         var exitKey = 'logout';
         var menu = layout.attachMenu({
-            parent:'menu',
-            image_path:'/src/front/dhtmlx/imgs/',
-            items:[
-                {id: "goods", text:"Товары"},
-                {id: "tree", text:"Дерево навигации", disabled: true},
-                {id: "prices", text:"Прайс-листы"},
-                {id: "contacts", text:"Контакты"},
-                {id: "booklets", text:"Буклеты"},
+            parent: 'menu',
+            image_path: '/src/front/dhtmlx/imgs/',
+            items: [
+                {id: "goods", text: "Товары"},
+                {id: "tree", text: "Дерево навигации", disabled: true},
+                {id: "prices", text: "Прайс-листы"},
+                {id: "contacts", text: "Контакты"},
+                {id: "booklets", text: "Буклеты"},
                 {id: exitKey, text: "Выход"}
             ]
         });
-        menu.attachEvent("onClick", function(id, zoneId, cas) {
-            window.open(document.location.origin + "/admin/" + id,"_self");
+        menu.attachEvent("onClick", function (id, zoneId, cas) {
+            window.open(document.location.origin + "/admin/" + id, "_self");
         });
         var exitDOM = menu.idPull[menu.idPrefix + exitKey];
-        $("#" + exitDOM.id).
-            css("position", "absolute").
-            css("right", "0").
-            css("background-color", "#F04B4B").
-            css("display", "inline-block").
-            css("cursor", "pointer").
-            css("color", "#fff").
-            css("font-weight", "bold").
-            css("font-size", "12px").
-            css("border-radius", "3px").
-            css("box-shadow", "0px 0px 3px rgba(255, 255, 255, 0.5) inset").
-            css("border", "1px solid #F04B4B");
+        $("#" + exitDOM.id).css("position", "absolute").css("right", "0").css("background-color", "#F04B4B").css("display", "inline-block").css("cursor", "pointer").css("color", "#fff").css("font-weight", "bold").css("font-size", "12px").css("border-radius", "3px").css("box-shadow", "0px 0px 3px rgba(255, 255, 255, 0.5) inset").css("border", "1px solid #F04B4B");
 
         return menu;
     },
 
-    createToolbar: function(layout, handlers, buttons, cellName) {
+    createToolbar: function (layout, handlers, buttons, cellName) {
         var config = [
             {type: "button", id: "reload", text: "Обновить"},
             {type: "button", id: "add", text: "Добавить"},
@@ -145,22 +134,22 @@ components = {
         var toolbar = layout.cells(cellName || "a").attachToolbar({items: config});
         if (typeof handlers != 'undefined') {
             toolbar.customHandlers = handlers;
-            toolbar.attachEvent("onClick", function(id){
+            toolbar.attachEvent("onClick", function (id) {
                 if (this.customHandlers.hasOwnProperty(id) && typeof this.customHandlers[id] == 'function') {
                     this.customHandlers[id]();
                 }
             });
         }
-        toolbar.onStateChange = function(state) {
+        toolbar.onStateChange = function (state) {
             var thiz = this;
-            this.forEachItem(function(itemId) {
+            this.forEachItem(function (itemId) {
                 if (state.items && state.items[itemId]) {
-                    thiz[state.items[itemId].enableState? 'enableItem': 'disableItem'](itemId);
+                    thiz[state.items[itemId].enableState ? 'enableItem' : 'disableItem'](itemId);
                 } else {
                     switch (itemId) {
                         case 'save':
                         case 'delete':
-                            thiz[state.hasSelection === true? 'enableItem': 'disableItem'](itemId);
+                            thiz[state.hasSelection === true ? 'enableItem' : 'disableItem'](itemId);
                             break;
                         case 'reload':
                         case 'loadBackground':
@@ -183,9 +172,10 @@ components = {
     initDhtmlxWindow: function (vars, closeCallback) {
         var myWins = new dhtmlXWindows({
             image_path: '/src/front/dhtmlx/imgs/',
-            skin:"dhx_blue"
+            skin: "dhx_blue"
         });
-        var _vars = {id: U.getRandomString(),
+        var _vars = {
+            id: U.getRandomString(),
             left: 20,
             top: 30,
             width: 300,
@@ -194,7 +184,7 @@ components = {
         };
         $.extend(true, _vars, vars || {});
         var win = myWins.createWindow(_vars);
-        win.attachEvent('onClose', function() {
+        win.attachEvent('onClose', function () {
             if (typeof closeCallback == 'function') {
                 closeCallback();
             }
@@ -205,17 +195,17 @@ components = {
 };
 
 
-Handlers = function(callback){
+Handlers = function (callback) {
     this.callback = callback;
 };
 
-Handlers.prototype.success = function(data) {
+Handlers.prototype.success = function (data) {
     if (typeof(this.callback) == 'function') {
         this.callback(data);
     }
 };
 
-serviceWrapper = (function() {
+serviceWrapper = (function () {
     function load(apiMethod, params, handlers) {
         $.ajax({
             type: 'POST',
@@ -223,80 +213,86 @@ serviceWrapper = (function() {
             data: params,
             url: '/api/' + apiMethod,
             context: document.body
-        }).done(function(data) {
+        }).done(function (data) {
                 if (typeof(handlers.success) == 'function') {
                     handlers.success(data);
                 }
             }
-        ).fail(function()  {
-            alert("Sorry. Server unavailable. ");
-        });;
+        ).fail(function (error) {
+            dhtmlx.alert({
+                title: 'Alert',
+                type: 'alert-error',
+                text: error.responseJSON.message
+            });
+        });
     }
+
     return {
-        getAddresses: function(id, callback) {
+        getAddresses: function (id, callback) {
             load('getAddresses', {id: -1}, new Handlers(callback));
         },
-        getGoods: function(id, callback) {
+        getGoods: function (id, callback) {
             load('getGoods', {id: -1}, new Handlers(callback));
         },
-        saveGoodsOrder: function(data, callback) {
+        saveGoodsOrder: function (data, callback) {
             load('saveOrder', data, new Handlers(callback));
         },
-        getNextGoodCode: function(code, callback) {
+        getNextGoodCode: function (code, callback) {
             load('getNextGoodCode', {code: code}, new Handlers(callback));
         },
-        getDescriptionKeys: function(callback) {
+        getDescriptionKeys: function (callback) {
             load('getDescriptionKeys', null, new Handlers(callback))
         },
-        getPrices: function(callback) {
+        getPrices: function (callback) {
             load('getPrices', null, new Handlers(callback));
         },
-        getGoodsKeys: function(callback) {
+        getGoodsKeys: function (callback) {
             load('getGoodsKeys', null, new Handlers(callback));
         },
-        updateGood: function(id, data, callback) {
+        updateGood: function (id, data, callback) {
             load('updateGood', {id: id, data: data}, new Handlers(callback));
         },
-        getGood: function(id, callback) {
+        getGood: function (id, callback) {
             load('getGood', {id: id}, new Handlers(callback));
         },
-        getGoodsAdminOrder: function(callback) {
+        getGoodsAdminOrder: function (callback) {
             load('getAdminOrder', null, new Handlers(callback));
         },
-        getGoodImages: function(id, callback) {
+        getGoodImages: function (id, callback) {
             load('getGoodImages', {id: id}, new Handlers(callback));
         },
-        deleteGood: function(id, callback) {
+        deleteGood: function (id, callback) {
             load('deleteGood', {id: id}, new Handlers(callback));
         },
-        uploadImagesForGood: function(id, oldGoodKey, data, callback) {
+        uploadImagesForGood: function (id, oldGoodKey, data, callback) {
             load('uploadImagesForGood', {id: id, old_good_key: oldGoodKey, data: data}, new Handlers(callback));
         },
-        updatePrices: function(data, callback) {
+        updatePrices: function (data, callback) {
             load('updatePrices', {data: data}, new Handlers(callback));
         },
         /*****************************************Booklets*************************************/
-        listBooklets: function(mapping, callback) {
+        listBooklets: function (mapping, callback) {
             load('listBooklets', {mapping: mapping}, new Handlers(callback));
         },
-        getBooklet: function(id, mapping, callback) {
+        getBooklet: function (id, mapping, callback) {
             load('getBooklet', {id: id, mapping: mapping}, new Handlers(callback));
         },
-        saveBooklet: function(data, callback) {
+        saveBooklet: function (data, callback) {
             load('saveBooklet', {data: data}, new Handlers(callback));
         },
-        deleteBooklet: function(id, callback) {
+        deleteBooklet: function (id, callback) {
             load('deleteBooklet', {id: id}, new Handlers(callback));
         },
-        getBookletBackgrounds: function(callback) {
+        getBookletBackgrounds: function (callback) {
             load('getBookletBackgrounds', null, new Handlers(callback));
         }
     }
 })();
 
-ServiceEntities = function() {};
+ServiceEntities = function () {
+};
 
-ServiceEntities.prototype.init = function(entity, entityIdKey, maxEntitiesCount, defaults) {
+ServiceEntities.prototype.init = function (entity, entityIdKey, maxEntitiesCount, defaults) {
     this.defaults = defaults || {};
     this.maxEntitiesCount = maxEntitiesCount;
     this.newEntitiesCount = 0;
@@ -306,51 +302,51 @@ ServiceEntities.prototype.init = function(entity, entityIdKey, maxEntitiesCount,
     return this;
 };
 
-ServiceEntities.prototype.createNewEntity = function() {
+ServiceEntities.prototype.createNewEntity = function () {
     var newEntity = JSON.parse(JSON.stringify(this.entity));
     this.newEntitiesCount++;
     newEntity[this.idField] = this.generateId(this.newEntitiesCount);
     this.newEntities[newEntity[this.idField]] = newEntity;
     newEntity._isNew = true;
-    for(var key in this.defaults) {
+    for (var key in this.defaults) {
         if (newEntity.hasOwnProperty(key)) {
-            newEntity[key] = typeof this.defaults[key] == 'function'? this.defaults[key](): this.defaults[key];
+            newEntity[key] = typeof this.defaults[key] == 'function' ? this.defaults[key]() : this.defaults[key];
         }
     }
     return newEntity;
 };
 
-ServiceEntities.prototype.removeEntity = function(id) {
+ServiceEntities.prototype.removeEntity = function (id) {
     delete this.newEntities[id];
     return this;
 };
 
-ServiceEntities.prototype.removeAll = function() {
+ServiceEntities.prototype.removeAll = function () {
     this.newEntities = {};
     this.newEntitiesCount = 0;
 };
 
-ServiceEntities.prototype.canCreateNewEntity = function() {
+ServiceEntities.prototype.canCreateNewEntity = function () {
     return this.maxEntitiesCount > this.newEntitiesCount;
 };
 
-ServiceEntities.prototype.generateId = function(id) {
-  return  '_new:' + id;
+ServiceEntities.prototype.generateId = function (id) {
+    return '_new:' + id;
 };
 
 /**********************************************************************************/
 
-Observable = function() {
+Observable = function () {
     this.listeners = {};
 }
 
-Observable.prototype.addListener = function(propertyName, listener) {
+Observable.prototype.addListener = function (propertyName, listener) {
     this.listeners[propertyName] = this.listeners[propertyName] || [];
     this.listeners[propertyName].push(listener);
     return this;
 };
 
-Observable.prototype.propertyChange = function(propertyName, state, owner) {
+Observable.prototype.propertyChange = function (propertyName, state, owner) {
     if (typeof propertyName == 'string' && propertyName.length > 1 && this.listeners[propertyName].length) {
         for (var listenerIndex = 0; listenerIndex < this.listeners[propertyName].length; listenerIndex++) {
             var listenerFunction = this.listeners[propertyName][listenerIndex]['on' + propertyName[0].toUpperCase() + propertyName.substr(1, propertyName.length) + 'Change'];

@@ -1,12 +1,33 @@
 <?php
+error_reporting(-1);
+include_once('src/back/import/db');
+include_once('src/back/import/service');
+include_once('src/back/import/errors');
+
+function catchInternalError($error) {
+    header('Content-Type: application/json');
+    $errorModel = new DBErrorType();
+    $errorModel->createException($error);
+    error_log($error->getMessage());
+    if ($error instanceof BaseError) {
+        http_response_code($error->status);
+        echo json_encode($error->toJson());
+        return;
+    }
+    http_response_code(500);
+    $internalError = new InternalError($error);
+    echo json_encode($internalError->toJson());
+}
 try {
     $config = parse_ini_file('config/config.ini');
+    $messages = parse_ini_file('config/messages.ini');
     $GLOBALS['config'] = $config;
+    $GLOBALS['AU_MESSAGES'] = $messages;
+    $GLOBALS['AU_SEC_PROTOCOL'] = 'HTTPS';
 
     header('Content-type: application/json; charset=UTF-8');
     http_response_code(200);
 
-    include_once('src/back/import/service');
     if (array_key_exists('method', $_GET)) {
         $method = $_GET['method'];
         function checkAccess($methodName)
@@ -32,7 +53,7 @@ try {
                 "saveOrder"
             ];
             if (in_array($methodName, $securedMethods)) {
-                $result = isset($_SERVER['HTTPS']) && SessionManager::sessionStart() && AuthManager::isAuth();
+                $result = isset($_SERVER[$GLOBALS['AU_SEC_PROTOCOL']]) && SessionManager::sessionStart() && AuthManager::isAuth();
             }
             return $result;
         }
@@ -47,31 +68,32 @@ try {
                     $responseData = AddressService::getAddresses();
                     break;
                 case 'getGoods':
-                    $responseData = GoodsService::getGoods(-1);
+                    $responseData = ProductsService::getGoods(-1);
                     break;
                 case 'updateGood':
+                    ProductsService::validate_updateGood();
                     $id = Utils::getFromPOST('id');
                     $data = Utils::getFromPOST('data');
-                    $responseData = GoodsService::updateGood($id, $data);
+                    $responseData = ProductsService::updateGood($id, $data);
                     break;
                 case 'getGood':
                     $id = Utils::getFromPOST('id');
-                    $responseData = GoodsService::getGood($id);
+                    $responseData = ProductsService::getGood($id);
                     break;
                 case 'getGoodImages':
                     $id = Utils::getFromPOST('id');
-                    $responseData = GoodsService::getImages($id);
+                    $responseData = ProductsService::getImages($id);
                     break;
                 case 'deleteGood':
                     $id = Utils::getFromPOST('id');
-                    $responseData = GoodsService::deleteGood($id);
+                    $responseData = ProductsService::deleteGood($id);
                     break;
                 case 'saveOrder':
                     $data = Utils::getFromPOST('order');
-                    $responseData = GoodsService::saveGoodsOrder($data);
+                    $responseData = ProductsService::saveGoodsOrder($data);
                     break;
                 case 'getAdminOrder':
-                    $responseData = GoodsService::getGoodsOrder();
+                    $responseData = ProductsService::getGoodsOrder();
                     break;
                 case 'sendFeedbackEmail':
                     $messageBody = Utils::getFromPOST('message_body');
@@ -87,16 +109,16 @@ try {
                     break;
                 case 'getNextGoodCode':
                     $code = Utils::getFromPOST('code');
-                    $responseData = GoodsService::getNextGoodCode($code);
+                    $responseData = ProductsService::getNextGoodCode($code);
                     break;
                 case 'uploadImagesForGood':
+                    ProductsService::validate_updateImages();
                     $id = Utils::getFromPOST('id');
-                    $data = $_POST['data'];
-                    $oldKey = Utils::getFromPOST('old_good_key');
-                    $responseData = GoodsService::updateImages($id, $oldKey, $data);
+                    $data = Utils::getFromPOST('data', false);
+                    $responseData = ProductsService::updateImages($id, $data);
                     break;
                 case 'updatePrices':
-                    $data = $_POST['data'];
+                    $data = Utils::getFromPOST('data');
                     $responseData = PriceService::updatePrices($data);
                     break;
                 case 'loadNews':
@@ -122,7 +144,7 @@ try {
                     echo BookletService::get($id, $mapping);
                     break;
                 case 'saveBooklet':
-                    $data = $_POST['data'];
+                    $data = Utils::getFromPOST('data');
                     $responseData = BookletService::save($data);
                     break;
                 case 'deleteBooklet':
@@ -144,14 +166,11 @@ try {
             }
             echo json_encode($responseData);
         } else {
-            http_response_code(401);
-            echo '{}';
+            throw new UnAuthorizedError( $GLOBALS['AU_MESSAGES']['session_expired']);
         }
     }
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode($e);
+    catchInternalError($e);
 } catch (Error $e) {
-    http_response_code(500);
-    echo json_encode($e);
+    catchInternalError($e);
 }

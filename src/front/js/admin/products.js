@@ -1,12 +1,11 @@
 $(document).ready(function () {
     U.dhtmlxDOMPreInit(document.documentElement, document.body);
     createPage();
-})
-
+});
 
 function createPage() {
     init();
-};
+}
 
 function init() {
     app.layout = initLayout();
@@ -397,6 +396,52 @@ function initToolbar(layout, grid) {
                 app.images.lock(false);
                 grid.selectRowById(entity.id);
             }
+        },
+        saveDetails: function () {
+            var rowId = app.grid.getSelectedRowId();
+            var entity = app.grid.getUserData(rowId, 'entity');
+            var oldRowId = rowId;
+            var updater = {
+                description: function (form, entity) {
+                    var formData = app.form.getFormData();
+                    var descriptions = [];
+                    for (var key in formData) {
+                        if (key.indexOf('k_') == 0) {
+                            descriptions.push(key + '=' + formData[key]);
+                        }
+                    }
+                    entity.description = descriptions.join('|');
+                },
+                god_type: function (form, entity) {
+                    var formData = app.form.getFormData();
+                    entity.god_type = formData.god_type ? 'HARD' : 'SIMPLE';
+                }
+            };
+            components.updateEntity(app.form, entity, updater);
+            app.layout.progressOn();
+            function reloadRow(entity) {
+                app.grid.changeRowId(oldRowId, entity.id);
+                entity._tree = prepareTree(entity._tree);
+                app.grid.setUserData(entity.id, 'entity', entity);
+                components.updateGridRow(app.grid, entity.id, entity, app.gridRowConfig);
+                app.grid.clearSelection();
+                app.grid.selectRowById(entity.id);
+            }
+
+            function callback(data) {
+                function callback() {
+                    serviceWrapper.getGood(data, reloadRow);
+                    app.layout.progressOff();
+                }
+
+                app.serviceEntities.removeAll();
+            }
+
+            if (entity.hasOwnProperty('_isNew')) {
+                entity.id = null;
+            }
+            components.prepareEntity(entity);
+            serviceWrapper.updateGood(entity.id, entity, callback);
         },
         save: function () {
             var rowId = app.grid.getSelectedRowId();

@@ -21,7 +21,7 @@ try {
         } else {
             $pageConstructor = new $Page();
             $page = $pageConstructor->getContent();
-            $cache->setCache($_SERVER["REQUEST_URI"], $page);
+            //$cache->setCache($_SERVER["REQUEST_URI"], $page);
         }
         return $page;
     }

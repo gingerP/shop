@@ -1,6 +1,7 @@
 <?php
 
-include_once('admin_pages');
+include_once('src/back/import/admin_pages');
+
 class AdminPage_Goods extends AdminPagesCreator{
     public function AdminPage_Goods() {}
 
