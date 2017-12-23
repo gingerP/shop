@@ -6,9 +6,9 @@ include_once("src/back/import/page");
 class DeliveryPage extends APagesCreator
 {
 
-    public function DeliveryPage()
+    public function __construct()
     {
-        $this->APagesCreator();
+        parent::__construct();
         $this->setPageCode("delivery");
         $this->setIsTreeVisible(false);
         $this->setIsStatusBarVisible(true);

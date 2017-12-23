@@ -44,7 +44,7 @@ function initTabbar(layout) {
 function initGoodsOrder(callback) {
     require([
         '/src/front/js/admin/goodsOrderComponent.js'
-    ], function(module) {
+    ], function (module) {
         app.goodsOrder = module;
         if (typeof(callback) == 'function') {
             callback();
@@ -55,11 +55,11 @@ function initGoodsOrder(callback) {
 function initGrid(layout) {
     var grid = layout.cells("a").attachGrid();
     grid.setImagePath(app.dhtmlxImgsPath);
-    grid.setHeader("ID, Код, Название, Дерево");
-    grid.setInitWidths("40,100,290,200");
-    grid.setColAlign("left,left,left,left");
-    grid.setColTypes("ro,ro,ro,ro");
-    grid.setColSorting("int,str,str,str");
+    grid.setHeader("#, Код, Название");
+    grid.setInitWidths("40,100,290");
+    grid.setColAlign("left,left,left");
+    grid.setColTypes("ro,ro,ro");
+    grid.setColSorting("int,str,str");
     grid.init();
 
     grid.attachEvent("onSelectStateChanged", function (id) {
@@ -76,7 +76,7 @@ function initGrid(layout) {
             app.images.clearImages();
         }
     });
-    app.gridRowConfig = ['id', 'key_item', 'name', '_tree'];
+    app.gridRowConfig = ['num', 'key_item', 'name'];
 
     return grid;
 }
@@ -98,10 +98,7 @@ function initForm(tabbar) {
                     {type: 'button', name: 'update_code', offsetTop: 0, value: 'Обновить код'}
                 ]
                 },
-                {type: 'input', name: 'name', label: 'Название', rows: 3},
-                {type: "checkbox", name: 'god_type', label: "С отдельной страницей"},
-                {type: 'input', name: 'image_path', label: 'Изображения'},
-                {type: 'input', name: 'manufacture', label: 'Производитель'}
+                {type: 'input', name: 'name', label: 'Название', rows: 3}
             ]
             },
             {type: 'newcolumn', offset: 100},
@@ -274,25 +271,31 @@ function initImages(tabbar) {
         }
     };
     dataView.saveImages = function (id, callback) {
-        var instance = this;
-        var key;
         var images = [];
         var index = 0;
-        for (key = this.first(); ; key = this.next(key)) {
+        _.forEach(this._auImages, function(imageItem, index) {
+            if (index !== imageItem.position) {
+                images.push({index: index, new: false, image: imageItem.data});
+            }
+            if (imageItem.isNew) {
+                images.push({index: index, new: true, image: imageItem.data});
+            }
+        });
+/*        for (key = this.first(); ; key = this.next(key)) {
             if (!key || key == 'add') {
                 break;
             }
             var isNew = key.indexOf('new_') == 0;
             var src = $('div[dhx_f_id=' + key + '] img').attr('src');
             if (isNew === false) {
-                var matches = /^(.*)\?\d*/.exec(src);
+                var matches = /^(.*)\?\d*!/.exec(src);
                 src = matches.length > 1 ? matches[1] : src;
             }
             images.push({index: index++, new: isNew, image: src});
+        }*/
+        if (images.length) {
+            serviceWrapper.uploadImagesForGood(id, app.form.oldGoodCode, images, callback);
         }
-
-        serviceWrapper.uploadImagesForGood(id, app.form.oldGoodCode, images, callback);
-
     };
     dataView.deleteFile = function (id) {
         var userData = this.getCustomUserData(id);
@@ -397,52 +400,6 @@ function initToolbar(layout, grid) {
                 grid.selectRowById(entity.id);
             }
         },
-        saveDetails: function () {
-            var rowId = app.grid.getSelectedRowId();
-            var entity = app.grid.getUserData(rowId, 'entity');
-            var oldRowId = rowId;
-            var updater = {
-                description: function (form, entity) {
-                    var formData = app.form.getFormData();
-                    var descriptions = [];
-                    for (var key in formData) {
-                        if (key.indexOf('k_') == 0) {
-                            descriptions.push(key + '=' + formData[key]);
-                        }
-                    }
-                    entity.description = descriptions.join('|');
-                },
-                god_type: function (form, entity) {
-                    var formData = app.form.getFormData();
-                    entity.god_type = formData.god_type ? 'HARD' : 'SIMPLE';
-                }
-            };
-            components.updateEntity(app.form, entity, updater);
-            app.layout.progressOn();
-            function reloadRow(entity) {
-                app.grid.changeRowId(oldRowId, entity.id);
-                entity._tree = prepareTree(entity._tree);
-                app.grid.setUserData(entity.id, 'entity', entity);
-                components.updateGridRow(app.grid, entity.id, entity, app.gridRowConfig);
-                app.grid.clearSelection();
-                app.grid.selectRowById(entity.id);
-            }
-
-            function callback(data) {
-                function callback() {
-                    serviceWrapper.getGood(data, reloadRow);
-                    app.layout.progressOff();
-                }
-
-                app.serviceEntities.removeAll();
-            }
-
-            if (entity.hasOwnProperty('_isNew')) {
-                entity.id = null;
-            }
-            components.prepareEntity(entity);
-            serviceWrapper.updateGood(entity.id, entity, callback);
-        },
         save: function () {
             var rowId = app.grid.getSelectedRowId();
             var entity = app.grid.getUserData(rowId, 'entity');
@@ -491,10 +448,11 @@ function initToolbar(layout, grid) {
             components.prepareEntity(entity);
             serviceWrapper.updateGood(entity.id, entity, callback);
         },
-        saveOrder: function() {
+        saveOrder: function () {
             function show() {
                 app.goodsOrder.show();
             }
+
             if (!app.goodsOrder) {
                 initGoodsOrder(show);
             } else {
@@ -559,6 +517,7 @@ var orderWraper = (function getOrderData(grid) {
             index: index
         }
     }
+
     function getOrder(grid) {
         var data = [];
         var index = 0;
@@ -569,6 +528,7 @@ var orderWraper = (function getOrderData(grid) {
         });
         return data;
     }
+
     return {
         getOrder: getOrder
     }
@@ -610,10 +570,11 @@ var loader = {
             app.toolbar.onStateChange(gridState);
             if (goods.length) {
                 for (var goodIndex = 0; goodIndex < goods.length; goodIndex++) {
-                    goods[goodIndex]._tree = prepareTree(goods[goodIndex]._tree);
+                    goods[goodIndex].num = goodIndex + 1;
                     var array = components.prepareEntityToGrid(goods[goodIndex], app.gridRowConfig);
-                    grid.addRow(goods[goodIndex].id, array);
+                    var rowId = grid.addRow(goods[goodIndex].id, array);
                     grid.setUserData(goods[goodIndex].id, 'entity', goods[goodIndex]);
+                    grid.setCellTextStyle(goods[goodIndex].id, 0, 'color:#9e9e9e;');
                 }
                 grid.sortRows(0, "int", "asc");
             }

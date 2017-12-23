@@ -90,9 +90,9 @@
                 self.activateBlackout();
             })
             .on('blur', debounce(function() {
-/*                self.clearSearchedData();
-                self.closeSearchView();*/
-            }, 300));
+                self.clearSearchedData();
+                self.closeSearchView();
+            }, self._debounceTimeout));
         self.$mobButton
             .on('click', function() {
                 self.$parent.addClass('input-opened');

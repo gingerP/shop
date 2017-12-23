@@ -1,33 +1,69 @@
 <?php
 include_once('src/back/import/db');
 include_once('src/back/import/import');
-class EmailService {
 
-    public static function sendFeedbackEmail($messageBody, $senderEmail, $senderName) {
+class EmailService
+{
+
+    public static function sendFeedbackEmail($messageBody, $senderEmail, $senderName, $fromProductCode = '')
+    {
         $sendToEmails = DBPreferencesType::getPreferenceValue(Constants::FEEDBACK_MAIL);
         $sendToEmails = explode(";", $sendToEmails);
         $systemMail = DBPreferencesType::getPreferenceValue(Constants::SYSTEM_MAIL);
 
-        if ($sendToEmails == "") {
-            echo 'error';
-            Log::error("empty system email: $senderEmail, $senderName");
-            return false;
+        if (count($sendToEmails) == 0 || $sendToEmails[0] == '') {
+            Log::info("Empty system email: $senderEmail, $senderName");
+            throw new Exception('Empty system email.');
         }
-        $headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\nFrom: new.vinni@gmail.com\r\nBcc: $systemMail\r\nX-Mailer: PHP/".phpversion();
 
-        //$headers = 'From: new.vinni@gmail.com\r\n'.'X-Mailer: PHP/' . phpversion();;
-        //return 'before4 '.implode(', ', $sendToEmails);
+        $headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\nFrom: new.vinni@gmail.com\r\nBcc: $systemMail\r\nX-Mailer: PHP/" . phpversion();
+
         $res = mail(
             implode(', ', $sendToEmails),
-            "FEEDBACK from $senderName ($senderEmail)",
-            $messageBody,
+            self::getEmailSubject($senderEmail, $senderName),
+            self::getHtmlMessage($messageBody, $senderEmail, $senderName, $fromProductCode),
             $headers
         );
-        /*$res = mail($sendToEmails[0], "FEEDBACK from $senderName ($senderEmail)", $messageBody, $headers);*/
-        Log::info($res." send email: $senderEmail, $senderName - to ".$sendToEmails[0]);
-        /*return $res;*/
-
-        //Log::info("$res send email: $senderEmail, $senderName - to .$sendToEmails");
+        if (!$res) {
+            $error = error_get_last();
+            throw new Exception('Email sending failed: '.$error['message']);
+        }
+        Log::info("Email sended: $senderEmail, $senderName - to " . implode(', ', $sendToEmails));
         return $res;
+    }
+
+    private static function getHtmlMessage($messageBody, $senderEmail, $senderName, $fromProductCode)
+    {
+        $escapedMessageBody = htmlentities($messageBody);
+        $html = "<!doctype html>
+                    <html>
+                      <head>
+                        <meta name=\"viewport\" content=\"width=device-width\" />
+                        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+                        <title>Email from </title>
+                        </head>
+                        <body>
+                            $escapedMessageBody";
+        if ($fromProductCode !== '') {
+            $Products = new DBGoodsType();
+            $product = $Products->getByCode($fromProductCode);
+            if (!is_null($product)) {
+                $productUrl =
+                    URLBuilder::getCatalogLinkForSingleItem($product["key_item"], null, null, []);
+                $productName = $product[DB::TABLE_GOODS__NAME];
+                $html .= "<hr><br>
+                        <span style=\"font-weight: bold;\">
+                            <span style=\"color: grey;\">Сообщение отправлено со страницы товара&nbsp</span>
+                            <a style=\"color: #414141;\" href=\"$productUrl\">$productName</a>
+                        </span>";
+            }
+        }
+
+        $html .= "</body></html>";
+        return $html;
+    }
+
+    private static function getEmailSubject($senderName, $senderEmail) {
+        return "Сообщение с сайта от $senderName ($senderEmail)";
     }
 }

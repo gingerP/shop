@@ -8,6 +8,8 @@
 
 class Img extends Tag{
 
+    protected $closable = false;
+
     public function Img() {
         return $this->Tag();
     }

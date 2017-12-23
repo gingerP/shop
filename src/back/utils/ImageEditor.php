@@ -1,6 +1,8 @@
 <?php
 include_once('src/back/import/import');
-Class ImageEditor {
+
+Class ImageEditor
+{
     // *** Class variables
     private $imageBase64;
     private $image;
@@ -9,10 +11,11 @@ Class ImageEditor {
     private $imageResized;
     private $fileName;
 
-    public static function newImageBase64($base64) {
+    public static function newImageBase64($base64)
+    {
         $tmpDir = FileUtils::getTmpDir();
         $imageExtension = Utils::getImageExtensionFromBase64($base64);
-        $imageName = Utils::getRandomString().'.'.$imageExtension;
+        $imageName = Utils::getRandomString() . '.' . $imageExtension;
         $path = FileUtils::buildPath($tmpDir, $imageName);
         $base64PrefixLess = Utils::extractBase64($base64);
         FileUtils::createDir($tmpDir);
@@ -25,7 +28,8 @@ Class ImageEditor {
         return $instance;
     }
 
-    function __construct($fileName) {
+    function __construct($fileName)
+    {
         // *** Open up the file
         $this->fileName = $fileName;
         $this->image = $this->openImage($this->fileName);
@@ -35,39 +39,42 @@ Class ImageEditor {
         $this->height = imagesy($this->image);
     }
 
-    private function openImage($file) {
+    private function openImage($file)
+    {
         // *** Get extension
         $extension = strtolower(strrchr($file, '.'));
 
         try {
-            switch ($extension) {
-                case '.jpg':
-                case '.jpeg':
-                    $img = @imagecreatefromjpeg($file);
-                    break;
-                case '.gif':
-                    $img = @imagecreatefromgif($file);
-                    break;
-                case '.png':
-                    $img = @imagecreatefrompng($file);
-                    break;
-                default:
-                    $img = false;
-                    break;
-            }
-        } catch (Exception $e) {
-
+        switch ($extension) {
+            case '.jpg':
+            case '.jpeg':
+                $img = imagecreatefromjpeg($file);
+                break;
+            case '.gif':
+                $img = imagecreatefromgif($file);
+                break;
+            case '.png':
+                $img = imagecreatefrompng($file);
+                break;
+            default:
+                $img = false;
+                break;
+        }
+        }catch (Exception $e) {
+            echo $e->getTraceAsString();
+        }finally{
         }
         return $img;
     }
 
-    public function resizeImage($newWidth, $newHeight, $option = "auto") {
+    public function resizeImage($newWidth, $newHeight, $option = "auto")
+    {
 
         // *** Get optimal width and height - based on $option
         $optionArray = $this->getDimensions($newWidth, $newHeight, strtolower($option));
 
-        $optimalWidth = $optionArray[ 'optimalWidth' ];
-        $optimalHeight = $optionArray[ 'optimalHeight' ];
+        $optimalWidth = $optionArray['optimalWidth'];
+        $optimalHeight = $optionArray['optimalHeight'];
 
         // *** Resample - create image canvas of x, y size
         $this->imageResized = imagecreatetruecolor($optimalWidth, $optimalHeight);
@@ -81,7 +88,8 @@ Class ImageEditor {
         }
     }
 
-    private function getDimensions($newWidth, $newHeight, $option) {
+    private function getDimensions($newWidth, $newHeight, $option)
+    {
 
         switch ($option) {
             case 'exact':
@@ -98,31 +106,34 @@ Class ImageEditor {
                 break;
             case 'auto':
                 $optionArray = $this->getSizeByAuto($newWidth, $newHeight);
-                $optimalWidth = $optionArray[ 'optimalWidth' ];
-                $optimalHeight = $optionArray[ 'optimalHeight' ];
+                $optimalWidth = $optionArray['optimalWidth'];
+                $optimalHeight = $optionArray['optimalHeight'];
                 break;
             case 'crop':
                 $optionArray = $this->getOptimalCrop($newWidth, $newHeight);
-                $optimalWidth = $optionArray[ 'optimalWidth' ];
-                $optimalHeight = $optionArray[ 'optimalHeight' ];
+                $optimalWidth = $optionArray['optimalWidth'];
+                $optimalHeight = $optionArray['optimalHeight'];
                 break;
         }
         return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
     }
 
-    private function getSizeByFixedHeight($newHeight) {
+    private function getSizeByFixedHeight($newHeight)
+    {
         $ratio = $this->width / $this->height;
         $newWidth = $newHeight * $ratio;
         return $newWidth;
     }
 
-    private function getSizeByFixedWidth($newWidth) {
+    private function getSizeByFixedWidth($newWidth)
+    {
         $ratio = $this->height / $this->width;
         $newHeight = $newWidth * $ratio;
         return $newHeight;
     }
 
-    private function getSizeByAuto($newWidth, $newHeight) {
+    private function getSizeByAuto($newWidth, $newHeight)
+    {
         if ($this->height < $this->width) {
             // *** Image to be resized is wider (landscape)
             $optimalWidth = $newWidth;
@@ -149,7 +160,8 @@ Class ImageEditor {
         return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
     }
 
-    private function getOptimalCrop($newWidth, $newHeight) {
+    private function getOptimalCrop($newWidth, $newHeight)
+    {
 
         $heightRatio = $this->height / $newHeight;
         $widthRatio = $this->width / $newWidth;
@@ -166,7 +178,8 @@ Class ImageEditor {
         return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
     }
 
-    private function crop($optimalWidth, $optimalHeight, $newWidth, $newHeight) {
+    private function crop($optimalWidth, $optimalHeight, $newWidth, $newHeight)
+    {
         // *** Find center - this will be used for the crop
         $cropStartX = ($optimalWidth / 2) - ($newWidth / 2);
         $cropStartY = ($optimalHeight / 2) - ($newHeight / 2);
@@ -179,7 +192,8 @@ Class ImageEditor {
         imagecopyresampled($this->image, $crop, 0, 0, $cropStartX, $cropStartY, $newWidth, $newHeight, $newWidth, $newHeight);
     }
 
-    public function applyWatermark($watermarkPath) {
+    public function applyWatermark($watermarkPath)
+    {
 
         // Determine watermark size and type
         $wsize = getimagesize($watermarkPath);
@@ -198,7 +212,8 @@ Class ImageEditor {
         imagedestroy($watermark);
     }
 
-    public function saveImage($savePath, $imageQuality = "100") {
+    public function saveImage($savePath, $imageQuality = "100")
+    {
         // *** Get extension
         $extension = strrchr($savePath, '.');
         $extension = strtolower($extension);
@@ -248,12 +263,16 @@ Class ImageEditor {
     /**
      * @param mixed $imageBase64
      */
-    public function setImageBase64($imageBase64) {
+    public function setImageBase64($imageBase64)
+    {
         $this->imageBase64 = $imageBase64;
-    }/**
+    }
+
+    /**
      * @return mixed
      */
-    public function getImageBase64() {
+    public function getImageBase64()
+    {
         return $this->imageBase64;
     }
 }

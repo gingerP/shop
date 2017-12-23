@@ -1,10 +1,12 @@
 <?php
 try {
+    define('AU_ROOT', __DIR__.'/../../../');
     $config = parse_ini_file('config/config.ini');
     $messages = parse_ini_file('config/messages.ini');
     $GLOBALS['AU_MESSAGES'] = $messages;
 
     $GLOBALS['config'] = $config;
+    define('AU_CONFIG', $config);
     $GLOBALS['AU_SEC_PROTOCOL'] = 'HTTPS';
     $GLOBALS['REDIRECT_PROTOCOL'] = 'https';
 

@@ -9,45 +9,53 @@
 include_once("src/back/import/import");
 include_once("src/back/import/tag");
 
-class TagUtils {
+class TagUtils
+{
 
-    public static function buildHtml($tag, Num $depth) {
+    public static function buildHtml($tag, Num $depth)
+    {
         try {
             $tabs = "";//implode("", array_fill(0, $depth->_inc()->getNum(), "  "));
             $html = "";
             if ($tag instanceof Tag) {
-                $beginTag = "$tabs<".$tag->getTagName();
+                $beginTag = "$tabs<" . $tag->getTagName();
                 $tagContent = "";
-                $endTag = "$tabs</".$tag->getTagName().">";
+                $endTag = $tag->isClosable() ? "$tabs</" . $tag->getTagName() . ">" : "";
                 $id = "";
                 $class = "";
                 $attributes = "";
                 if (!Utils::isNullOrEmptyString($tag->getId())) {
-                    $id = TagLabels::ID."='".$tag->getId()."'";
+                    $id = TagLabels::ID . "=\"" . $tag->getId() . "\"";
                 }
                 if (count($tag->getClassList()) > 0) {
-                    $class = TagLabels::_CLASS."='";
-                    for($index = 0, $max = count($tag->getClassList()); $index < $max; $index++) {
-                        $class.= $tag->getClassList()[$index]." ";
+                    $class = TagLabels::_CLASS . "=\"";
+                    for ($index = 0, $max = count($tag->getClassList()); $index < $max; $index++) {
+                        $class .= $tag->getClassList()[$index] . " ";
                     }
-                    $class.="'";
+                    $class .= "\"";
                 }
                 if (count($tag->getAttributeList()) > 0) {
-                    foreach($tag->getAttributeList() as $key => $value) {
+                    foreach ($tag->getAttributeList() as $key => $value) {
                         $attributes .= " $key=\"$value\" ";
                     }
                 }
-                $beginTag .= " ".$id
-                            ." ".$class
-                            ." ".$attributes
-                            ." >";
+                if (!self::isEmptyString($id)) {
+                    $beginTag .= " " . $id;
+                }
+                if (!self::isEmptyString($class)) {
+                    $beginTag .= " " . $class;
+                }
+                if (!self::isEmptyString($attributes)) {
+                    $beginTag .= " " . $attributes;
+                }
+                $beginTag .= ">";
 
                 if (!($tag instanceof SingleTag)) {
-                    for($index = 0, $max = count($tag->getChildList()); $index < $max; $index++) {
+                    for ($index = 0, $max = count($tag->getChildList()); $index < $max; $index++) {
                         $tagContent .= TagUtils::buildHtml($tag->getChildList()[$index], $depth);
                         $depth->_dec();
                     }
-                    $html = $beginTag.$tagContent.$endTag;
+                    $html = $beginTag . $tagContent . $endTag;
                 } else {
                     $html = $beginTag;
                 }
@@ -60,11 +68,13 @@ class TagUtils {
         return $html;
     }
 
-    public static function createShadow(&$mainDiv) {
+    public static function createShadow(&$mainDiv)
+    {
 
     }
 
-    public static function createNote($text, $link) {
+    public static function createNote($text, $link)
+    {
         $note = new Div();
         $note->addStyleClass("note");
         $note->addChild($text);
@@ -77,7 +87,8 @@ class TagUtils {
         return $note;
     }
 
-    public static function createList($arr) {
+    public static function createList($arr)
+    {
         if (is_array($arr) && count($arr) > 0) {
             $mainTag = new Ul();
             for ($arrIndex = 0; $arrIndex < count($arr); $arrIndex++) {
@@ -88,6 +99,15 @@ class TagUtils {
             return $mainTag;
         }
         return "";
+    }
+
+    public static function isEmptyString($string)
+    {
+        if (!is_string($string)) {
+            return true;
+        }
+        $trimed = trim($string);
+        return $trimed == '';
     }
 
 } 

@@ -9,6 +9,7 @@ abstract class Tag
     protected $classList = array();
     protected $attributeList = array();
     protected $childList = array();
+    protected $closable = true;
 
     protected function Tag() {
         return $this;
@@ -26,6 +27,10 @@ abstract class Tag
     public function getId()
     {
         return $this->id;
+    }
+
+    public function isClosable() {
+        return $this->closable;
     }
 
     public function addStyleClass($class)

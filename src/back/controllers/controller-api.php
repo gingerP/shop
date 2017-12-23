@@ -1,4 +1,5 @@
 <?php
+define('AU_ROOT', __DIR__.'/../../../');
 error_reporting(-1);
 include_once('src/back/import/db');
 include_once('src/back/import/service');
@@ -22,6 +23,7 @@ try {
     $config = parse_ini_file('config/config.ini');
     $messages = parse_ini_file('config/messages.ini');
     $GLOBALS['config'] = $config;
+    define('AU_CONFIG', $config);
     $GLOBALS['AU_MESSAGES'] = $messages;
     $GLOBALS['AU_SEC_PROTOCOL'] = 'HTTPS';
 
@@ -99,7 +101,8 @@ try {
                     $messageBody = Utils::getFromPOST('message_body');
                     $senderEmail = Utils::getFromPOST('sender_email');
                     $senderName = Utils::getFromPOST('sender_name');
-                    $responseData = EmailService::sendFeedbackEmail($messageBody, $senderEmail, $senderName);
+                    $product = Utils::getFromPOST('product', false);
+                    $responseData = EmailService::sendFeedbackEmail($messageBody, $senderEmail, $senderName, $product);
                     break;
                 case 'getDescriptionKeys':
                     $responseData = DescriptionKeys::$keys;

@@ -1,14 +1,14 @@
-var keyBoard = (function() {
+var keyBoard = (function () {
     var handlers = {};
     return {
-        init: function() {
-            $("body").keydown(function(e) {
+        init: function () {
+            $("body").keydown(function (e) {
                 if (typeof(handlers[e.keyCode]) == 'function') {
                     handlers[e.keyCode]();
                 }
             })
         },
-        handle: function(keyBoardKey, handler) {
+        handle: function (keyBoardKey, handler) {
             handlers[keyBoardKey] = handler;
         }
     }
@@ -127,19 +127,6 @@ function closeTree(liObject) {
 
 
 /*------------------------------------------gallery end---------------------------------------*/
-
-
-$.fn.centered_popup = function () {
-    this.css('position', 'fixed');
-    this.css('top', (document.body.clientHeight - this.height()) / 2);
-    this.css('left', (document.body.clientWidth - this.width()) / 2);
-    console.log("window.height: " + $(window).height());
-    console.log("window.width: " + $(window).width());
-    console.log("this.height: " + this.height());
-    console.log("this.width: " + this.width());
-    console.log("height: " + document.body.clientHeight);
-    console.log("width: " + document.body.clientWidth);
-};
 
 function initBlackoutLogic() {
     var opacity = 0.2;
@@ -299,6 +286,7 @@ function initPreviewImage() {
                 $galleryViewport.removeAttr('style');
             }
         }
+
         $(window).resize(debounce(onResize, 300));
         onResize();
 
@@ -395,158 +383,6 @@ function initPriceListLogic(callback) {
     return popup;
 }
 
-function initFeedbackLogic() {
-    var popupContentTemplate = "\
-                <div id='feedback' class='bottom_panel_item'>\
-                    <div class='feedback_blocker'></div>\
-                    <div class='title f-16'>Напишите нам письмо (augustova@mail.ru)</div>\
-                    <div class='feedback_container'>\
-                        <div class='input_block' >\
-                            {message_label}\
-                            <textarea id='message' {message_placeholder} class='message input f-15' cols='40' rows='5'></textarea>\
-                            <div class='message_validation f-11'></div>\
-                        </div>\
-                        <div class='input_block' >\
-                            {name_label}\
-                            <input id='name' {name_placeholder} class='name input f-15'>\
-                            <div class='name_validation f-11'></div>\
-                        </div>\
-                        <div class='input_block'>\
-                            {email_label}\
-                            <input id='email' {email_placeholder} class='email input f-15'>\
-                            <div class='email_validation f-11'></div>\
-                        </div>\
-                        <button class='send input_hover input_block f-17 button'>Отправить</button>\
-                    </div>\
-                </div>\
-        ";
-    if (U.isOldIe()) {
-        popupContentTemplate = templates.replace(popupContentTemplate, {
-            message_label: "<label for='message' class='f-15'>Содержимое письма</label>",
-            name_label: "<label for='name' class='f-15'>Меня зовут</label>",
-            email_label: "<label for='email' class='f-15'>Мой e-mail</label>",
-            message_placeholder: "",
-            name_placeholder: "",
-            email_placeholder: ""
-        })
-    } else {
-        popupContentTemplate = templates.replace(popupContentTemplate, {
-            message_label: "",
-            name_label: "",
-            email_label: "",
-            message_placeholder: "placeholder='Содержимое письма'",
-            name_placeholder: "placeholder='Меня зовут'",
-            email_placeholder: "placeholder='Мой e-mail'"
-        })
-    }
-    $('.bottom_panel_window').prepend(popupContentTemplate);
-    var $feedback = $('#feedback');
-    var $feedbackBlocker = $('.feedback_blocker', $feedback);
-    var $feedbackSendBtn = $('.send', $feedback);
-    //popup.setData(popupContent);
-    isFeedbackNotActive = function () {
-        return !popup.isVisible;
-    };
-
-    var $feedback = $('#feedback');
-    var isFormSubmit = false;
-    var initFormValidation = function () {
-        $('.message', $feedback).on('change paste focus textInput input', function () {
-            if (isFormSubmit) {
-                var value = $(this).val();
-                if (U.hasContent(value) && (value.length > 1000 || value.length == 0)) {
-                    $('.message', $feedback).addClass('validation_error');
-                    $('.message_validation', $feedback).addClass('validation_message').val('Сообщение слишком большое.');
-                } else {
-                    $('.message', $feedback).removeClass('validation_error');
-                    $('.message_validation', $feedback).removeClass('validation_message').val('');
-                }
-                console.info('#feedback .message');
-            }
-        });
-        $('.name', $feedback).on('change paste focus textInput input', function () {
-            if (isFormSubmit) {
-                var value = $(this).val();
-                if (U.hasContent(value) && value.length > 50) {
-                    $('.name', $feedback).addClass('validation_error');
-                    $('.name_validation', $feedback).addClass('validation_message').val('Имя слишком большое.');
-                } else {
-                    $('.name', $feedback).removeClass('validation_error');
-                    $('.name_validation', $feedback).removeClass('validation_message').val('');
-                }
-                console.info('#feedback .name');
-            }
-        });
-        /*        $('.email', $feedback).on('change paste focus textInput input', function() {
-         if (isFormSubmit) {
-         var value = $(this).val();
-         var regexp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-         var result = regexp.test(value);
-         if (!result) {
-         $('.email', $feedback).addClass('validation_error');
-         $('.email_validation', $feedback).addClass('validation_message').val('Email некорректный.');
-         } else {
-         $('.email', $feedback).removeClass('validation_error');
-         $('.email_validation', $feedback).removeClass('validation_message').val('');
-         }
-         console.info('#feedback .email');
-         }
-         });*/
-    };
-    var validateForm = function () {
-        $('.input', $feedback).trigger('change');
-        return $('.validation_message', $feedback).length == 0;
-    };
-
-    var isEmptyMessage = function () {
-        return $('.message', $feedback).val() == '';
-    };
-    initFormValidation();
-    $feedbackSendBtn.on('click', function () {
-        isFormSubmit = true;
-        if (!$(this).hasClass('input_disable') && validateForm() && !isEmptyMessage()) {
-            var messageBody = $('.message', $feedback).val();
-            var senderName = $('.name', $feedback).val();
-            var senderEmail = $('.email', $feedback).val();
-            var data = {
-                message_body: messageBody,
-                sender_name: senderName,
-                sender_email: senderEmail
-            }
-
-            $feedbackBlocker.fadeIn(100);
-            $feedbackBlocker.removeClass('successful').removeClass('error').addClass('progress');
-            $feedbackSendBtn.addClass('input_disable')
-            $.ajax({
-                type: "POST",
-                dataType: 'json',
-                data: data,
-                url: '/api/sendFeedbackEmail',
-                context: document.body
-            }).done(function (data) {
-                    $feedbackSendBtn.removeClass('input_disable').trigger('mouseleave');
-                    if (data === true) {
-                        $feedbackBlocker.removeClass('progress').removeClass('error').addClass('successful');
-                    } else {
-                        $feedbackBlocker.removeClass('progress').removeClass('successful').addClass('error');
-                    }
-                    setTimeout(function () {
-                        if (data === true) {
-                            isFormSubmit = false;
-                            $('input, textarea', $feedback).val('');
-                            $('.validation_error', $feedback).removeClass('validation_error');
-                        }
-                        $feedbackBlocker.fadeOut(100);
-                    }, 3000);
-                }
-            );
-        }
-    }).focusin(function () {
-        $(this).trigger('mouseenter');
-    }).focusout(function () {
-        $(this).trigger('mouseleave');
-    });
-}
 
 var googleMapLogic = (function () {
     var callIconSVG = '<svg xmlns="http://www.w3.org/2000/svg" fill="#414141" height="24" viewBox="0 0 24 24" width="24">\
@@ -591,19 +427,25 @@ var googleMapLogic = (function () {
 
     function tag(tagName, classList, innerHtml) {
         var tag = document.createElement(tagName);
-        tag.classList = classList || '';
+        tag.className = classList || '';
         tag.innerHTML = innerHtml || '';
         return tag;
     }
 
     function getPhoneOperatorLabel(code) {
-        switch(code) {
-            case 'mts': return 'МТС';
-            case 'velcom': return 'VELCOM';
-            case 'life': return 'Life';
-            case 'stat': return 'тел.';
-            case 'statfax': return 'тел./факс';
-            default: return '';
+        switch (code) {
+            case 'mts':
+                return 'МТС';
+            case 'velcom':
+                return 'VELCOM';
+            case 'life':
+                return 'Life';
+            case 'stat':
+                return 'тел.';
+            case 'statfax':
+                return 'тел./факс';
+            default:
+                return '';
         }
     }
 
@@ -615,7 +457,7 @@ var googleMapLogic = (function () {
             var emailView = tag('DIV', 'contact-address-item contact-email');
             emailView.appendChild(tag('DIV', 'contact-address-label', 'почта'));
             var emailLink = tag('A', '', contact.email);
-            emailLink.setAttribute('href', 'mailto:' + contact.email);
+            emailLink.setAttribute('href', 'mailto:' + contact.email + '?subject=Сообщение с сайта для ЧТУП\"Августово-Компани\"');
             var emailValue = tag('DIV', 'contact-address-value');
             emailValue.appendChild(emailLink);
             emailView.appendChild(emailValue);
@@ -1009,12 +851,9 @@ $(document).ready(function () {
     if (!currentPageName || currentPageName.trim() == '') {
         pages.isMain = true;
     }
-
-
     initEntryLogic();
     /*initPriceListLogic(inputHoverModule.update);*/
     initTopBarScrolling(93);
-    initFeedbackLogic();
     initSearchLogic();
     /*inputHoverModule.update();*/
     initPathLinkSideBar();
@@ -1040,13 +879,24 @@ $(document).ready(function () {
         initTreeLogic();
     }
 
-    /*    var blackouts = $('.blackout');
-     if (blackouts.length > 0) {
-     var shadow = document.createElement('div');
-     shadow.setAttribute('class', 'blackout_container');
-     $(blackouts).prepend(shadow);
-     }*/
     var agentClass = U.isIE() ? 'ie' : 'not_ie';
-    $('body').addClass(agentClass);
+    if (U.isOldIe() || U.isIE9()) {
+        agentClass += 'old_ie';
+    }
+    document.body.className += ' ' + agentClass;
+
+    (new Feedback()).initialize();
+
+    $.fn.centered_popup = function () {
+        this.css('position', 'fixed');
+        this.css('top', (document.body.clientHeight - this.height()) / 2);
+        this.css('left', (document.body.clientWidth - this.width()) / 2);
+        console.log("window.height: " + $(window).height());
+        console.log("window.width: " + $(window).width());
+        console.log("this.height: " + this.height());
+        console.log("this.width: " + this.width());
+        console.log("height: " + document.body.clientHeight);
+        console.log("width: " + document.body.clientWidth);
+    };
 });
 /*------------------------------------------gallery---------------------------------------*/

@@ -1,14 +1,31 @@
 <?php
+define('AU_ROOT', __DIR__.'/../../../');
+$config = parse_ini_file('config/config.ini');
+$GLOBALS['config'] = $config;
+define('AU_CONFIG', $config);
+include_once("src/back/import/import");
+include_once("src/back/import/page");
+function catchInternalError($error) {
+    header('Content-Type: application/json');
+    $errorModel = new DBErrorType();
+    $errorModel->createException($error);
+    error_log($error->getMessage());
+    if ($error instanceof BaseError) {
+        http_response_code($error->status);
+        echo json_encode($error->toJson());
+        return;
+    }
+    http_response_code(500);
+    $internalError = new InternalError($error);
+    echo json_encode($internalError->toJson());
+}
 try {
-    $config = parse_ini_file('config/config.ini');
-    $GLOBALS['config'] = $config;
 
-    include_once("src/back/import/import");
-    include_once("src/back/import/page");
     if (isset($_SERVER['HTTPS'])) {
         header("Location: http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
         exit;
     }
+
     $pageName = Utils::getFromGET(UrlParameters::PAGE_NAME);
     $page = '';
 
@@ -26,6 +43,10 @@ try {
         return $page;
     }
 
+    function redirectMain() {
+        header("Location: http://" . $_SERVER["HTTP_HOST"]);
+        exit;
+    }
     switch ($pageName) {
         case UrlParameters::PAGE__ADMIN:
             $page = getContent(AdminPage::class);
@@ -49,22 +70,16 @@ try {
             $page = getContent(ContactsPage::class);
             break;
         default:
-            $page = getContent(MainPage::class);
+            if (Utils::isHomeNaked($_SERVER['REQUEST_URI'])) {
+                $page = getContent(MainPage::class);
+            }  else {
+                redirectMain();
+            }
     }
 
     echo $page;
 } catch (Exception $e) {
-    http_response_code(500);
-    header('Content-type: application/json; charset=UTF-8');
-    echo json_encode([
-        'http_code' => 500,
-        'message' => $e->getMessage()
-    ]);
+    catchInternalError($e);
 } catch (Error $e) {
-    http_response_code(500);
-    header('Content-type: application/json; charset=UTF-8');
-    echo json_encode([
-        'http_code' => 500,
-        'message' => $e->getMessage()
-    ]);
+    catchInternalError($e);
 }

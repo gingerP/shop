@@ -4,10 +4,12 @@ include_once("src/back/import/tag");
 include_once("src/back/import/page");
 include_once("src/back/import/db");
 
-class MainPage extends APagesCreator {
+class MainPage extends APagesCreator
+{
 
-    public function MainPage() {
-        $this->APagesCreator();
+    public function __construct()
+    {
+        parent::__construct();
         $this->setPageCode("main_page");
         $this->setIsStatusBarVisible(false);
         $this->setIsViewModeBlockVisible(false);
@@ -17,16 +19,12 @@ class MainPage extends APagesCreator {
             "name" => "description",
             "content" => "на augustova.by вы найдете спецодежду для вашей работы, а юридические лица смогут приобрести лакокрасочные материалы, чистящие и моющие ср-ва, канцтовары, строительный инструмент и другое "
         ]);
-        $metaKeyword = new Meta();
-        $metaKeyword->addAttributes([
-           "name" => "keywords",
-           "content" => ""
-        ]);
-        $this->addMetaTags($metaDesc, $metaKeyword);
+        $this->addMetaTags($metaDesc);
         $this->content = $this->getHtml();
     }
 
-    protected function createGeneralContent() {
+    protected function createGeneralContent()
+    {
         $mainDiv = new Div();
         $div01 = new Div();
         $div01->addStyleClasses(["slide_show", "gallery"]);
@@ -35,75 +33,18 @@ class MainPage extends APagesCreator {
         return $mainDiv->addChildren($div01, $this->getCatalogItems(), $this->preRenderNewsItems());
     }
 
-    private function getPricesGallery() {
+    private function getPricesGallery()
+    {
         $mainDiv = new Div();
         $mainDiv->addStyleClass("prices_gallery center_column");
-/*        $mainDiv->addChild("<div class='news-gallery-container' style='margin: 0 0 5px 0;'><img src='/images/banners/banner_for_students.png'></div>");*/
         $mainDiv->addChild("<news-gallery-component></news-gallery-component>");
-/*
-        $priceDescriptions = new Div();
-        $priceDescriptions->addStyleClass("prices_descriptions");
-        $priceButtonsContainer = new Div();
-        $priceButtonsContainer->addStyleClass("price_buttons_container");
-        $priceButtons = new Div();
-        $priceButtons->addStyleClass("prices_buttons");
-        $priceButtonsContainer->addChild($priceButtons);
-        $mainDiv->addChildList([$priceButtonsContainer, $priceDescriptions]);
-        $dbGoodsTypesType = new DBGoodsTypesType();
-        $goodsTypes = $dbGoodsTypesType->getListActive();
-        $index = 0;
-        while ($row = mysqli_fetch_array($goodsTypes)) {
-            $priceDescription = new Div();
-            $priceDescription->addAttribute("price_code", $row[ DB::TABLE_GOODS_TYPES__CODE ]);
-            $priceDescription->addStyleClasses(["f-16", "prices_description"]);
-            $priceDescription->addAttribute("style", "background-image: url(/images/" . $row[ DB::TABLE_GOODS_TYPES__CODE ] . ".jpg)");
-            $priceDescriptionChild = new Div();
-            $priceDescription->addChild($priceDescriptionChild);
-            if ($index == 0) {
-                $priceDescription->addStyleClass("selected_description");
-            } else {
-                $priceDescription->addStyleClass("hidden");
-            }
-            $priceLabel = new Strong();
-            $priceLabel->addChild($row[ DB::TABLE_GOODS_TYPES__NAME ]);
-            $priceLabel->addStyleClasses(["description_title description_label", "f-40"]);
-            $priceDescriptionChild->addChild($priceLabel);
-
-            $description = $row[ DB::TABLE_GOODS_TYPES__DESCRIPTION ];
-            $description = Utils::cleanExplode(Constants::LIST_DELIMITER, $description);
-            if (count($description)) {
-                array_push($description, "и другое...");
-                $list = $this->getStyledTextList($description, ["main_page_price_item_first", *//*"main_page_price_item_second", *//*"main_page_price_item_third"]);
-                $list->addStyleClass("description_label");
-                $priceDescriptionChild->addChildList([$list]);
-            }
-
-            if (strlen($row[ DB::TABLE_GOODS_TYPES__PRICE_FILE_NAME ]) > 0 && FileUtils::isFileExist(Constants::DEFAULT_ROOT_PRICE_PATH . $row[ DB::TABLE_GOODS_TYPES__PRICE_FILE_NAME ])) {
-                $textContainer = new Span();
-                $textContainer->addChild("скачать прайс лист");
-                $priceDownloadButton = new A();
-                $priceDownloadButton->addChild($textContainer);
-                $priceDownloadButton->addStyleClasses(["button", "f-19", "input_hover"]);
-                $priceDownloadButton->addAttribute("href", Constants::DEFAULT_ROOT_PRICE_PATH . $row[ DB::TABLE_GOODS_TYPES__PRICE_FILE_NAME ]);
-                $priceDescriptionChild->addChild($priceDownloadButton);
-            }
-            $priceDescriptions->addChild($priceDescription);
-
-            $priceButton = new Div();
-            $priceButton->addAttribute("price_code", $row[ DB::TABLE_GOODS_TYPES__CODE ]);
-            $priceButton->addStyleClasses(["price_button", "f-16", "input_hover"]);
-            $priceButton->addChild($row[ DB::TABLE_GOODS_TYPES__ABBREVIATION]);
-            $priceButtonLabel = new Div();
-            $priceButtonLabel->addChild($row[ DB::TABLE_GOODS_TYPES__NAME ]);
-            $priceButtons->addChild($priceButton/*->addChild($priceButtonLabel)*//*);
-            $index++;
-        }*/
         return $mainDiv;
     }
 
     //TODO check next method for performance (работоспособность)
 
-    private function getCatalogItems() {
+    private function getCatalogItems()
+    {
         $dbGoods = new DBGoodsType();
         $catalogLoader = new CatalogLoader();
         $catalogLoader->getItemsMainData(1, 15);
@@ -120,24 +61,24 @@ class MainPage extends APagesCreator {
             //$name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement
             $product = $goods[$goodIndex];
             $images = FileUtils::getFilesByPrefixByDescription(
-                Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $product[ DB::TABLE_GOODS__KEY_ITEM ] . DIRECTORY_SEPARATOR,
+                Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $product[DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR,
                 Constants::MEDIUM_IMAGE,
                 'jpg'
             );
-            $info = Item::getMetroItemView($product["name"],
-                        $images,
-                        $product["key_item"],
-                        null,
-                        null,
-                        null,
-                        null,
-                        $product['god_type'],
-                        Utils::formatClotheTitle($product["name"])
+            $info = Item::getMetroItemView(
+                $product["name"],
+                $images,
+                $product["key_item"],
+                null,
+                null,
+                null,
+                null,
+                Utils::formatClotheTitle($product["name"])
             );
             $productContainer = new A();
             $productContainer->addStyleClass("catalog_good_item previews-zero-col");
             $productContainer->addChild($info[0]);
-            $url = URLBuilder::getItemLinkForComplexType("", $product[ DB::TABLE_GOODS__KEY_ITEM ], 1, 48);
+            $url = URLBuilder::getItemLinkForComplexType("", $product[DB::TABLE_GOODS__KEY_ITEM], 1, 48);
             $productContainer->addAttribute('href', $url);
             $div02->addChild($productContainer);
             //$div02->addChild($this->renderGalleryItemWithSingleItem($goods[$goodIndex]));
@@ -147,7 +88,8 @@ class MainPage extends APagesCreator {
         return [$this->getCatalogItemsTitle(), $slideShowContainer];
     }
 
-    private function getCatalogItemsTitle() {
+    private function getCatalogItemsTitle()
+    {
         $headContainer = new Div();
 
         $head = new Div();
@@ -172,38 +114,36 @@ class MainPage extends APagesCreator {
         return $slogan->addChild($headContainer);
     }
 
-    private function renderGalleryItemWithSingleItem($data) {
+    private function renderGalleryItemWithSingleItem($data)
+    {
         $mainDiv = new Div();
         $mainDiv->addStyleClasses(["main_page_item", "blackout", "catalog_item_button_container"]);
         $container = new Div();
         $container->addStyleClass("main_page_item_sub");
-        $urlToItem = URLBuilder::getItemLinkForComplexType("", $data[ DB::TABLE_GOODS__KEY_ITEM ], 1, 48);
+        $urlToItem = URLBuilder::getItemLinkForComplexType("", $data[DB::TABLE_GOODS__KEY_ITEM], 1, 48);
         $itemImagePath = '';
-        $itemName = $data[ DB::TABLE_GOODS__NAME ];
-        $images = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $data[ DB::TABLE_GOODS__KEY_ITEM ] . DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, 'jpg');
-        if ($images[ 0 ] == '') {
+        $itemName = $data[DB::TABLE_GOODS__NAME];
+        $images = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $data[DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, 'jpg');
+        if ($images[0] == '') {
             $itemImagePath = FileUtils::getCapImage(Labels::CAP_IMAGE_FOR_CLOTHING);
         } else {
-            $itemImagePath = $images[ 0 ];
+            $itemImagePath = $images[0];
         }
         $singleItemView = new Div();
         $singleItemView->addStyleClasses(["main_page_item_sub_single"]);
         $imgView = new Img();
         $noteView = null;
         $imgView->addAttribute("src", $itemImagePath);
-        if ($data[ DB::TABLE_GOODS__GOD_TYPE ] == "HARD") {
-            $singleItemView->addStyleClass("cursor_pointer");
-            $noteView = TagUtils::createNote($itemName, "");
-        } else {
-            $noteView = TagUtils::createNote($itemName, "");
-        }
+        $singleItemView->addStyleClass("cursor_pointer");
+        $noteView = TagUtils::createNote($itemName, "");
         $noteView->addStyleClasses(["f-15"]);
         $container->addChildList([$singleItemView, $noteView, Item::getItemButton($urlToItem)]);
         $singleItemView->addChild($imgView);
         return $mainDiv->addChild($container);
     }
 
-    private function renderGalleryItemWithMultipleItems($data) {
+    private function renderGalleryItemWithMultipleItems($data)
+    {
         $mainDiv = new Div();
         /*$mainDiv->addStyleClass("main_page_item");
         $mainDiv->addChild("<news-gallery></news-gallery>");*/
@@ -228,37 +168,40 @@ class MainPage extends APagesCreator {
         return $mainDiv;
     }
 
-    private function preRenderNewsItems() {
+    private function preRenderNewsItems()
+    {
         $mainDiv = new Div();
-       /* $mainDiv->addStyleClass("main_page_items_slideshow");
-        $head = new Div();
-        $head->addStyleClass("main_page_slogan_container news_slogan center_column");
-        $sloganContainer = new Div();
-        $slogan = new Div();
-        $slogan->addStyleClass("slogan news_slogan ");
-        $slogan->addChild("Новости");
+        /* $mainDiv->addStyleClass("main_page_items_slideshow");
+         $head = new Div();
+         $head->addStyleClass("main_page_slogan_container news_slogan center_column");
+         $sloganContainer = new Div();
+         $slogan = new Div();
+         $slogan->addStyleClass("slogan news_slogan ");
+         $slogan->addChild("Новости");
 
-        $leftEar = new Div();
-        $leftEar->addStyleClass("slogan_left_ear");
-        $rightEar = new Div();
-        $rightEar->addStyleClass("slogan_right_ear");
+         $leftEar = new Div();
+         $leftEar->addStyleClass("slogan_left_ear");
+         $rightEar = new Div();
+         $rightEar->addStyleClass("slogan_right_ear");
 
-        $head->addChildren($leftEar, $sloganContainer->addChildren($slogan), $rightEar);
-        $itemsBlock = new Div();
-        $items = new Div();
-        $itemsBlock->addStyleClass("news_items_block");
-        $itemsBlock->addChildren($items);
-        $items->addStyleClass("slide_show news_items");
-        $itemsFullSizeContainer = new Div();
-        $itemsFullSizeContainer->addStyleClass('news_items_container center_column');
-        $itemsFullSizeContainer->addChild("<news-component></news-component>");*/
+         $head->addChildren($leftEar, $sloganContainer->addChildren($slogan), $rightEar);
+         $itemsBlock = new Div();
+         $items = new Div();
+         $itemsBlock->addStyleClass("news_items_block");
+         $itemsBlock->addChildren($items);
+         $items->addStyleClass("slide_show news_items");
+         $itemsFullSizeContainer = new Div();
+         $itemsFullSizeContainer->addStyleClass('news_items_container center_column');
+         $itemsFullSizeContainer->addChild("<news-component></news-component>");*/
 
         $newsCount = 0;
         //$itemsFullSizeContainer->addAttribute("style", "width: ".($newsCount * 1050)."px; height: 400px;");
-        return $mainDiv/*->addChildren($head, $itemsBlock->addChild($itemsFullSizeContainer))*/;
+        return $mainDiv/*->addChildren($head, $itemsBlock->addChild($itemsFullSizeContainer))*/
+            ;
     }
 
-    private function getNewsItem($dbRow) {
+    private function getNewsItem($dbRow)
+    {
         $mainDiv = new Div();
         $mainDiv->addStyleClasses(["news_item", "main_page_item"]);
         $newsItemSubContainer = new Div();
@@ -285,7 +228,8 @@ class MainPage extends APagesCreator {
         return $mainDiv;
     }
 
-    private function renderPriceDownloadItems() {
+    private function renderPriceDownloadItems()
+    {
         $mainDiv = new Div();
         $mainDiv->addStyleClasses(["w-25p", "price_download_container", "blackout"]);
         $button = new Div();
@@ -297,7 +241,8 @@ class MainPage extends APagesCreator {
         return $mainDiv;
     }
 
-    private function getStyledTextList($textList, $styles) {
+    private function getStyledTextList($textList, $styles)
+    {
         $mainDiv = new Div();
         $styleIndex = 0;
         for ($textIndex = 0; $textIndex < count($textList); $textIndex++) {

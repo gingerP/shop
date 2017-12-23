@@ -30,7 +30,7 @@ abstract class DBType {
     }
 
     public function getResponseSize() {    
-        return !$this->response ? 0 : mysqli_num_rows($this->response);
+        return $this->responseSize;
     }
 
     public function executeRequest($whereParamKey, $whereParamValue, $order, $orderRule = 'asc') {
@@ -140,7 +140,7 @@ abstract class DBType {
     }
 
     public function update($id, $valuesAssoc) {
-        if ($id != null &&  $id != '') {
+        if ($id != null && $id != '') {
             $this->request = "UPDATE ".$this->getTableName()." SET ";
             $requestParams = [];
             foreach($valuesAssoc as $key => $value) {
@@ -153,7 +153,15 @@ abstract class DBType {
             Log::db("DBConnection.update REQUEST: ".$this->request);
             return $id;
         } else {
-            $this->request = "INSERT INTO ".$this->getTableName()."(".join(array_keys($valuesAssoc), ",").") VALUES ('".join(array_values($valuesAssoc), "','")."');";
+            $this->initConnection();
+            $columns = [];
+            $values = [];
+            $link = $this->connection->getLink();
+            foreach($valuesAssoc as $key => $value) {
+                array_push($columns, mysqli_real_escape_string($link, $key));
+                array_push($values, mysqli_real_escape_string($link, $value));
+            }
+            $this->request = "INSERT INTO ".$this->getTableName()."(".join($columns, ",").") VALUES ('".join($values, "','")."');";
             $this->execute($this->request);
             $id_ = $this->connection->insertId;
             Log::db("DBConnection.update REQUEST: ".$this->request." RESPONSE: ".$id_);
@@ -179,10 +187,23 @@ abstract class DBType {
         return true;
     }
 
+    public function initConnection() {
+        if ($this->connection == null) {
+            $this->connection = new DBConnection();
+            $this->connection = $this->connection->init();
+            return $this->connection;
+        }
+        return $this->connection;
+    }
+
     protected function execute($sqlCommand) {
         $this->connection = $this->connection == null ? new DBConnection() : $this->connection;
         $this->response = $this->connection->execute($sqlCommand);
-        $this->responseSize = $this->getResponseSize();
+        if (is_bool($this->response)) {
+            $this->responseSize = 0;
+        } else {
+            $this->responseSize = mysqli_num_rows($this->response);
+        }
         return $this->response;
     }
 

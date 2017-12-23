@@ -3,19 +3,34 @@ var grunt = require('grunt');
 require('load-grunt-tasks')(grunt);
 grunt.initConfig({
     less: {
-        dev: {
+        site: {
             options: {
                 compress: true
             },
             files: {
-                'dist/style.css': 'src/front/less/style.less'
+                'dist/style.css': 'src/front/less/site/index.less'
+            }
+        },
+        admin: {
+            options: {
+                compress: true
+            },
+            files: {
+                'dist/admin-style.css': 'src/front/less/admin/index.less'
             }
         }
     },
     watch: {
-        less: {
-            files: ['src/front/less/**/*.less'],
-            tasks: ['less'],
+        site: {
+            files: ['src/front/less/site/**/*.less'],
+            tasks: ['less:site'],
+            options: {
+                spawn: false
+            }
+        },
+        admin: {
+            files: ['src/front/less/admin/**/*.less'],
+            tasks: ['less:admin'],
             options: {
                 spawn: false
             }
@@ -42,6 +57,7 @@ grunt.initConfig({
                     'src/front/js/components/search-input/search-input.js',
                     'src/front/js/components/common.factory.js',
                     'src/front/js/components/components.module.js',
+                    'src/front/js/components/email-form/email-form.component.js',
                     'src/front/js/components/news/components/news.component.js',
                     'src/front/js/components/news.gallery/components/news.gallery.component.js',
                     'src/front/js/components/vCore*.js',

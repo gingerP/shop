@@ -1,0 +1,24 @@
+.dhxform {
+  &_control {
+    input[type=text],
+    textarea {
+      box-sizing: border-box;
+      border-left-width: 1px !important;
+      border-left-style: dotted !important;
+      border-top-style: dotted !important;
+      border-right-style: dotted !important;
+      border-right-width: 1px !important;
+      border-top-width: 1px !important;
+    }
+  }
+  &_label {
+    font-weight: bold;
+  }
+  &_obj_material {
+    input[readonly="true"].dhxform_textarea {
+      color: #414141;
+      background-color: #f7f7f7;
+      font-weight: bold;
+    }
+  }
+}

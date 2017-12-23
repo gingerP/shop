@@ -1,7 +1,7 @@
 <?php
 
 class Constants {
-    const SESSION_LIFE_TIME = 1000;
+    const SESSION_LIFE_TIME = 60 * 20; //10 min
     const SESSION_ID_LIFETIME = 1;
     const SESSION_LAST_ACTIVITY = "SESSION_LAST_ACTIVITY";
     const SESSION_START_TIME = "SESSION_START_TIME";

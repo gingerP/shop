@@ -175,6 +175,12 @@ class Utils {
         return preg_replace('/[^\;\:\-\=\|\,\.\_\@\%\-A-Za-zА-Яа-я0-9 ]/u', '', addslashes($string)); // Removes special chars.
     }
 
+    public static function isHomeNaked($url) {
+        $urlPostfix = parse_url($url, PHP_URL_PATH);
+        $urlQuery = parse_url($url, PHP_URL_QUERY);
+        return ($urlPostfix == '/' || $urlPostfix == '') && $urlQuery == '';
+    }
+
     public static function getFromGET($key) {
         if (array_key_exists($key, $_GET)) {
             if (is_array($_GET[$key])) {
@@ -197,23 +203,45 @@ class Utils {
         return $default;
     }
 
-    public static function getFromPOST($key) {
-        if (array_key_exists($key, $_POST)) {
-            if (is_array($_POST[$key])) {
-                return self::cleanArrayWithSpecialChars($_POST[$key]);
-            } else if (is_string($_POST[$key])){
-                return self::cleanWithSpecialChars(urldecode($_POST[$key]));
+    public static function getPostSource() {
+        if (strpos($_SERVER['CONTENT_TYPE'], 'application/json') === 0) {
+            if (!array_key_exists('POST_JSON', $GLOBALS)) {
+                $GLOBALS['POST_JSON'] =json_decode(file_get_contents('php://input'), true);
+            }
+            return $GLOBALS['POST_JSON'];
+        }
+        return $_POST;
+    }
+
+    public static function getFromPOST($key, $shouldEscape = true) {
+        $data = self::getPostSource();
+        if (array_key_exists($key, $data)) {
+            if (!$shouldEscape) {
+                return $data[$key];
+            }
+            if (is_array($data[$key])) {
+                return self::cleanArrayWithSpecialChars($data[$key]);
+            } else if (is_string($data[$key])){
+                return self::cleanWithSpecialChars(urldecode($data[$key]));
+            } else {
+                return $data[$key];
             }
         }
         return null;
     }
 
-    public static function getFromPOSTWithDefault($key, $default) {
-        if (array_key_exists($key, $_POST)) {
-            if (is_array($_POST[$key])) {
-                return self::cleanArrayWithSpecialChars($_POST[$key]);
-            } else if (is_string($_POST[$key])){
-                return self::cleanWithSpecialChars(urldecode($_POST[$key]));
+    public static function getFromPOSTWithDefault($key, $default, $shouldEscape = true) {
+        $data = $data = self::getPostSource();
+        if (array_key_exists($key, $data)) {
+            if (!$shouldEscape) {
+                return $data[$key];
+            }
+            if (is_array($data[$key])) {
+                return self::cleanArrayWithSpecialChars($data[$key]);
+            } else if (is_string($data[$key])){
+                return self::cleanWithSpecialChars(urldecode($data[$key]));
+            } else {
+                return $data[$key];
             }
         }
         return $default;
@@ -339,5 +367,7 @@ class Utils {
         return $result;
     }
 
-
+    public static function normalizeAbsoluteImagePath($imagePath) {
+        return $imagePath;
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 include_once("src/back/import/import");
+include_once("src/back/import/errors");
+
 class FileUtils {
     private static $tmpDir = '';
     private static $tmpDirAge = 0;
@@ -146,6 +148,13 @@ class FileUtils {
             self::$bookletImageDirAge = time();
         }
         return self::$bookletImageDir;
+    }
+
+    public static function rename($oldPath, $newPath) {
+        if (!rename($oldPath, $newPath)) {
+            $error = error_get_last();
+            throw new InternalError($GLOBALS['AU_MESSAGES']['rename_failed_error']." ".$error['message']);
+        }
     }
 
 }

@@ -1,23 +1,27 @@
 <?php
 
-namespace errors;
-
-
-class BaseError extends \Error
+class BaseError extends Exception
 {
-    private $errorMessage = '';
-    protected $code;
+    public $message = '';
+    public $status;
     private $stack = '';
 
-    public function __construct($message, $code) {
-        $this->errorMessage = $message;
+    public function __construct($message, $httpStatus) {
+        $this->message = $message;
         if ($message instanceof Error) {
-            $this->errorMessage = $message->getMessage();
+            $this->message = $message->getMessage();
         } else if ($message instanceof Exception) {
-            $this->errorMessage = $message->getMessage();
+            $this->message = $message->getMessage();
             $this->stack = $message->getTraceAsString();
         }
-        $this->code = $code;
+        $this->status = $httpStatus;
+    }
+
+    public function toJson() {
+        return [
+            'message' => $this->message,
+            'code' => $this->status
+        ];
     }
 
 }

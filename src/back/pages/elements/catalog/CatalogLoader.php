@@ -44,7 +44,7 @@ class CatalogLoader {
             $goods->getUserSortedForMenu($keys, $limitBegin, $limitEnd);
         } else {
             $str = implode('|', $keys);
-            $goods->executeRequestRegExpWithLimit(DB::TABLE_NAV_KEY__KEY_ITEM, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+            $goods->executeRequestRegExpWithLimit(DB::TABLE_GOODS__CATEGORY, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
         }
         $this->data = $goods->getResponse();
         $this->dataCount = $goods->getResponseSize();

@@ -3,7 +3,7 @@ include_once("src/back/import/import");
 
 class Item {
 
-    public static function getMetroItemView($name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName) {
+    public static function getMetroItemView($name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $trimName) {
         $previewsColsNum = 2;
         $previewsNum = 0;
         $blackOut = new Div();
@@ -39,7 +39,7 @@ class Item {
                 [
                     "itemprop" => "image",
                     TagLabels::ON_CLICK => "openSimpleImg(arguments[0])",
-                    "src" => "/".addslashes($images[$imgIndex]),
+                    "src" => "/".addslashes(Utils::normalizeAbsoluteImagePath($images[$imgIndex])),
                     "alt" => $name
                 ]);
             $imgView->addStyleClass($imgIndex > 0? "simple_item_image_half": "simple_item_image");
@@ -155,7 +155,7 @@ class Item {
         return [$blackOut, []];
     }
 
-    public static function getCompactItemView($name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement) {
+    public static function getCompactItemView($name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $trimName, $isHighLightElement) {
         $blackOut = new Div();
         $blackOut->addStyleClasses(["blackout", "catalog_item_button_container"]);
         $blackOut->addAttributes([
@@ -186,19 +186,15 @@ class Item {
             $index++;
         }
 
-            $url = URLBuilder::getCatalogLinkForSingleItem($itemId, $pageNumber, $num, array(
-                    UrlParameters::KEY => $key,
-                    UrlParameters::SEARCH_VALUE => $valueToSearch
-                )
-            );
-            $mainDiv->addStyleClass("cursor_pointer");
-            $link = TagUtils::createNote($trimName, "");
-            $blackOut->addChild($link);
-            $blackOut->addChild(self::getItemButton($url));
-
-
-
-
+        $url = URLBuilder::getCatalogLinkForSingleItem($itemId, $pageNumber, $num, array(
+                UrlParameters::KEY => $key,
+                UrlParameters::SEARCH_VALUE => $valueToSearch
+            )
+        );
+        $mainDiv->addStyleClass("cursor_pointer");
+        $link = TagUtils::createNote($trimName, "");
+        $blackOut->addChild($link);
+        $blackOut->addChild(self::getItemButton($url));
         return [$blackOut, []];
     }
 
@@ -208,5 +204,12 @@ class Item {
         $button->addChild("подробнее");
         $button->addAttribute("href", $url);
         return $button;
+    }
+
+    private static function normalizeImagePath($imagePath) {
+        if (strpos($imagePath, AU_ROOT) == 0) {
+            return substr($imagePath, strlen(AU_ROOT));
+        }
+        return $imagePath;
     }
 }

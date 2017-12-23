@@ -43,10 +43,11 @@ class AuthManager {
 
     public static function makeAuth() {
         $result = false;
-        if (array_key_exists(Constants::LOGIN_USER, $_POST) &&
-            array_key_exists(Constants::LOGIN_PASSWORD, $_POST)) {
-            $userName = $_POST[Constants::LOGIN_USER];
-            $passwd = $_POST[Constants::LOGIN_PASSWORD];
+        $POST = Utils::getPostSource();
+        if (array_key_exists(Constants::LOGIN_USER, $POST) &&
+            array_key_exists(Constants::LOGIN_PASSWORD, $POST)) {
+            $userName = Utils::getFromPOST(Constants::LOGIN_USER, false);
+            $passwd = Utils::getFromPOST(Constants::LOGIN_PASSWORD, false);
             $isUserExist = self::checkUserPasswd($userName, $passwd);
             if ($isUserExist) {
                 $_SESSION[Constants::LOGIN_USER]= $userName;

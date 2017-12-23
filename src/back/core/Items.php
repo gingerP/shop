@@ -58,9 +58,7 @@ class Items {
                         $num,
                         $key,
                         $valueToSearch,
-                        $row['god_type'],
-                        Utils::formatClotheTitle($row["name"]),
-                        $highLightId == $row["key_item"]
+                        Utils::formatClotheTitle($row["name"])
                     );
                     $item = $info[0];
                     $itemInfo = $info[1];

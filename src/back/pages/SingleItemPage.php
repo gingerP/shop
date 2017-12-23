@@ -7,9 +7,9 @@ const PREVIEW_IMAGE_FULL_WIDTH = 150;
 class SingleItemPage extends APagesCreator
 {
 
-    public function SingleItemPage()
+    public function __construct()
     {
-        $this->APagesCreator();
+        parent::__construct();
         $this->setPageCode("single_item_page");
         $this->setIsStatusBarVisible(true);
         $this->setIsTreeVisible(true);
@@ -170,7 +170,7 @@ class SingleItemPage extends APagesCreator
             $imageContainer = new Div();
             $imageContainer->addStyleClasses(["blackout", "image_preview"]);
             $img = new Img();
-            $img->addAttribute("src", $image);
+            $img->addAttribute("src", Utils::normalizeAbsoluteImagePath($image));
             $overviewImages->addChild($imageContainer->addChild($img));
         }
         if (count($images) == 0) {
@@ -229,5 +229,4 @@ class SingleItemPage extends APagesCreator
         $itemDescription->addChild($description);
         return $mainTag->addChildList([$itemTitle, $itemDescription]);
     }
-
 }

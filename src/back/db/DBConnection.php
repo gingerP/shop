@@ -29,7 +29,7 @@ class DBConnection
         if (!$this->link) {
             throw new Exception(mysqli_connect_errno().'. '.mysqli_connect_error());
         }
-        mysqli_set_charset($this->link, 'utf8');
+        mysqli_set_charset($this->link, 'utf8mb4');
     }
 
     public function execute($sqlCommand)
@@ -38,15 +38,12 @@ class DBConnection
         $this->response = mysqli_query($this->link, $sqlCommand);
         $this->insertId = mysqli_insert_id($this->link);
         $this->affectedRows = mysqli_affected_rows($this->link);
-        if (false === $this->response) {
-            echo mysqli_error($this->link);
-        }
         return $this->response;
     }
 
     public function init()
     {
-        $this->getInstanceApache2();
+        $this->getInstance();
         return $this;
     }
 

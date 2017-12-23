@@ -49,11 +49,11 @@ class SearchService
         if ($products) {
         while ($product = mysqli_fetch_array($products)) {
             $code = $product[DB::TABLE_GOODS__KEY_ITEM];
-            $fileUrl = FileUtils::getFirstFileInDirectoryByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, 'jpg');
+            $iconPath = FileUtils::getFirstFileInDirectoryByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, 'jpg');
             array_push($normalized, [
                 'name' => $product[DB::TABLE_GOODS__NAME],
                 'url' => URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM], null, null, []),
-                'icon' => $fileUrl,
+                'icon' => Utils::normalizeAbsoluteImagePath($iconPath),
             ]);
         }
         }

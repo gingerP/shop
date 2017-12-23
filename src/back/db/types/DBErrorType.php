@@ -8,10 +8,10 @@
 
 include_once("src/back/import/db");
 
-class DBNewsType extends DBType {
-    protected $tableName = DB::TABLE_NEWS___NAME;
+class DBErrorType extends DBType {
+    protected $tableName = DB::TABLE_ERRORS___NAME;
 
-    public function DBNewsType() {
+    public function __construct() {
         $this->DBType();
         return $this;
     }
@@ -25,10 +25,33 @@ class DBNewsType extends DBType {
     }
 
     protected function getIndexColumn() {
-        return DB::TABLE_NEWS__ID;
+        return DB::TABLE_ERRORS__ID;
     }
 
     protected function getOrder() {
-        return DB::TABLE_NEWS___ORDER;
+        return DB::TABLE_ERRORS___ORDER;
     }
+
+    public function createException($error) {
+        if (is_array($error)) {
+            $this->update(null,
+                [
+                    DB::TABLE_ERRORS__NAME => $error['name'],
+                    DB::TABLE_ERRORS__STACK => $error['stack'],
+                    DB::TABLE_ERRORS__DATE => $error['date'],
+                    DB::TABLE_ERRORS__MESSAGE => $error['message']
+                ]
+            );
+            return;
+        }
+        $this->update(null,
+            [
+                DB::TABLE_ERRORS__NAME => get_class($error),
+                DB::TABLE_ERRORS__STACK => $error->getTraceAsString(),
+                DB::TABLE_ERRORS__DATE => date("Y-m-d H:i:s"),
+                DB::TABLE_ERRORS__MESSAGE => $error->getMessage()
+            ]
+        );
+    }
+
 }

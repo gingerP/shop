@@ -1,0 +1,325 @@
+2017-12-24 00:02:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:02:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:02:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:06:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:06:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:06:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:07:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:07:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:07:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:07:56 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:07:56 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:07:56 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:08:16 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:08:16 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:08:16 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:08:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:08:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:08:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:09:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:09:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:09:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:14:03 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:14:03 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:14:03 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:15:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:15:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:15:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:16:45 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:16:45 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:16:45 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:17:00 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:17:00 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:17:00 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Exception','#0 /home/vinni/workspace/augustova/src/back/controllers/controller-api.php(105): EmailService::sendFeedbackEmail(\'wwwwwwwwwwwwwww...\', \'wwwwwwwwwwwwww\', \'wwwwwwwww\', \'CC038\')\n#1 /home/vinni/workspace/augustova/index.php(9): include_once(\'/home/vinni/wor...\')\n#2 {main}','2017-12-24 00:17:00','Empty system email'); RESPONSE: 112
+2017-12-24 00:17:15 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:17:15 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:17:15 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Exception','#0 /home/vinni/workspace/augustova/src/back/controllers/controller-api.php(105): EmailService::sendFeedbackEmail(\'wwwwwwwwwwwwwww...\', \'wwwwwwwwwwwwww\', \'wwwwwwwww\', \'CC038\')\n#1 /home/vinni/workspace/augustova/index.php(9): include_once(\'/home/vinni/wor...\')\n#2 {main}','2017-12-24 00:17:15','Empty system email.'); RESPONSE: 113
+2017-12-24 00:18:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:18:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:18:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3bd1fd03819a8dd9189b76d5009ebc98' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:41 INFO DBConnection.getList REQUEST: SELECT * FROM nav_key RESPONSE_COUNT: 8
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:19:41 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:19:41 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:19:41 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:19:41 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:19:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:19:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:19:42 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:19:42 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:19:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:19:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:19:42 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:19:42 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:19:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:19:46 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:19:46 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:19:46 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:21:01 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:21:01 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:21:01 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:23:31 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:23:31 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:23:31 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:25:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:25:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:25:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:26:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:26:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:26:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:32:27 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3bd1fd03819a8dd9189b76d5009ebc98' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:32:28 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:34:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3bd1fd03819a8dd9189b76d5009ebc98' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:34:41 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Error','#0 /home/vinni/workspace/augustova/src/back/controllers/controller.php(39): SingleItemPage->SingleItemPage()\n#1 /home/vinni/workspace/augustova/src/back/controllers/controller.php(64): getContent(\'SingleItemPage\')\n#2 /home/vinni/workspace/augustova/index.php(6): include_once(\'/home/vinni/wor...\')\n#3 {main}','2017-12-24 00:34:41','Call to undefined method SingleItemPage::APagesCreator()'); RESPONSE: 114
+2017-12-24 00:34:41 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:34:41 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Error','#0 /home/vinni/workspace/augustova/src/back/controllers/controller.php(39): MainPage->MainPage()\n#1 /home/vinni/workspace/augustova/src/back/controllers/controller.php(74): getContent(\'MainPage\')\n#2 /home/vinni/workspace/augustova/index.php(6): include_once(\'/home/vinni/wor...\')\n#3 {main}','2017-12-24 00:34:41','Call to undefined method MainPage::APagesCreator()'); RESPONSE: 115
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3bd1fd03819a8dd9189b76d5009ebc98' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:37:48 INFO DBConnection.getList REQUEST: SELECT * FROM nav_key RESPONSE_COUNT: 8
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:37:48 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Error','#0 /home/vinni/workspace/augustova/src/back/controllers/controller.php(39): MainPage->MainPage()\n#1 /home/vinni/workspace/augustova/src/back/controllers/controller.php(74): getContent(\'MainPage\')\n#2 /home/vinni/workspace/augustova/index.php(6): include_once(\'/home/vinni/wor...\')\n#3 {main}','2017-12-24 00:37:48','Call to undefined method MainPage::APagesCreator()'); RESPONSE: 116
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:37:48 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Error','#0 /home/vinni/workspace/augustova/src/back/controllers/controller.php(39): MainPage->MainPage()\n#1 /home/vinni/workspace/augustova/src/back/controllers/controller.php(74): getContent(\'MainPage\')\n#2 /home/vinni/workspace/augustova/index.php(6): include_once(\'/home/vinni/wor...\')\n#3 {main}','2017-12-24 00:37:48','Call to undefined method MainPage::APagesCreator()'); RESPONSE: 117
+2017-12-24 00:37:48 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:37:48 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Error','#0 /home/vinni/workspace/augustova/src/back/controllers/controller.php(39): MainPage->MainPage()\n#1 /home/vinni/workspace/augustova/src/back/controllers/controller.php(74): getContent(\'MainPage\')\n#2 /home/vinni/workspace/augustova/index.php(6): include_once(\'/home/vinni/wor...\')\n#3 {main}','2017-12-24 00:37:48','Call to undefined method MainPage::APagesCreator()'); RESPONSE: 118
+2017-12-24 00:37:50 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:37:50 INFO DBConnection.update REQUEST: INSERT INTO errors(name,stack,date,message) VALUES ('Error','#0 /home/vinni/workspace/augustova/src/back/controllers/controller.php(39): MainPage->MainPage()\n#1 /home/vinni/workspace/augustova/src/back/controllers/controller.php(74): getContent(\'MainPage\')\n#2 /home/vinni/workspace/augustova/index.php(6): include_once(\'/home/vinni/wor...\')\n#3 {main}','2017-12-24 00:37:50','Call to undefined method MainPage::APagesCreator()'); RESPONSE: 119
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3bd1fd03819a8dd9189b76d5009ebc98' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:39:14 INFO DBConnection.getList REQUEST: SELECT * FROM nav_key RESPONSE_COUNT: 8
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM (SELECT * FROM goods) AS t  WHERE t.key_item='CC038' ORDER BY t.name ASC LIMIT 0,5000
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:39:14 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:39:14 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:39:14 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:39:14 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:39:14 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:39:15 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:39:15 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:39:15 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:39:15 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:39:15 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3f1fd2d6d67696ecdb414c1faec689d1' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:06 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:06 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:06 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:06 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:07 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM news AS t  ORDER BY t.creation_time DESC LIMIT 0,100
+2017-12-24 00:40:07 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:07 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:07 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:07 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:07 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='add26f8a1924be602d4e87a36c41e425' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:08 INFO DBConnection.getList REQUEST: SELECT * FROM nav_key RESPONSE_COUNT: 8
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:08 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,10
+2017-12-24 00:40:08 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:08 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:08 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:08 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:08 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:08 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:09 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='9114883de962934bcb83d51c2f6f2dd7' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:09 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:10 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:10 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:10 INFO DBConnection.getList REQUEST: SELECT * FROM address WHERE active=true ORDER BY address_id RESPONSE_COUNT: 5
+2017-12-24 00:40:10 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='CONTACTS_GROUPS' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:11 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:11 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='60de28617171ec81e62677cf2568df59' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:11 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:11 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:11 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:12 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:12 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:12 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:12 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:12 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3f1fd2d6d67696ecdb414c1faec689d1' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:17 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:17 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:17 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:17 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM news AS t  ORDER BY t.creation_time DESC LIMIT 0,100
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:17 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:17 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:17 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='add26f8a1924be602d4e87a36c41e425' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:18 INFO DBConnection.getList REQUEST: SELECT * FROM nav_key RESPONSE_COUNT: 8
+2017-12-24 00:40:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:18 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,10
+2017-12-24 00:40:18 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:18 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:19 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:19 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:19 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:19 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:19 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:19 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:19 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:19 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:19 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:19 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:40:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:40:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:40:21 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:40:21 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:40:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:51 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='add26f8a1924be602d4e87a36c41e425' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:43:51 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:51 INFO DBConnection.getList REQUEST: SELECT * FROM nav_key RESPONSE_COUNT: 8
+2017-12-24 00:43:51 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:51 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:43:51 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,10
+2017-12-24 00:43:51 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:43:51 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:43:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:43:52 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:43:52 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:43:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:43:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:43:52 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:43:52 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:43:52 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:54 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:43:54 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:43:54 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:43:54 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:43:54 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:43:55 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='FEEDBACK_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:43:55 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='SYSTEM_EMAIL' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:45:20 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='60de28617171ec81e62677cf2568df59' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:45:20 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:45:20 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:45:20 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:45:20 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:45:20 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:45:20 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:45:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:45:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:45:21 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:45:21 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:45:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:45:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='9114883de962934bcb83d51c2f6f2dd7' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:45:21 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:45:22 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:45:22 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:45:22 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:45:22 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:45:22 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:45:22 INFO DBConnection.getList REQUEST: SELECT * FROM address WHERE active=true ORDER BY address_id RESPONSE_COUNT: 5
+2017-12-24 00:45:22 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='CONTACTS_GROUPS' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:45:23 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:45:23 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:45:23 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:45:23 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:45:23 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:46:40 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='9114883de962934bcb83d51c2f6f2dd7' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:46:40 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:46:40 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:46:40 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:46:40 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:46:40 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:46:40 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:46:40 INFO DBConnection.getList REQUEST: SELECT * FROM address WHERE active=true ORDER BY address_id RESPONSE_COUNT: 5
+2017-12-24 00:46:40 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='CONTACTS_GROUPS' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:46:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:46:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:46:42 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:46:42 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:46:42 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:04 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='9114883de962934bcb83d51c2f6f2dd7' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:04 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:04 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:04 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:04 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:47:04 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:47:04 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:05 INFO DBConnection.getList REQUEST: SELECT * FROM address WHERE active=true ORDER BY address_id RESPONSE_COUNT: 5
+2017-12-24 00:47:05 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='CONTACTS_GROUPS' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:06 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:47:06 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:47:06 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:35 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='3f1fd2d6d67696ecdb414c1faec689d1' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:35 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:35 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:47:35 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:47:35 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:36 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:47:36 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM news AS t  ORDER BY t.creation_time DESC LIMIT 0,100
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:36 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:47:36 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:47:36 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000
+2017-12-24 00:47:38 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM pages_cache AS t  WHERE t.hash='6666cd76f96956469e7be39d750cc7d9' ORDER BY t.hash asc LIMIT 0,1
+2017-12-24 00:47:38 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM preferences AS t  WHERE t.key='USE_ADMIN_ORDER' ORDER BY t.key ASC LIMIT 0,1
+2017-12-24 00:47:38 INFO DBConnection.getUserSortedForCommon REQUEST: SELECT * FROM goods AS t  left join user_order uo on t.id = uo.good_id  ORDER BY uo.good_index ASC, t.id ASC  LIMIT 0,15
+2017-12-24 00:47:38 INFO DBConnection.getTotalCount: SELECT COUNT(t.id) FROM (SELECT * FROM goods) AS t TOTALCOUNT: 104
+2017-12-24 00:47:38 INFO DBConnection.executeRequestWithLimit REQUEST: SELECT t.* FROM nav_key AS t  ORDER BY t.id ASC LIMIT 0,5000

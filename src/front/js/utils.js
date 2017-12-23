@@ -164,18 +164,6 @@ var U = {
     }
 }
 
-var templates = {
-    replace: function(template, replacement) {
-        var result = template;
-        if (template && replacement) {
-            for (var key in replacement) {
-                result = result.replace('{' + key + '}', replacement[key]);
-            }
-        }
-        return result;
-    }
-}
-
 function initHandlebarsExtensions() {
     Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
         if (arguments.length < 3) {
@@ -191,7 +179,7 @@ function initHandlebarsExtensions() {
             '<=':       function(l,r) { return l <= r; },
             '>=':       function(l,r) { return l >= r; },
             'typeof':   function(l,r) { return typeof l == r; }
-        }
+        };
         if (!operators[operator]) {
             throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
         }

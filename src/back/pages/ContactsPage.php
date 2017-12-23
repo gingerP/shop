@@ -2,8 +2,8 @@
 
 class ContactsPage extends APagesCreator{
 
-    public function ContactsPage() {
-        $this->APagesCreator();
+    public function __construct() {
+        parent::__construct();
         $this->setPageCode("contacts_page");
         $this->setIsTreeVisible(false);
         $this->setIsStatusBarVisible(true);

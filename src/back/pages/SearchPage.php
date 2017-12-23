@@ -5,8 +5,8 @@ include_once("src/back/import/page");
 class SearchPage extends APagesCreator {
     private $search_value = "";
 
-    public function SearchPage() {
-        $this->APagesCreator();
+    public function __construct() {
+        parent::__construct();
         $this->setPageCode("search_page");
         $this->setIsStatusBarVisible(true);
         $this->setIsViewModeBlockVisible(true);

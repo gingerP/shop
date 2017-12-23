@@ -109,7 +109,7 @@ class DBGoodsType extends DBType{
         $regExp = "^(".implode('|', $goodKeys)."){1}";
         $this->request = "SELECT * FROM ".$this->getTableName()." AS t".
         $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
-        $this->request = $this->request." WHERE LOWER(t.".DB::TABLE_GOODS__KEY_ITEM.") REGEXP '$regExp'";
+        $this->request = $this->request." WHERE LOWER(t.".DB::TABLE_GOODS__CATEGORY.") REGEXP '$regExp'";
         $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->responseSize = mysqli_num_rows($this->execute($this->request));
@@ -140,6 +140,15 @@ class DBGoodsType extends DBType{
     public function getCode($id) {
         $row = $this->get($id);
         return $row[DB::TABLE_GOODS__KEY_ITEM];
+    }
+
+    public function getByCode($keyItem) {
+        $response = $this->executeRequest(DB::TABLE_GOODS__KEY_ITEM, $keyItem, DB::TABLE_GOODS___ORDER, DB::ASC);
+        $row = mysqli_fetch_array($response);
+        if ($row) {
+            return $row;
+        }
+        return null;
     }
 
     protected function getTableName() {

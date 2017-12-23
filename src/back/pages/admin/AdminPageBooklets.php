@@ -2,9 +2,9 @@
 
 include_once("src/back/import/db");
 
-class AdminPage_Booklet extends AdminPagesCreator {
+class AdminPageBooklets extends AdminPagesCreator {
 
-    public function AdminPage_Booklet() {}
+    public function AdminPageBooklets() {}
 
     protected function getHeadContent() {
         return [

@@ -34,11 +34,9 @@ class DB {
     const TABLE_GOODS__ID = 'id';
     const TABLE_GOODS__KEY_ITEM = 'key_item';
     const TABLE_GOODS__NAME = 'name';
-    const TABLE_GOODS__PERSON = 'person';
-    const TABLE_GOODS__INDIVIDUAL = 'individual';
+    const TABLE_GOODS__CATEGORY = 'category';
     const TABLE_GOODS__DESCRIPTION = 'description';
     const TABLE_GOODS__IMAGE_PATH = 'image_path';
-    const TABLE_GOODS__GOD_TYPE = 'god_type';
 
     const TABLE_ADDRESS___NAME = 'address';
     const TABLE_ADDRESS__ID = 'address_id';
@@ -97,6 +95,14 @@ class DB {
     const TABLE_USERS__NAME = 'name';
     const TABLE_USERS__PASSWORD = 'password';
 
+    const TABLE_ERRORS___NAME = 'errors';
+    const TABLE_ERRORS___ORDER = self::TABLE_ERRORS___NAME;
+    const TABLE_ERRORS__ID = 'id';
+    const TABLE_ERRORS__NAME = 'name';
+    const TABLE_ERRORS__MESSAGE = 'message';
+    const TABLE_ERRORS__STACK = 'stack';
+    const TABLE_ERRORS__DATE = 'date';
+
     const TABLE_NEWS___NAME = 'news';
     const TABLE_NEWS___ORDER = self::TABLE_NEWS__ID;
     const TABLE_NEWS__ID = 'news_id';
@@ -128,8 +134,7 @@ class DB {
     	self::TABLE_GOODS__KEY_ITEM => self::TABLE_GOODS__KEY_ITEM,
     	self::TABLE_GOODS__NAME => self::TABLE_GOODS__NAME,
     	self::TABLE_GOODS__DESCRIPTION => self::TABLE_GOODS__DESCRIPTION,
-    	self::TABLE_GOODS__IMAGE_PATH => self::TABLE_GOODS__IMAGE_PATH,
-    	self::TABLE_GOODS__GOD_TYPE => self::TABLE_GOODS__GOD_TYPE
+    	self::TABLE_GOODS__IMAGE_PATH => self::TABLE_GOODS__IMAGE_PATH
     ];
 
     const TABLE_NEWS__MAPPER = [

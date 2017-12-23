@@ -2,8 +2,7 @@
 
 include_once('src/back/import/admin_pages');
 
-class AdminPage_Prices extends AdminPagesCreator{
-    public function AdminPage_Prices() {}
+class AdminPagePrices extends AdminPagesCreator{
 
     protected function getHeadContent() {
         return [

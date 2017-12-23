@@ -1,8 +1,9 @@
 <?php
 include_once('src/back/import/db');
 include_once('src/back/import/import');
+include_once('src/back/import/errors');
 
-class GoodsService
+class ProductsService
 {
 
     public static function getGoods($id)
@@ -21,17 +22,13 @@ class GoodsService
             DB::TABLE_GOODS__NAME,
             DB::TABLE_GOODS__DESCRIPTION,
             DB::TABLE_GOODS__IMAGE_PATH,
-            DB::TABLE_GOODS__GOD_TYPE
+            DB::TABLE_GOODS__CATEGORY
         ];
-        $treeUtils = new TreeUtils();
-        $tree = $treeUtils->buildTreeByLeafs();
         while ($row = mysqli_fetch_array($response)) {
             $item = [];
             foreach ($resKeys as $key) {
                 $item[$key] = $row[$key];
             }
-            $keyItem = $item[DB::TABLE_GOODS__KEY_ITEM];
-            $item['_tree'] = self::getTreePath($treeUtils, $tree, $keyItem);
             array_push($ret, $item);
         }
         return $ret;
@@ -44,121 +41,181 @@ class GoodsService
         return self::clearTreePath($treeUtils->getTreePath($tree, $key));
     }
 
-    public static function updateGood($id, $values)
+    public static function validate_updateGood()
     {
-        if (is_array($values)) {
-            $goodsType = new DBGoodsType();
-            if (array_key_exists(DB::TABLE_GOODS__ID, $values)) {
-                unset($values[DB::TABLE_GOODS__ID]);
-            }
-            $pref = new DBPreferencesType();
-            $imagePath = $pref->getPreference(Constants::CATALOG_PATH);
-            $imagePath = $imagePath[DB::TABLE_PREFERENCES__VALUE];
-            $imagesCatalog = $values[DB::TABLE_GOODS__KEY_ITEM];
-            $isDirCreated = FileUtils::createDir($imagePath . $imagesCatalog);
-            return $goodsType->update($id, $values);
+        $id = Utils::getFromPOST('id');
+        $data = Utils::getFromPOST('data');
+        $isIdExists = array_key_exists('id', $data);
+        $isKeyItemExists = array_key_exists('key_item', $data);
+        if ($isIdExists && !ctype_digit($id)
+            || !array_key_exists('category', $data)
+            || $isIdExists && !$isKeyItemExists
+            || $isKeyItemExists && !$isIdExists
+        ) {
+            throw new BadRequestError('Invalid parameters.');
         }
-        return -1;
     }
 
-    public static function updateImages($id, $oldCode, $imagesFromFront)
+    /**
+     * @api
+     * @param $id
+     * @param $values
+     * @return []
+     */
+    public static function updateGood($id, $values)
     {
+        self::clearCache();
+
+        $goodsType = new DBGoodsType();
+        $isNew = !array_key_exists(DB::TABLE_GOODS__ID, $values);
+        if (array_key_exists(DB::TABLE_GOODS__ID, $values)) {
+            unset($values[DB::TABLE_GOODS__ID]);
+        }
+        if (!array_key_exists(DB::TABLE_GOODS__ID, $values)
+            && !array_key_exists(DB::TABLE_GOODS__KEY_ITEM, $values)
+        ) {
+            $values[DB::TABLE_GOODS__KEY_ITEM] =
+                ProductsService::getNextGoodCode($values[DB::TABLE_GOODS__CATEGORY]);
+        }
+        $pref = new DBPreferencesType();
+        $imagePath = $pref->getPreference(Constants::CATALOG_PATH);
+        $imagePath = $imagePath[DB::TABLE_PREFERENCES__VALUE];
+        $imagesCatalog = $values[DB::TABLE_GOODS__KEY_ITEM];
+        $isDirCreated = FileUtils::createDir($imagePath . $imagesCatalog);
+        $newId = $goodsType->update($id, $values);
+        return ProductsService::getGood($newId);
+    }
+
+    public static function validate_updateImages()
+    {
+        $id = Utils::getFromPOST('id');
+        $data = Utils::getFromPOST('data');
+        if (is_null($data)) {
+            $data = [];
+        }
+        if (is_null($id)) {
+            throw new BadRequestError('"id" field required.');
+        } else if (!is_integer($id)) {
+            throw new BadRequestError('"id" should be numeric.');
+        } else if (!is_array($data)) {
+            throw new BadRequestError('"data" should be array.');
+        }
+        foreach ($data as $image) {
+            if (!array_key_exists('index', $image)) {
+                throw new BadRequestError('"index" is required.');
+            } else if (!array_key_exists('new', $image)) {
+                throw new BadRequestError('"new" is required.');
+            } else if (!array_key_exists('image', $image)) {
+                throw new BadRequestError('"image" is required.');
+            } else if (count($image) !== 3) {
+                throw new BadRequestError('"data" item should contain only 3 keys.');
+            } else if (!is_bool($image['new'])) {
+                throw new BadRequestError('"new" should be boolean.');
+            } else if (!is_int($image['index'])) {
+                throw new BadRequestError('"index" should be numeric.');
+            }
+        }
+    }
+
+    public static function updateImages($id, $imagesFromFront)
+    {
+        self::clearCache();
+
         $imagesFromFront = $imagesFromFront == null ? [] : $imagesFromFront;
         if (is_array($imagesFromFront)) {
             $dbPref = new DBPreferencesType();
             $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
-            $mediumImageWatermarkName = $dbPref->getPreference(Constants::WATERMARK_MEDIUM_PATH)[DB::TABLE_PREFERENCES__VALUE];
-            $largeImageWatermarkName = $dbPref->getPreference(Constants::WATERMARK_LARGE_PATH)[DB::TABLE_PREFERENCES__VALUE];
             $goodsType = new DBGoodsType();
             $code = $goodsType->getCode($id);
 
-            $newCode = null;
-            if (!is_null($oldCode) && $code != $oldCode) {
-                $newCode = $code;
-                $code = $oldCode;
-            }
-
-            $imagesFromFileSystem = FileUtils::getFilesByPrefixByDescription(FileUtils::buildPath($catalogPath, $code), Constants::SMALL_IMAGE, "jpg");
+            $imagesFromFileSystem = FileUtils::getFilesByPrefixByDescription(FileUtils::buildPath( $catalogPath, $code), Constants::SMALL_IMAGE, "jpg");
             $imagesToDelete = array_merge($imagesFromFileSystem);
             uasort($imagesFromFront, function ($o1, $o2) {
                 return ($o1['index'] < $o2['index']) ? -1 : 1;
             });
-            $imagesToProcessing = self::prepareImagesToProcessing($imagesFromFront, $imagesFromFileSystem, $imagesToDelete);
-            self::removeImagesFilesBySamples(FileUtils::buildPath($catalogPath, $code), $imagesToDelete);
+            $imagesToProcessing = ProductsService::prepareImagesToProcessing($imagesFromFront, $imagesFromFileSystem, $imagesToDelete);
+            ProductsService::removeImagesFilesBySamples(FileUtils::buildPath( $catalogPath, $code), $imagesToDelete);
             //two steps of recreating files
             //step 1: rename old files to temp names (only files witch should be renamed)
             for ($imageIndex = 0; $imageIndex < count($imagesToProcessing); $imageIndex++) {
                 $imageData = $imagesToProcessing[$imageIndex];
-                if ($imageData['new'] == 'false') {
+                if ($imageData['new'] == false) {
                     $imageNumber = FileUtils::getCatalogImageNumber($imageData['oldImage']);
                     if ($imageNumber != null) {
-                        $smallImagePath = FileUtils::buildPath($catalogPath, $code, Constants::SMALL_IMAGE . $imageNumber . '.jpg');
-                        $smallImageTmpPath = FileUtils::buildPath($catalogPath, $code, Constants::SMALL_IMAGE . $imageData['tempName']);
-                        rename($smallImagePath, $smallImageTmpPath);
+                        $smallImagePath = FileUtils::buildPath( $catalogPath, $code, Constants::SMALL_IMAGE . $imageNumber . '.jpg');
+                        $smallImageTmpPath = FileUtils::buildPath( $catalogPath, $code, Constants::SMALL_IMAGE . $imageData['tempName']);
+                        FileUtils::rename($smallImagePath, $smallImageTmpPath);
 
-                        $mediumImagePath = FileUtils::buildPath($catalogPath, $code, Constants::MEDIUM_IMAGE . $imageNumber . '.jpg');
-                        $mediumImageTmpPath = FileUtils::buildPath($catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['tempName']);
-                        rename($mediumImagePath, $mediumImageTmpPath);
+                        $mediumImagePath = FileUtils::buildPath( $catalogPath, $code, Constants::MEDIUM_IMAGE . $imageNumber . '.jpg');
+                        $mediumImageTmpPath = FileUtils::buildPath( $catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['tempName']);
+                        FileUtils::rename($mediumImagePath, $mediumImageTmpPath);
 
-                        $largeImagePath = FileUtils::buildPath($catalogPath, $code, Constants::LARGE_IMAGE . $imageNumber . '.jpg');
-                        $largeImageTmpPath = FileUtils::buildPath($catalogPath, $code, Constants::LARGE_IMAGE . $imageData['tempName']);
-                        rename($largeImagePath, $largeImageTmpPath);
+                        $largeImagePath = FileUtils::buildPath( $catalogPath, $code, Constants::LARGE_IMAGE . $imageNumber . '.jpg');
+                        $largeImageTmpPath = FileUtils::buildPath( $catalogPath, $code, Constants::LARGE_IMAGE . $imageData['tempName']);
+                        FileUtils::rename($largeImagePath, $largeImageTmpPath);
                     }
                 }
             }
             //step 2: rename to real names (old files and new)
-
             for ($imageIndex = 0; $imageIndex < count($imagesToProcessing); $imageIndex++) {
                 $imageData = $imagesToProcessing[$imageIndex];
-                if ($imageData['new'] == 'false') {
+                if ($imageData['new'] == false) {
                     //if image ISN'T NEW
 
-                    $smallImageTmpPath = FileUtils::buildPath($catalogPath, $code, Constants::SMALL_IMAGE . $imageData['tempName']);
-                    $smallImageNewPath = FileUtils::buildPath($catalogPath, $code, Constants::SMALL_IMAGE . $imageData['newName'] . '.jpg');
-                    rename($smallImageTmpPath, $smallImageNewPath);
+                    $smallImageTmpPath = FileUtils::buildPath( $catalogPath, $code, Constants::SMALL_IMAGE . $imageData['tempName']);
+                    $smallImageNewPath = FileUtils::buildPath( $catalogPath, $code, Constants::SMALL_IMAGE . $imageData['newName'] . '.jpg');
+                    FileUtils::rename($smallImageTmpPath, $smallImageNewPath);
 
-                    $mediumImageTmpPath = FileUtils::buildPath($catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['tempName']);
-                    $mediumImageNewPath = FileUtils::buildPath($catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['newName'] . '.jpg');
-                    rename($mediumImageTmpPath, $mediumImageNewPath);
+                    $mediumImageTmpPath = FileUtils::buildPath( $catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['tempName']);
+                    $mediumImageNewPath = FileUtils::buildPath( $catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['newName'] . '.jpg');
+                    FileUtils::rename($mediumImageTmpPath, $mediumImageNewPath);
 
-                    $largeImageTmpPath = FileUtils::buildPath($catalogPath, $code, Constants::LARGE_IMAGE . $imageData['tempName']);
-                    $largeImageNewPath = FileUtils::buildPath($catalogPath, $code, Constants::LARGE_IMAGE . $imageData['newName'] . '.jpg');
-                    rename($largeImageTmpPath, $largeImageNewPath);
+                    $largeImageTmpPath = FileUtils::buildPath( $catalogPath, $code, Constants::LARGE_IMAGE . $imageData['tempName']);
+                    $largeImageNewPath = FileUtils::buildPath( $catalogPath, $code, Constants::LARGE_IMAGE . $imageData['newName'] . '.jpg');
+                    FileUtils::rename($largeImageTmpPath, $largeImageNewPath);
                 } else {
                     //if image IS NEW
-                    $data = str_replace('data:image/jpeg;base64,', '', $imageData['oldImage']);
+                    $imageStart = substr($imageData['oldImage'], 0, 15);
+                    if ($imageStart !== 'data:image/jpeg') {
+                        throw new ImageShouldBeJpegError();
+                    }
+                    $data = str_replace(
+                        'data:image/jpeg;base64',
+                        '', $imageData['oldImage']
+                    );
                     $data = str_replace(' ', '+', $data);
 
-                    $smallImageName = FileUtils::buildPath($catalogPath, $code, Constants::SMALL_IMAGE . $imageData['newName'] . '.jpg');
-                    if (file_put_contents($smallImageName, base64_decode($data)) == true) {
-                        $imageEditorS = new ImageEditor($smallImageName);
-                        $imageEditorS->resizeImage(Constants::SMALL_IMAGE_WIDTH, Constants::SMALL_IMAGE_HEIGHT);
-                        $imageEditorS->saveImage($smallImageName, 100);
-                    };
-
-                    $mediumImageName = FileUtils::buildPath($catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['newName'] . '.jpg');
-                    if (file_put_contents($mediumImageName, base64_decode($data)) == true) {
-                        $imageEditorS = new ImageEditor($mediumImageName);
-                        $imageEditorS->resizeImage(Constants::MEDIUM_IMAGE_WIDTH, Constants::MEDIUM_IMAGE_HEIGHT);
-                        $imageEditorS->applyWatermark($mediumImageWatermarkName);
-                        $imageEditorS->saveImage($mediumImageName, 100);
-                    };
-
-                    $largeImageName = FileUtils::buildPath($catalogPath, $code, Constants::LARGE_IMAGE . $imageData['newName'] . '.jpg');
-                    if (file_put_contents($largeImageName, base64_decode($data)) == true) {
-                        $imageEditorS = new ImageEditor($largeImageName);
-                        $imageEditorS->resizeImage(Constants::LARGE_IMAGE_WIDTH, Constants::LARGE_IMAGE_HEIGHT);
-                        $imageEditorS->applyWatermark($largeImageWatermarkName);
-                        $imageEditorS->saveImage($largeImageName, 100);
-                    };
+                    $smallImageName = FileUtils::buildPath( $catalogPath, $code, Constants::SMALL_IMAGE . $imageData['newName'] . '.jpg');
+                    self::saveImageFromBase64($smallImageName, $data,
+                        ['width' => Constants::SMALL_IMAGE_WIDTH, 'height' => Constants::SMALL_IMAGE_HEIGHT]
+                    );
+                    $mediumImageName = FileUtils::buildPath( $catalogPath, $code, Constants::MEDIUM_IMAGE . $imageData['newName'] . '.jpg');
+                    self::saveImageFromBase64($mediumImageName, $data,
+                        ['width' => Constants::MEDIUM_IMAGE_WIDTH, 'height' => Constants::MEDIUM_IMAGE_HEIGHT]
+                    );
+                    $largeImageName = FileUtils::buildPath( $catalogPath, $code, Constants::LARGE_IMAGE . $imageData['newName'] . '.jpg');
+                    self::saveImageFromBase64($largeImageName, $data,
+                        ['width' => Constants::LARGE_IMAGE_WIDTH, 'height' => Constants::LARGE_IMAGE_HEIGHT]
+                    );
                 }
             }
-
-            //if good KEY_ITEM was CHANGED
-            if (!is_null($newCode)) {
-                rename(FileUtils::buildPath($catalogPath, $code), FileUtils::buildPath($catalogPath, $newCode));
-            }
         }
+        return true;
+    }
+
+    private static function saveImageFromBase64($imagePath, $data, $imageSize)
+    {
+        $decoded = base64_decode($data);
+        if ($decoded === false) {
+            throw new Exception("base64_decode failed for $imagePath");
+        }
+        $isSaved = file_put_contents($imagePath, $decoded);
+        if ($isSaved === false) {
+            throw new Exception("$imagePath not saved");
+        }
+        $imageEditorS = new ImageEditor($imagePath);
+        $imageEditorS->resizeImage($imageSize['width'], $imageSize['height']);
+        $imageEditorS->saveImage($imagePath, 100);
     }
 
     private static function prepareImagesToProcessing(&$imagesFromWeb, &$imagesFromFileSystem, &$imagesToDelete)
@@ -201,11 +258,20 @@ class GoodsService
             preg_match('/^.*(s_|l_|m_){1}(\d{3})\.{1}\w+$/', $value, $matches);
             if (count($matches) > 2) {
                 $imageNumber = $matches[2];
-                $res = [];
-                array_push($res, unlink(FileUtils::buildPath($path, Constants::SMALL_IMAGE . $imageNumber . '.jpg')));
-                array_push($res, unlink(FileUtils::buildPath($path, Constants::MEDIUM_IMAGE . $imageNumber . '.jpg')));
-                array_push($res, unlink(FileUtils::buildPath($path, Constants::LARGE_IMAGE . $imageNumber . '.jpg')));
+                ProductsService::tryToDeleteFile(
+                    FileUtils::buildPath($path, Constants::SMALL_IMAGE . $imageNumber . '.jpg'));
+                ProductsService::tryToDeleteFile(
+                    FileUtils::buildPath($path, Constants::MEDIUM_IMAGE . $imageNumber . '.jpg'));
+                ProductsService::tryToDeleteFile(
+                    FileUtils::buildPath($path, Constants::LARGE_IMAGE . $imageNumber . '.jpg'));
             }
+        }
+    }
+
+    private static function tryToDeleteFile($fileName)
+    {
+        if (file_exists($fileName)) {
+            unlink($fileName);
         }
     }
 
@@ -213,18 +279,14 @@ class GoodsService
     {
         $goodsType = new DBGoodsType();
         $row = $goodsType->get($id);
-        $ret = null;
-        $ret[DB::TABLE_GOODS__ID] = $row[DB::TABLE_GOODS__ID];
-        $ret[DB::TABLE_GOODS__KEY_ITEM] = $row[DB::TABLE_GOODS__KEY_ITEM];
-        $ret[DB::TABLE_GOODS__NAME] = $row[DB::TABLE_GOODS__NAME];
-        $ret[DB::TABLE_GOODS__DESCRIPTION] = $row[DB::TABLE_GOODS__DESCRIPTION];
-        $ret[DB::TABLE_GOODS__IMAGE_PATH] = $row[DB::TABLE_GOODS__IMAGE_PATH];
-        $ret[DB::TABLE_GOODS__GOD_TYPE] = $row[DB::TABLE_GOODS__GOD_TYPE];
-        $treeUtils = new TreeUtils();
-        $tree = $treeUtils->buildTreeByLeafs();
-        $keyItem = $ret[DB::TABLE_GOODS__KEY_ITEM];
-        $ret['_tree'] = self::getTreePath($treeUtils, $tree, $keyItem);
-        return $ret;
+        return [
+            DB::TABLE_GOODS__ID => $row[DB::TABLE_GOODS__ID],
+            DB::TABLE_GOODS__KEY_ITEM => $row[DB::TABLE_GOODS__KEY_ITEM],
+            DB::TABLE_GOODS__NAME => $row[DB::TABLE_GOODS__NAME],
+            DB::TABLE_GOODS__DESCRIPTION => $row[DB::TABLE_GOODS__DESCRIPTION],
+            DB::TABLE_GOODS__IMAGE_PATH => $row[DB::TABLE_GOODS__IMAGE_PATH],
+            DB::TABLE_GOODS__CATEGORY => $row[DB::TABLE_GOODS__CATEGORY]
+        ];
     }
 
     public static function getNextGoodCode($code)
@@ -245,6 +307,8 @@ class GoodsService
 
     public static function deleteGood($id)
     {
+        self::clearCache();
+
         $dbPref = new DBPreferencesType();
         $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         $goodsType = new DBGoodsType();
@@ -261,19 +325,23 @@ class GoodsService
         $catalogDir = $pref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         $goodsType = new DBGoodsType();
         $good = $goodsType->get($id);
-        $images = [];
+        $result = [];
         if ($good != null) {
             $goodCode = $good[DB::TABLE_GOODS__KEY_ITEM];
             if (!is_null($goodCode)) {
-                $images = FileUtils::getFilesByPrefixByDescription(FileUtils::buildPath($catalogDir, $goodCode), Constants::SMALL_IMAGE, "jpg");
-                //$filesMedium = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH.DIRECTORY_SEPARATOR.$goodCode.DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, "jpg");
+                $imagesPaths = FileUtils::getFilesByPrefixByDescription(FileUtils::buildPath($catalogDir, $goodCode), Constants::SMALL_IMAGE, "jpg");
+                foreach ($imagesPaths as $imagePath) {
+                    array_push($result, Utils::normalizeAbsoluteImagePath($imagePath));
+                }
             }
         }
-        return $images;
+        return $result;
     }
 
     public static function saveGoodsOrder($order)
     {
+        self::clearCache();
+
         $dbUserOrder = new DBUserOrderType();
         Log::db("saveGoodsOrder " . count($order));
         return $dbUserOrder->saveOrder($order);
@@ -295,16 +363,17 @@ class GoodsService
         return self::mergeImagesToGoods($goods);
     }
 
-    private static function mergeImagesToGoods($goods) {
+    private static function mergeImagesToGoods($goods)
+    {
         $goodIndex = 0;
-        while($goodIndex < count($goods)) {
-            $goods[$goodIndex][DB::TABLE_GOODS__IMAGE_PATH] = '/'.Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $goods[$goodIndex][DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR. Constants::SMALL_IMAGE.'001.jpg';
+        while ($goodIndex < count($goods)) {
+            $goods[$goodIndex][DB::TABLE_GOODS__IMAGE_PATH] = '/' . Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $goods[$goodIndex][DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR . Constants::SMALL_IMAGE . '001.jpg';
             $goodIndex++;
         }
         return $goods;
     }
 
-    private function clearTreePath($path)
+    private static function clearTreePath($path)
     {
         $ret = [];
         for ($pathItemIndex = 0; $pathItemIndex < count($path); $pathItemIndex++) {
@@ -312,6 +381,11 @@ class GoodsService
             array_push($ret, new Tree($path[$pathItemIndex]->parentKey, $path[$pathItemIndex]->key, $path[$pathItemIndex]->value, null, null));
         }
         return $ret;
+    }
+
+    private static function clearCache() {
+        $cacheModel = new DBPagesCacheType();
+        $cacheModel->clear();
     }
 
 }

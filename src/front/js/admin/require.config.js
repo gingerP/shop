@@ -1,3 +1,9 @@
-/**
- * Created by vinni on 12/10/17.
- */
+require.config({
+    baseUrl: '/src/front/js/admin',
+    paths: {
+        lodash: '../ext/lodash.min'
+    },
+    shim: {
+    },
+    waitSeconds: 15
+});

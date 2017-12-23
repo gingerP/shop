@@ -1,23 +1,12 @@
 <?php
 
-namespace errors;
+include_once('src/back/labels/HttpStatuses.php');
+include_once('src/back/errors/BaseError.php');
 
-
-class BaseError extends \Error
+class InternalError extends BaseError
 {
-    private $errorMessage = '';
-    protected $code;
-    private $stack = '';
-
-    public function __construct($message, $code) {
-        $this->errorMessage = $message;
-        if ($message instanceof Error) {
-            $this->errorMessage = $message->getMessage();
-        } else if ($message instanceof Exception) {
-            $this->errorMessage = $message->getMessage();
-            $this->stack = $message->getTraceAsString();
-        }
-        $this->code = $code;
+    public function __construct($message) {
+        parent::__construct($message, HttpStatuses::INTERNAL_SERVER_ERROR);
     }
 
 }

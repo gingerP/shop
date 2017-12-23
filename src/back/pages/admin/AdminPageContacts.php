@@ -2,8 +2,7 @@
 
 include_once('src/back/import/admin_pages');
 
-class AdminPage_Contacts extends AdminPagesCreator{
-    public function AdminPage_Contacts() {}
+class AdminPageContacts extends AdminPagesCreator{
 
     protected function getHeadContent() {
         return [

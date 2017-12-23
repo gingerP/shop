@@ -14,7 +14,7 @@ class SessionManager {
         //validate session
         if (isset($_SESSION[Constants::SESSION_USER_IP])) {
             if ($_SESSION[Constants::SESSION_USER_IP] != $_SERVER['REMOTE_ADDR']) {
-                self::sessionDestroy();
+                SessionManager::sessionDestroy();
                 return false;
             }
         } else {
@@ -22,7 +22,7 @@ class SessionManager {
         }
         if (Constants::SESSION_LIFE_TIME) {
             if (isset($_SESSION[Constants::SESSION_LAST_ACTIVITY]) && $currentTime - $_SESSION[Constants::SESSION_LAST_ACTIVITY] >= Constants::SESSION_LIFE_TIME) {
-                self::sessionDestroy();
+                SessionManager::sessionDestroy();
                 return false;
             } else if ($isUserActivity) {
                 $_SESSION[Constants::SESSION_LAST_ACTIVITY] = $currentTime;

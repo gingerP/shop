@@ -2,8 +2,7 @@
 
 include_once('src/back/import/admin_pages');
 
-class AdminPage_Tree extends AdminPagesCreator {
-    public function AdminPage_Tree() {}
+class AdminPageTree extends AdminPagesCreator {
 
     protected function getHeadContent() {
         return [
