@@ -13,8 +13,8 @@ class DBGoodsType extends DBType{
 
     protected $tableName = DB::TABLE_GOODS___NAME;
 
-    public function DBGoodsType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 
@@ -96,23 +96,22 @@ class DBGoodsType extends DBType{
 
     public function getAdminSortedForCommon($limitBegin, $limitEnd) {
         $this->request = "SELECT * FROM ".$this->getTableName()." AS t ";
-        $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
+        $this->request = $this->request." LEFT JOIN ".DB::TABLE_USER_ORDER___NAME." uo ON t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
         $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->execute($this->request);
-        $this->responseSize = mysqli_num_rows($this->getResponse());
         Log::db("DBConnection.getUserSortedForCommon REQUEST: ".$this->request);
         return $this->response;
     }
 
     public function getUserSortedForMenu($goodKeys, $limitBegin, $limitEnd) {
         $regExp = "^(".implode('|', $goodKeys)."){1}";
-        $this->request = "SELECT * FROM ".$this->getTableName()." AS t".
-        $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
+        $this->request = "SELECT * FROM ".$this->getTableName()." AS t";
+        $this->request = $this->request." LEFT JOIN ".DB::TABLE_USER_ORDER___NAME." uo ON t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
         $this->request = $this->request." WHERE LOWER(t.".DB::TABLE_GOODS__CATEGORY.") REGEXP '$regExp'";
         $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
-        $this->responseSize = mysqli_num_rows($this->execute($this->request));
+        $this->execute($this->request);
         Log::db("DBConnection.getUserSortedForMenu REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         return $this->response;
     }
@@ -149,6 +148,16 @@ class DBGoodsType extends DBType{
             return $row;
         }
         return null;
+    }
+
+    public function getCategoriesCount() {
+        $result = [];
+        $this->request = "SELECT count(*) count, category FROM ".$this->getTableName()." GROUP BY ".DB::TABLE_GOODS__CATEGORY.";";
+        $this->execute($this->request);
+        while($row = mysqli_fetch_array($this->response)) {
+            $result[$row['category']] = $row['count'];
+        }
+        return $result;
     }
 
     protected function getTableName() {

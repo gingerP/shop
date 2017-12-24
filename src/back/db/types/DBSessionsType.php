@@ -11,8 +11,8 @@ include_once("src/back/import/db");
 class DBSessionsType extends DBType {
     protected $tableName = DB::TABLE_SESSIONS___NAME;
 
-    public function DBSessionsType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

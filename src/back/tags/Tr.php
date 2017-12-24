@@ -8,8 +8,8 @@
 
 class Tr extends Tag {
 
-    public function Tr() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     function getTagName() {

@@ -40,7 +40,7 @@ class URLBuilder {
         return $url;
     }
 
-    public static function getCatalogLinkForSingleItem($pageId, $pageNumber, $num, $additionalData) {
+    public static function getCatalogLinkForSingleItem($pageId, $pageNumber = null, $num = null, $additionalData = []) {
         $urlArray = array(
             UrlParameters::PAGE_NAME => UrlParameters::PAGE__SINGLE_ITEM,
             UrlParameters::PAGE_ID => $pageId

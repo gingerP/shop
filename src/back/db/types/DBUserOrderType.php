@@ -11,8 +11,8 @@ class DBUserOrderType extends DBType{
 
     protected $tableName = DB::TABLE_USER_ORDER___NAME;
 
-    public function DBUserOrderType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

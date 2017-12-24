@@ -8,8 +8,8 @@
 
 class Button extends Tag{
 
-    public function Button() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     public function getTagName() {

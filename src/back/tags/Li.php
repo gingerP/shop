@@ -8,8 +8,8 @@
 
 class Li extends Tag {
 
-    public function Li() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     public function getTagName() {

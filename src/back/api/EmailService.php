@@ -16,7 +16,7 @@ class EmailService
             throw new Exception('Empty system email.');
         }
 
-        $headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\nFrom: new.vinni@gmail.com\r\nBcc: $systemMail\r\nX-Mailer: PHP/" . phpversion();
+        $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=UTF-8\r\nFrom: new.vinni@gmail.com\r\nBcc: $systemMail\r\nX-Mailer: PHP/" . phpversion();
 
         $res = mail(
             implode(', ', $sendToEmails),

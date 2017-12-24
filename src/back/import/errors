@@ -3,3 +3,5 @@ include_once("src/back/errors/InternalError.php");
 include_once("src/back/errors/BadRequestError.php");
 include_once("src/back/errors/UnAuthorizedError.php");
 include_once("src/back/errors/ImageShouldBeJpegError.php");
+include_once("src/back/errors/DataBaseError.php");
+include_once("src/back/errors/ProductNotFoundError.php");

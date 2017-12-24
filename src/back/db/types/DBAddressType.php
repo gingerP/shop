@@ -10,8 +10,8 @@ class DBAddressType extends DBType{
 
     protected $tableName = DB::TABLE_ADDRESS___NAME;
 
-    public function DBAddressType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

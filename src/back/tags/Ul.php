@@ -8,8 +8,8 @@
 
 class Ul extends Tag{
 
-    public function Ul() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     function getTagName() {

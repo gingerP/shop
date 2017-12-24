@@ -313,8 +313,7 @@ class ProductsService
         $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         $goodsType = new DBGoodsType();
         $code = $goodsType->getCode($id);
-        //remove directory with images
-        FileUtils::removeDir($catalogPath . $code);
+        FileUtils::removeDirRec($catalogPath . $code);
         $infoRemove = $goodsType->delete($id);
         return $infoRemove;
     }

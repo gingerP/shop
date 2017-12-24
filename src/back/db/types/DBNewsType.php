@@ -11,8 +11,8 @@ include_once("src/back/import/db");
 class DBNewsType extends DBType {
     protected $tableName = DB::TABLE_NEWS___NAME;
 
-    public function DBNewsType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

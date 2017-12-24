@@ -10,3 +10,12 @@ CREATE TABLE `augustova`.`errors` (
 
 ALTER TABLE `augustova`.`goods`
 ADD COLUMN `category` VARCHAR(45) NOT NULL AFTER `image_path`;
+
+ALTER TABLE `augustova`.`user_order`
+DROP FOREIGN KEY `fk_good_id`;
+ALTER TABLE `augustova`.`user_order`
+ADD CONSTRAINT `fk_good_id`
+  FOREIGN KEY (`good_id`)
+  REFERENCES `augustova`.`goods` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;

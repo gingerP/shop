@@ -8,8 +8,8 @@
 
 class Strong extends Tag{
 
-    public function Strong() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     public function getTagName() {

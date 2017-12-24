@@ -8,8 +8,8 @@
 
 class Option extends Tag{
 
-    public function Option() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
 

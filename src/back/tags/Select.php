@@ -8,8 +8,8 @@
 
 class Select extends Tag{
 
-    public function Select() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     function getTagName() {

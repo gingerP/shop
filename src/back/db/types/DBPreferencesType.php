@@ -13,8 +13,8 @@ class DBPreferencesType extends DBType {
     private static $cachedValuesAges = [];
     private static $prefTimeout = 10;
 
-    public function DBPreferencesType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

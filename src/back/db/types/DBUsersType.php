@@ -11,8 +11,8 @@ include_once("src/back/import/db");
 class DBUsersType extends DBType {
     protected $tableName = DB::TABLE_USERS___NAME;
 
-    public function DBUsersType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

@@ -8,8 +8,8 @@
 
 class Script extends Tag{
 
-    public function Script() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     public function getTagName() {

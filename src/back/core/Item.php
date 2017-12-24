@@ -58,16 +58,11 @@ class Item {
 
         $mainDiv->addChild($row0);
 
-            $url = URLBuilder::getCatalogLinkForSingleItem($itemId, $pageNumber, $num, array(
-                    UrlParameters::KEY => $key,
-                    UrlParameters::SEARCH_VALUE => $valueToSearch
-                )
-            );
             $mainDiv->addStyleClass("cursor_pointer");
             $link = TagUtils::createNote($trimName, "");
             $link->addAttribute("itemprop", "name");
             $blackOut->addChild($link);
-            $blackOut->addChild(self::getItemButton($url));
+            $blackOut->addChild(self::getItemButton());
 
 
 
@@ -198,11 +193,10 @@ class Item {
         return [$blackOut, []];
     }
 
-    public static function getItemButton($url) {
+    public static function getItemButton() {
         $button = new Div();
         $button->addStyleClasses(["catalog_item_button", "f-17", "input_hover"]);
         $button->addChild("подробнее");
-        $button->addAttribute("href", $url);
         return $button;
     }
 

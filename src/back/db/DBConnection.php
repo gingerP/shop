@@ -12,7 +12,7 @@ class DBConnection
     public $responseSize = 0;
     public $link;
 
-    public function DBConnection()
+    public function __construct()
     {
     }
 
@@ -26,7 +26,7 @@ class DBConnection
             $config['db.database_name']
         );
 
-        if (!$this->link) {
+        if ($this->link === false) {
             throw new Exception(mysqli_connect_errno().'. '.mysqli_connect_error());
         }
         mysqli_set_charset($this->link, 'utf8mb4');

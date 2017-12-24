@@ -88,6 +88,7 @@ try {
                     break;
                 case 'deleteGood':
                     $id = Utils::getFromPOST('id');
+                    Log::db($id);
                     $responseData = ProductsService::deleteGood($id);
                     break;
                 case 'saveOrder':

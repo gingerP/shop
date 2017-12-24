@@ -12,7 +12,7 @@ class DBErrorType extends DBType {
     protected $tableName = DB::TABLE_ERRORS___NAME;
 
     public function __construct() {
-        $this->DBType();
+        parent::__construct();
         return $this;
     }
 

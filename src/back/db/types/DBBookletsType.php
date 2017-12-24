@@ -11,8 +11,8 @@ include_once("src/back/import/db");
 class DBBookletsType extends DBType {
     protected $tableName = DB::TABLE_BOOKLET___NAME;
 
-    public function DBBookletsType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

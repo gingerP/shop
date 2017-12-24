@@ -6,8 +6,8 @@ class DBGoodsTypesType extends DBType{
 
     protected $tableName = DB::TABLE_GOODS_TYPES___NAME;
 
-    public function DBGoodsTypesType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

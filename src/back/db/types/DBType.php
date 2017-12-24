@@ -16,7 +16,7 @@ abstract class DBType {
     protected $response = null;
     protected $responseSize = 0;
 
-    protected function DBType() {
+    protected function __construct() {
     }
 
     public function executeRequestWithLimit($whereParamKey, $whereParamValue, $order, $orderRule, $limitBegin, $limitEnd) {
@@ -123,6 +123,20 @@ abstract class DBType {
         return $this->response;
     }
 
+    public function getListIn($columnName, $criteriaList) {
+        function prepareCriteria($value) {
+            if (is_string($value)) {
+                return "\"$value\"";
+            }
+            return $value;
+        }
+        $criteria = implode(',', array_map('prepareCriteria', $criteriaList));
+        $this->request = "SELECT * FROM ".$this->getTable()." WHERE $columnName IN ($criteria);";
+        $this->execute($this->request);
+        Log::db("DBConnection.getListIn REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        return $this->response;
+    }
+
     public function getListActive($mapping = null) {
         $fields = "*";
         if ($mapping != null && count($mapping) > 0) {
@@ -172,9 +186,10 @@ abstract class DBType {
 
     public function delete($id) {
         $rowsCount = 0;
-        if ($id != null && $id != '') {
-            $this->request = "DELETE FROM ".$this->getTableName()." WHERE ".$this->getIndexColumn()."=".$id;
+        if (!is_null($id) && $id != '') {
+            $this->request = "DELETE FROM ".$this->getTableName()." WHERE ".$this->getIndexColumn()."=".$id.';';
             $this->execute($this->request);
+            Log::db("DBConnection.delete REQUEST: ".$this->request);
             $rowsCount = $this->connection->affectedRows;
         }
         return $rowsCount;
@@ -197,10 +212,13 @@ abstract class DBType {
     }
 
     protected function execute($sqlCommand) {
-        $this->connection = $this->connection == null ? new DBConnection() : $this->connection;
+        $this->connection = new DBConnection();
         $this->response = $this->connection->execute($sqlCommand);
         if (is_bool($this->response)) {
             $this->responseSize = 0;
+            if ($this->response == false) {
+                throw new DataBaseError(mysqli_error($this->getConnection()->getLink()));
+            }
         } else {
             $this->responseSize = mysqli_num_rows($this->response);
         }
@@ -243,10 +261,14 @@ abstract class DBType {
     protected function getOrder() {
     }
 
-    public function extractDataFromResponse($response, $mapping) {
+    public function extractDataFromResponse($response, $mapping = null) {
         $result = [];
         while ($row = mysqli_fetch_array($response)) {
-            array_push($result, Utils::extractObject($row, $mapping));
+            if (is_null($mapping)) {
+                array_push($result, $row);
+            } else {
+                array_push($result, Utils::extractObject($row, $mapping));
+            }
         }
         return $result;
     }

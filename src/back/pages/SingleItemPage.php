@@ -102,9 +102,9 @@ class SingleItemPage extends APagesCreator
 
             $rightBlock->addChild($this->getProductDescription($row[DB::TABLE_GOODS__DESCRIPTION]));
 
+            return $mainTag->addChildList([$titleBlock, $infoBlock->addChildList([$leftBlock, $rightBlock])]);
         }
-
-        return $mainTag->addChildList([$titleBlock, $infoBlock->addChildList([$leftBlock, $rightBlock])]);
+        throw new ProductNotFoundError("Product '$itemId' not found.");
     }
 
     private function getProductDescription($description)

@@ -10,8 +10,8 @@ include_once("src/back/import/db");
 
 class DBNavKeyType extends DBType {
 
-    public function DBNavKeyType() {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
     }
 
     public  function getNameByKey($key) {
@@ -24,17 +24,7 @@ class DBNavKeyType extends DBType {
     }
 
     public function getLeafs() {
-        $individual = array_key_exists(UrlParameters::CHECK_FIZ, $_GET) ? "g.individual='YES'" : '';
-        $person = array_key_exists(UrlParameters::CHECK_UR, $_GET) ? "g.person='YES'": '';
-        $store = '';
-        if ($individual != '' && $person != '') {
-            $store = " (".$individual." or ".$person.") and ";
-        } elseif ($individual == '' && $person != '') {
-            $store = $person." and ";
-        } elseif ($individual != '' && $person == '') {
-            $store = $individual." and ";
-        }
-        $sqlCommand = "SELECT DISTINCT nk.* FROM nav_key nk, goods g  WHERE ".$store." nk.key_item=SUBSTRING(g.key_item, 1, 2)";
+        $sqlCommand = "SELECT DISTINCT nk.* FROM nav_key nk, goods g  WHERE nk.key_item=SUBSTRING(g.key_item, 1, 2)";
         $navKeys = new DBNavKeyType();
         return $navKeys->execute($sqlCommand);
     }

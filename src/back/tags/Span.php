@@ -8,8 +8,8 @@
 
 class Span extends Tag{
 
-    public function Span() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     function getTagName() {

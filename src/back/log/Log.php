@@ -4,16 +4,19 @@ include_once("src/back/import/errors");
 
 class Log {
     public static function db($message) {
+        return;
         self::prepare('logs', 'logs/DB_Connections.log');
         error_log(date("Y-m-d H:i:s")." ".LogLevel::INFO." ".$message."\n", 3, "logs/DB_Connections.log");
     }
 
     public static function info($message) {
+        return;
         self::prepare('logs', 'logs/logs.log');
         error_log(date("Y-m-d H:i:s")." ".LogLevel::INFO." ".$message."\n", 3, "logs/logs.log");
     }
 
     public static function temp($message) {
+        return;
         self::prepare('logs', 'logs/temp.log');
         //error_log(date("Y-m-d H:i:s")." ".LogLevel::INFO." ".$message."\n", 3, "logs/temp.log");
     }

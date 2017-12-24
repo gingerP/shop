@@ -11,9 +11,8 @@ class DBPagesCacheType extends DBType
 
     protected $tableName = DB::TABLE_PAGES_CACHE___NAME;
 
-    public function DBPagesCacheType()
-    {
-        $this->DBType();
+    public function __construct() {
+        parent::__construct();
         return $this;
     }
 

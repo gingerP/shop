@@ -8,8 +8,8 @@
 
 class Table extends Tag {
 
-    public function Table() {
-        return $this->Tag();
+    public function __construct() {
+        return parent::__construct();
     }
 
     function getTagName() {

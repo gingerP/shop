@@ -11,7 +11,7 @@ abstract class Tag
     protected $childList = array();
     protected $closable = true;
 
-    protected function Tag() {
+    protected function __construct() {
         return $this;
     }
 
