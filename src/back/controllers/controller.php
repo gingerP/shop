@@ -1,12 +1,21 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 define('AU_ROOT', __DIR__.'/../../../');
 $config = parse_ini_file('config/config.ini');
 $GLOBALS['config'] = $config;
 define('AU_CONFIG', $config);
-include_once("src/back/import/import");
-include_once("src/back/import/page");
+include_once('src/back/import/import');
+include_once('src/back/import/page');
+include_once('src/back/labels/HttpStatuses.php');
+
+function sendNotFoundPage() {
+    header('Content-Type: text/html; charset=utf-8');
+    http_response_code(HttpStatuses::NOT_FOUND);
+    $page = new NotFoundPage();
+    echo $page->getContent();
+}
 function redirectMain() {
-    header("Location: http://" . $_SERVER["HTTP_HOST"]);
+    header('Location: http://' . $_SERVER['HTTP_HOST']);
     exit;
 }
 function catchInternalError($error) {
@@ -15,13 +24,14 @@ function catchInternalError($error) {
     $errorModel->createException($error);
     error_log($error->getMessage());
     if ($error instanceof ProductNotFoundError) {
-        redirectMain();
+        sendNotFoundPage();
+        return;
     } else if ($error instanceof BaseError) {
         http_response_code($error->status);
         echo json_encode($error->toJson());
         return;
     }
-    http_response_code(500);
+    http_response_code(HttpStatuses::INTERNAL_SERVER_ERROR);
     $internalError = new InternalError($error);
     echo json_encode($internalError->toJson());
 }
@@ -84,7 +94,6 @@ try {
                 redirectMain();
             }
     }
-
     echo $page;
 } catch (Exception $e) {
     catchInternalError($e);
