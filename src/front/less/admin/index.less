@@ -2,6 +2,7 @@
 @import "./components/dhtmlx";
 @import "./components/login";
 @import "./components/products";
+@import "./components/products-order";
 
 .dhtmlx_message_area {
   bottom: 5px !important;
@@ -127,15 +128,18 @@
   float: left;
   max-width: 50%;
 }
-.dhx_dataview_default_item_selected {
-  border: none !important;
-  padding: 0px !important;
-}
-.dhx_dataview_default_item {
-  border: none !important;
-}
-.dhx_dataview_item {
-  margin: 3px !important;
+.dhx_dataview {
+  &_default_item_selected {
+    border: none !important;
+    padding: 0px !important;
+  }
+  &_default_item {
+    border: none !important;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  }
+  &_item {
+    margin: 10px !important;
+  }
 }
 .disable {
   .image_template_add_btn {
@@ -204,69 +208,6 @@
   width: @width1;
 }
 
-
-.dhxwin_active {
-  .goods-order- {
-    &config {
-      .dhx_cell_cont_wins .dhx_dataview.goods-order-data-view {
-        background-color: #f1f1f1;
-      }
-      background-color: #f1f1f1;
-      .dhx_dataview_item {
-        background-color: #ffffff;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      }
-      .dhx_drag_over {
-        box-shadow: 0 0 0 2px #39c;
-      }
-      .dragged {
-        background-color: rgba(235, 252, 255, 1);
-      }
-    }
-    &item {
-      width: 100%;
-      height: 100%;
-      padding: 0 !important;
-
-      &-index {
-        background-color: #D3F5FF;
-        position: relative;
-        float: left;
-        padding: 0px 5px;
-        text-align: center;
-        height: 100%;
-        width: 30px;
-        .index {
-          font-size: 1.5em;
-          color: #39c;
-        }
-        .note {
-          font-size: .6em;
-          color: #929292;
-        }
-        .id-value {
-          font-size: 1.1em;
-          color: #929292;
-        }
-      }
-      &-name {
-        height: 100%;
-        overflow-y: auto;
-        position: relative;
-        float: left;
-        word-break: break-word;
-        padding: 0 5px;
-        width: 150px;
-      }
-      &-img {
-        position: absolute;
-        margin: 5px;
-        width: 60px;
-        height: 100px;
-      }
-    }
-  }
-}
 .text-non-select {
   -webkit-user-select: none; /* Chrome/Safari */
   -moz-user-select: none; /* Firefox */

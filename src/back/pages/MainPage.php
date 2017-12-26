@@ -235,14 +235,13 @@ class MainPage extends APagesCreator
         $lastStringNumber = $productsCount.'';
         $lastStringNumber = $lastStringNumber[strlen($lastStringNumber) - 1];
         $label = 'товар';
-        if ($productsCount > 1 && $productsCount <= 4) {
+        if ($productsCount > 1 && $productsCount <= 4
+            || $productsCount > 20 && ($lastStringNumber == '2' || $lastStringNumber == '4')) {
             $label = 'товара';
-        } else if ($productsCount > 4) {
-            if ($productsCount > 20 && ($lastStringNumber == '2' || $lastStringNumber == '4')) {
-                $label = 'товара';
-            } else {
-                $label = 'товаров';
-            }
+        } else if ($productsCount > 4 && $productsCount <= 20) {
+            $label = 'товаров';
+        } else if ($productsCount > 20 && $lastStringNumber == '1') {
+            $label = 'товар';
         }
         return $label;
     }

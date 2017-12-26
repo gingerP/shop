@@ -85,7 +85,7 @@ require([
 
     function initGoodsOrder(callback) {
         require([
-            '/src/front/js/admin/goodsOrderComponent.js'
+            '/src/front/js/admin/products/productsOrder.js'
         ], function (module) {
             app.goodsOrder = module;
             if (typeof(callback) === 'function') {

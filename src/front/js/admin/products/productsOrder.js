@@ -1,4 +1,6 @@
-define([], function () {
+define([
+    'common/services'
+], function (Services) {
     var api;
     var win;
     var WIN_ID = 'goods-order-config';
@@ -6,12 +8,12 @@ define([], function () {
     var toolbar;
     var service = {
         load: function (callback) {
-            serviceWrapper.getGoodsAdminOrder(function(data) {
+            Services.getGoodsAdminOrder(function(data) {
                 callback(convertGoodsWithOrder(data));
             });
         },
         save: function (data, callback) {
-            serviceWrapper.saveGoodsOrder({
+            Services.saveGoodsOrder({
                 order: data
             }, function (result) {
                 callback(result);
@@ -55,19 +57,16 @@ define([], function () {
             drag: true,
             select: true,
             type: {
-                template: "" +
-                "<div class='goods-order-item text-non-select'>" +
-                "<div class='goods-order-item-index'>" +
-                "<div class='index'>#good_index#</div>" +
-                "<div class='note'>порядок</div>" +
-                "<div class='id-value'>#good_id#</div>" +
-                "<div class='note'>ID</div>" +
-                "</div>" +
-                "<div class='goods-order-item-name'>#name#</div>" +
-                "<img src='#image_path#' class='goods-order-item-img' alt='#name#'/img>" +
-                "</div>",
-                width: 270,
-                height: 150
+                template: "\
+                <div class='goods-order-item text-non-select'>\
+                    <img src='#image_path#' class='goods-order-item-img' alt='#name#'>\
+                    <div class='goods-order-item-label'>\
+                        <div class='goods-order-item-index'>#good_index#</div>\
+                        <div class='goods-order-item-name'>#name#</div>\
+                    </div>\
+                </div>",
+                width: 132,
+                height: 260
             }
         });
         view.$view.className += ' goods-order-data-view';
