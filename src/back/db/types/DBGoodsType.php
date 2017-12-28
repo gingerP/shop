@@ -160,6 +160,35 @@ class DBGoodsType extends DBType{
         return $result;
     }
 
+    public function searchByCriteriaExcludingIds($whereParamKeyArray, $whereValueArray, $excludedIds, $order, $orderRule, $limitBegin, $limitNum) {
+        $this->request = "SELECT t.* FROM ".$this->getTable()." AS t ";
+        $hasWhereValues = false;
+        for($i = 0; $i < count($whereParamKeyArray); $i++) {
+            if ($whereParamKeyArray[$i] != '' && $whereValueArray[$i] != '') {
+                $hasWhereValues = true;
+                if ($i == 0) {
+                    $this->request = $this->request." WHERE";
+                } elseif ($i != count($whereParamKeyArray)) {
+                    $this->request = $this->request." OR";
+                }
+                $this->request = $this->request." LOWER(t.".$whereParamKeyArray[$i].") LIKE '%".$whereValueArray[$i]."%'";
+            }
+        }
+        if (count($excludedIds) > 0) {
+            if ($hasWhereValues) {
+                $this->request = $this->request.' AND ';
+            } else {
+                $this->request = $this->request.' WHERE ';
+            }
+            $this->request = $this->request.' '.DB::TABLE_GOODS__ID.' NOT IN ('.implode(',', $excludedIds).')';
+        }
+        if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
+        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitNum;
+        $this->execute($this->request);
+        Log::db("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        return $this->response;
+    }
+
     protected function getTableName() {
         return $this->tableName;
     }

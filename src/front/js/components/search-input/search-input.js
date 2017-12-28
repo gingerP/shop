@@ -11,7 +11,7 @@
     }
     Handlebars.registerPartial('productsPartial',
         '<div class="search-result-products">\
-            <div class="search-result-title">Товары {{items.length}}</div>\
+            <div class="search-result-title">Товары (найдено {{items.length}})</div>\
         {{#each items}}\
             <a class="search-result-product" href="{{this.url}}">\
                 <img class="search-result-product-icon" src="{{this.icon}}">\
@@ -21,14 +21,14 @@
         </div>');
     Handlebars.registerPartial('contactsPartial',
         '<div class="search-result-contacts">\
-            <div class="search-result-title">Контакты {{items.length}}</div>\
+            <div class="search-result-title">Контакты (найдено {{items.length}})</div>\
         {{#each items}}\
             <a class="search-result-contact" href="{{this.url}}">{{this.name}}</a>\
         {{/each}}\
         </div>');
     Handlebars.registerPartial('navKeysPartial',
         '<div class="search-result-navs">\
-            <div class="search-result-title">Категории {{items.length}}</div>\
+            <div class="search-result-title">Категории (найдено {{items.length}})</div>\
         {{#each items}}\
             <a class="search-result-nav" href="{{this.url}}">{{this.name}}</a>\
         {{/each}}\
@@ -165,7 +165,7 @@
         var self = this;
         var width = $(window).width();
         if (width <= self._blackoutMaxScreenSize) {
-            $('body').scrollTop(110);
+            $(document).scrollTop(110);
         }
     };
 
