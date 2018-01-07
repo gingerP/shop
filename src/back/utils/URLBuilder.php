@@ -23,6 +23,10 @@ class URLBuilder {
                 , UrlParameters::ITEMS_COUNT)
     );
 
+    public static function getCatalogLink() {
+        return '/?'.Utils::buildUrl([UrlParameters::PAGE_NAME => UrlParameters::PAGE__CATALOG]);
+    }
+
     public static function getCatalogLinkForTree($key) {
         //" onclick=\"window.location='?page_name=catalog&key=".$tree->key.Utils::getStoreModeForUrl()."'\"";
         $urlArray = array(

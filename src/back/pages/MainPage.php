@@ -46,47 +46,60 @@ class MainPage extends APagesCreator
 
     private function getCatalogItems()
     {
+        $result = [$this->getCatalogItemsTitle()];
         $dbGoods = new DBGoodsType();
         $catalogLoader = new CatalogLoader();
-        $catalogLoader->getItemsMainData(1, 15);
+        $catalogLoader->getItemsMainData(1, 10);
         $goods = $dbGoods->extractDataFromResponse($catalogLoader->data, DB::TABLE_GOODS___MAPPER);
         $goodIndex = 0;
         $slideShowContainer = new Div();
         $slideShowContainer->addStyleClass("main_page_items_slideshow");
         $slideShow = new Div();
         $slideShow->addStyleClasses(["slide_show", "catalog_items"]);
-        $div02 = new Div();
-        $div02->addStyleClass('items_table');
-        $div02->addAttribute("style", "overflow: hidden;");
-        while ($goodIndex < count($goods)) {
-            //$name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement
-            $product = $goods[$goodIndex];
-            $images = FileUtils::getFilesByPrefixByDescription(
-                Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $product[DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR,
-                Constants::MEDIUM_IMAGE,
-                'jpg'
-            );
-            $info = Item::getMetroItemView(
-                $product["name"],
-                $images,
-                $product["key_item"],
-                null,
-                null,
-                null,
-                null,
-                Utils::formatClotheTitle($product["name"])
-            );
-            $productContainer = new A();
-            $productContainer->addStyleClass("catalog_good_item previews-zero-col");
-            $productContainer->addChild($info[0]);
-            $url = URLBuilder::getItemLinkForComplexType("", $product[DB::TABLE_GOODS__KEY_ITEM], 1, 48);
-            $productContainer->addAttribute('href', $url);
-            $div02->addChild($productContainer);
-            //$div02->addChild($this->renderGalleryItemWithSingleItem($goods[$goodIndex]));
-            $goodIndex++;
+        if (count($goods) > 0) {
+            $div02 = new Div();
+            $div02->addStyleClass('items_table');
+            $div02->addAttribute("style", "overflow: hidden;");
+            while ($goodIndex < count($goods)) {
+                //$name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement
+                $product = $goods[$goodIndex];
+                $images = FileUtils::getFilesByPrefixByDescription(
+                    Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $product[DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR,
+                    Constants::MEDIUM_IMAGE,
+                    'jpg'
+                );
+                $info = Item::getMetroItemView(
+                    $product["name"],
+                    $images,
+                    $product["key_item"],
+                    null,
+                    null,
+                    null,
+                    null,
+                    Utils::formatClotheTitle($product["name"])
+                );
+                $productContainer = new A();
+                $productContainer->addStyleClass("catalog_good_item previews-zero-col");
+                $productContainer->addChild($info[0]);
+                $url = URLBuilder::getItemLinkForComplexType("", $product[DB::TABLE_GOODS__KEY_ITEM], 1, 48);
+                $productContainer->addAttribute('href', $url);
+                $div02->addChild($productContainer);
+                //$div02->addChild($this->renderGalleryItemWithSingleItem($goods[$goodIndex]));
+                $goodIndex++;
+            }
+
+            $url = URLBuilder::getCatalogLink();
+            $remainingCountLink = new A();
+            $remainingCountLink->addStyleClass('catalog-more-link');
+            $remainingCountLink->addChild("Eщё ...");
+            $remainingCountLink->addAttribute('href', $url);
+
+            $slideShowContainer->addChildren($slideShow->addChildren($div02, $remainingCountLink));
+
+            array_push($result, $slideShowContainer);
         }
-        $slideShowContainer->addChildren($slideShow->addChildren($div02));
-        return [$this->getCatalogItemsTitle(), /*$slideShowContainer, */$this->getCategoriesGroupsDom()];
+        array_push($result, $this->getCategoriesGroupsDom());
+        return $result;
     }
 
     private function getCatalogItemsTitle()
@@ -151,7 +164,7 @@ class MainPage extends APagesCreator
                     Log::info('current: '.count($products));
                     Log::info('total: '.$totalCount);
                     $group = $this->getCategoryGroupDom($category, $products, $totalCount);
-                    $group->addStyleClass($existsIndex % 2 == 0 ? 'even' : 'odd');
+                    $group->addStyleClass($existsIndex % 2 == 0 ? 'odd' : 'even');
                     $container->addChild($group);
                     $existsIndex++;
                 }
@@ -167,6 +180,7 @@ class MainPage extends APagesCreator
         $productsList = new Div();
         $container->addChild($productsList);
         $container->addStyleClass('items_table ');
+        $container->addAttribute('id', $category[DB::TABLE_NAV_KEY__KEY_ITEM]);
 
         $subContainer = new Div();
         $subContainer->addStyleClass('slide_show catalog_items ');
