@@ -19,3 +19,7 @@ ADD CONSTRAINT `fk_good_id`
   REFERENCES `augustova`.`goods` (`id`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
+
+
+ALTER TABLE `augustova`.`goods`
+ADD COLUMN `version` VARCHAR(45) NOT NULL DEFAULT 0 AFTER `category`;

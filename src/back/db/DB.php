@@ -37,6 +37,7 @@ class DB {
     const TABLE_GOODS__CATEGORY = 'category';
     const TABLE_GOODS__DESCRIPTION = 'description';
     const TABLE_GOODS__IMAGE_PATH = 'image_path';
+    const TABLE_GOODS__VERSION = 'version';
 
     const TABLE_ADDRESS___NAME = 'address';
     const TABLE_ADDRESS__ID = 'address_id';
@@ -134,7 +135,8 @@ class DB {
     	self::TABLE_GOODS__KEY_ITEM => self::TABLE_GOODS__KEY_ITEM,
     	self::TABLE_GOODS__NAME => self::TABLE_GOODS__NAME,
     	self::TABLE_GOODS__DESCRIPTION => self::TABLE_GOODS__DESCRIPTION,
-    	self::TABLE_GOODS__IMAGE_PATH => self::TABLE_GOODS__IMAGE_PATH
+    	self::TABLE_GOODS__IMAGE_PATH => self::TABLE_GOODS__IMAGE_PATH,
+    	self::TABLE_GOODS__VERSION => self::TABLE_GOODS__VERSION
     ];
 
     const TABLE_NEWS__MAPPER = [

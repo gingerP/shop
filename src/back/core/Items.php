@@ -26,7 +26,7 @@ class Items {
             $mainTag->addStyleClass("items_table");
             $rowView = new Div();
             $mainTag->addChild($rowView);
-            while ($row = mysqli_fetch_array($response)) {
+            while ($product = mysqli_fetch_array($response)) {
                 $items++;
                 $indOnPage++;
                 $td++;
@@ -40,7 +40,7 @@ class Items {
                 $rowView->addStyleClass($rowViewClass);
                 $cellView = new A();
                 $rowView->addChild($cellView);
-                $keyItem = $row["key_item"];
+                $keyItem = $product["key_item"];
                 $images = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH.DIRECTORY_SEPARATOR.$keyItem.DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, 'jpg');
 
                 if (count($images) == 0) {
@@ -51,59 +51,55 @@ class Items {
                 $itemInfo = [];
                 if ($isMetro) {
                     $info = Item::getMetroItemView(
-                        $row["name"],
+                        $product["name"],
                         $images,
-                        $row["key_item"],
-                        $pageNumber,
-                        $num,
-                        $key,
-                        $valueToSearch,
-                        Utils::formatClotheTitle($row["name"])
+                        $product[DB::TABLE_GOODS__VERSION],
+                        Utils::formatClotheTitle($product["name"])
                     );
                     $item = $info[0];
                     $itemInfo = $info[1];
                 } elseif ($isCompact) {
                     //$name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement
                     $info = Item::getCompactItemView(
-                        $row["name"],
+                        $product["name"],
                         $images,
-                        $row["key_item"],
+                        $product["key_item"],
                         $pageNumber,
                         $num,
                         $key,
                         $valueToSearch,
-                        $row['god_type'],
-                        Utils::formatClotheTitle($row["name"]),
-                        $highLightId == $row["key_item"]
+                        $product['god_type'],
+                        Utils::formatClotheTitle($product["name"]),
+                        $highLightId == $product["key_item"]
                     );
                     $item = $info[0];
                     $itemInfo = $info[1];
                 } elseif ($isExtend) {
                     $info = Item::getSquareItemView(
-                        $row["name"],
+                        $product["name"],
                         $images,
-                        $row["key_item"],
+                        $product["key_item"],
                         $pageNumber,
                         $num,
                         $key,
                         $valueToSearch,
-                        $row['god_type'],
-                        Utils::formatClotheTitle($row["name"])
+                        $product['god_type'],
+                        Utils::formatClotheTitle($product["name"])
                     );
                     $item = $info[0];
                     $itemInfo = $info[1];
                 } elseif ($isList) {
                     $info = Item::getLineItemView(
-                        $row["name"],
+                        $product["name"],
                         $images,
-                        $row["key_item"],
+                        $product["key_item"],
                         $pageNumber,
                         $num,
                         $key,
                         $valueToSearch,
-                        $row['god_type'],
-                        Utils::trimFormatClotheTitle($row["name"]),
-                        $highLightId == $row["key_item"]
+                        $product['god_type'],
+                        Utils::trimFormatClotheTitle($product["name"]),
+                        $highLightId == $product["key_item"]
                     );
                     $item = $info[0];
                     $itemInfo = $info[1];
@@ -121,7 +117,7 @@ class Items {
                         $cellView->addStyleClass('previews-double-col');
                     }
                 }
-                $url = URLBuilder::getCatalogLinkForSingleItem($row["key_item"], $pageNumber, $num, array(
+                $url = URLBuilder::getCatalogLinkForSingleItem($product["key_item"], $pageNumber, $num, array(
                         UrlParameters::KEY => $key,
                         UrlParameters::SEARCH_VALUE => $valueToSearch
                     )

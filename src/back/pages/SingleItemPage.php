@@ -37,8 +37,8 @@ class SingleItemPage extends APagesCreator
         $goods->executeRequest(DB::TABLE_GOODS__KEY_ITEM, $itemId, DB::TABLE_GOODS___ORDER, DB::ASC);
         $response = $goods->getResponse();
         $mainTag->addStyleClasses(["single_item"]);
-        $row = mysqli_fetch_array($response);
-        if ($row) {
+        $product = mysqli_fetch_array($response);
+        if ($product) {
             $imagePathes = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, 'jpg');
             $filesSmall = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, "jpg");
             $filesMedium = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, "jpg");
@@ -54,13 +54,13 @@ class SingleItemPage extends APagesCreator
 
             $titleBlock = new Strong();
             $titleBlock->addStyleClasses(["title", "f-30"]);
-            $titleBlock->addChild($row[DB::TABLE_GOODS__NAME]);
-            $this->updateTitleTagChildren([$row[DB::TABLE_GOODS__NAME] . ' - ']);
+            $titleBlock->addChild($product[DB::TABLE_GOODS__NAME]);
+            $this->updateTitleTagChildren([$product[DB::TABLE_GOODS__NAME] . ' - ']);
 
             $metaDesc = new Meta();
             $metaDesc->addAttributes([
                 "name" => "description",
-                "content" => "на этой странице Вы найдете подробное описание для товара " . $row[DB::TABLE_GOODS__NAME] . ", а также сможете пролистать фотографии и просмотреть их увеличенную версию"
+                "content" => "на этой странице Вы найдете подробное описание для товара " . $product[DB::TABLE_GOODS__NAME] . ", а также сможете пролистать фотографии и просмотреть их увеличенную версию"
             ]);
             $this->addMetaTags($metaDesc);
 
@@ -87,20 +87,26 @@ class SingleItemPage extends APagesCreator
             $imageIndexLabel->addChild('1 / ' . count($imagePathes));
             $square->addChildList([$zoom, $img1, $img2, $imageIndexLabel]);
             $square->addChildList($this->getImageSwitcher());
-            $leftBlock->addChildList([$square, $this->getPreviewImages($filesMedium, Constants::MEDIUM_IMAGE . "images", false)]);
-
-
+            $leftBlock->addChildList([
+                $square,
+                $this->getPreviewImages(
+                    $filesMedium,
+                    Constants::MEDIUM_IMAGE . "images",
+                    false,
+                    $product[DB::TABLE_GOODS__VERSION]
+                )
+            ]);
             $rightBlock = new Div();
             $rightBlock->addStyleClasses(["right_block"]);
-            $overviewImgs = $this->getPreviewImages($filesSmall, Constants::SMALL_IMAGE . "images", true);
+            $overviewImgs = $this->getPreviewImages(
+                $filesSmall, Constants::SMALL_IMAGE . "images", true, $product[DB::TABLE_GOODS__VERSION]);
             $overviewImgs->updateId("gallery");
             $overviewImgs->addStyleClass("w-100p");
             $rightBlock->addChildList([$overviewImgs]);
-            $index = 0;
             $imgList = new Div();
             $imgList->addStyleClass("scroll_child");
 
-            $rightBlock->addChild($this->getProductDescription($row[DB::TABLE_GOODS__DESCRIPTION]));
+            $rightBlock->addChild($this->getProductDescription($product[DB::TABLE_GOODS__DESCRIPTION]));
 
             return $mainTag->addChildList([$titleBlock, $infoBlock->addChildList([$leftBlock, $rightBlock])]);
         }
@@ -154,7 +160,7 @@ class SingleItemPage extends APagesCreator
         return $mainTag;
     }
 
-    private function getPreviewImages($images, $key, $display)
+    private function getPreviewImages($images, $key, $display, $version = 0)
     {
         $mainTag = new Div();
         $mainTag->addStyleClasses([/*"scrollable", */
@@ -170,7 +176,7 @@ class SingleItemPage extends APagesCreator
             $imageContainer = new Div();
             $imageContainer->addStyleClasses(["blackout", "image_preview"]);
             $img = new Img();
-            $img->addAttribute("src", Utils::normalizeAbsoluteImagePath($image));
+            $img->addAttribute("src", Utils::normalizeAbsoluteImagePath($image, ['v' => $version]));
             $overviewImages->addChild($imageContainer->addChild($img));
         }
         if (count($images) == 0) {

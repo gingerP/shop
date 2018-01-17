@@ -3,11 +3,10 @@ include_once("src/back/import/import");
 
 class Item {
 
-    public static function getMetroItemView($name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $trimName) {
+    public static function getMetroItemView($name, $images, $version, $trimName) {
         $previewsColsNum = 2;
         $previewsNum = 0;
         $blackOut = new Div();
-        //$blackOut->addStyleClasses(["blackout", "catalog_item_button_container"]);
         $blackOut->addAttributes([
             "itemscope" => "",
             "itemtype"=> "http://data-vocabulary.org/Product"
@@ -39,7 +38,7 @@ class Item {
                 [
                     "itemprop" => "image",
                     TagLabels::ON_CLICK => "openSimpleImg(arguments[0])",
-                    "src" => "/".addslashes(Utils::normalizeAbsoluteImagePath($images[$imgIndex])),
+                    "src" => "/".addslashes(Utils::normalizeAbsoluteImagePath($images[$imgIndex], ['v' => $version])),
                     "alt" => $name
                 ]);
             $imgView->addStyleClass($imgIndex > 0? "simple_item_image_half": "simple_item_image");

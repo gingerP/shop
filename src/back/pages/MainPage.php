@@ -71,11 +71,7 @@ class MainPage extends APagesCreator
                 $info = Item::getMetroItemView(
                     $product["name"],
                     $images,
-                    $product["key_item"],
-                    null,
-                    null,
-                    null,
-                    null,
+                    $product[DB::TABLE_GOODS__VERSION],
                     Utils::formatClotheTitle($product["name"])
                 );
                 $productContainer = new A();
@@ -201,11 +197,7 @@ class MainPage extends APagesCreator
             $productCard = Item::getMetroItemView(
                 $product[DB::TABLE_GOODS__NAME],
                 $images,
-                $product[DB::TABLE_GOODS__KEY_ITEM],
-                null,
-                null,
-                null,
-                null,
+                $product[DB::TABLE_GOODS__VERSION],
                 Utils::formatClotheTitle($product[DB::TABLE_GOODS__NAME])
             )[0];
             $productLink = new A();

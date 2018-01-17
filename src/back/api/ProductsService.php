@@ -67,7 +67,6 @@ class ProductsService
         self::clearCache();
 
         $goodsType = new DBGoodsType();
-        $isNew = !array_key_exists(DB::TABLE_GOODS__ID, $values);
         if (array_key_exists(DB::TABLE_GOODS__ID, $values)) {
             unset($values[DB::TABLE_GOODS__ID]);
         }
@@ -77,12 +76,9 @@ class ProductsService
             $values[DB::TABLE_GOODS__KEY_ITEM] =
                 ProductsService::getNextGoodCode($values[DB::TABLE_GOODS__CATEGORY]);
         }
-        $pref = new DBPreferencesType();
-        $imagePath = $pref->getPreference(Constants::CATALOG_PATH);
-        $imagePath = $imagePath[DB::TABLE_PREFERENCES__VALUE];
-        $imagesCatalog = $values[DB::TABLE_GOODS__KEY_ITEM];
-        $isDirCreated = FileUtils::createDir($imagePath . $imagesCatalog);
         $newId = $goodsType->update($id, $values);
+        $goodsType = new DBGoodsType();
+        $goodsType->incrementVersion($id);
         return ProductsService::getGood($newId);
     }
 
@@ -199,6 +195,8 @@ class ProductsService
                     );
                 }
             }
+            $goodsType = new DBGoodsType();
+            $goodsType->incrementVersion($id);
         }
         return true;
     }
@@ -328,9 +326,10 @@ class ProductsService
         if ($good != null) {
             $goodCode = $good[DB::TABLE_GOODS__KEY_ITEM];
             if (!is_null($goodCode)) {
+                $version = $good[DB::TABLE_GOODS__VERSION];
                 $imagesPaths = FileUtils::getFilesByPrefixByDescription(FileUtils::buildPath($catalogDir, $goodCode), Constants::SMALL_IMAGE, "jpg");
                 foreach ($imagesPaths as $imagePath) {
-                    array_push($result, Utils::normalizeAbsoluteImagePath($imagePath));
+                    array_push($result, Utils::normalizeAbsoluteImagePath($imagePath, ['v' => $version]));
                 }
             }
         }

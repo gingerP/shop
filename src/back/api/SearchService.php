@@ -60,11 +60,12 @@ class SearchService
         if ($products) {
             while ($product = array_shift($products)) {
                 $code = $product[DB::TABLE_GOODS__KEY_ITEM];
+                $version = $product[DB::TABLE_GOODS__VERSION];
                 $iconPath = FileUtils::getFirstFileInDirectoryByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, 'jpg');
                 array_push($normalized, [
                     'name' => $product[DB::TABLE_GOODS__NAME],
                     'url' => URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM], null, null, []),
-                    'icon' => Utils::normalizeAbsoluteImagePath($iconPath),
+                    'icon' => Utils::normalizeAbsoluteImagePath($iconPath, ['v' => $version]),
                 ]);
             }
         }

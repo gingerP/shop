@@ -189,6 +189,12 @@ class DBGoodsType extends DBType{
         return $this->response;
     }
 
+    public function incrementVersion($id) {
+        $this->execute("update ".
+            $this->getTableName()." set ".
+            DB::TABLE_GOODS__VERSION." = ".DB::TABLE_GOODS__VERSION." + 1 where ".DB::TABLE_GOODS__ID."=".$id);
+    }
+
     protected function getTableName() {
         return $this->tableName;
     }
