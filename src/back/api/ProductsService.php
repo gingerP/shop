@@ -77,8 +77,10 @@ class ProductsService
                 ProductsService::getNextGoodCode($values[DB::TABLE_GOODS__CATEGORY]);
         }
         $newId = $goodsType->update($id, $values);
-        $goodsType = new DBGoodsType();
-        $goodsType->incrementVersion($id);
+        if (!is_null($id)) {
+            $goodsType = new DBGoodsType();
+            $goodsType->incrementVersion($id);
+        }
         return ProductsService::getGood($newId);
     }
 
@@ -195,8 +197,10 @@ class ProductsService
                     );
                 }
             }
-            $goodsType = new DBGoodsType();
-            $goodsType->incrementVersion($id);
+            if (!is_null($id)) {
+                $goodsType = new DBGoodsType();
+                $goodsType->incrementVersion($id);
+            }
         }
         return true;
     }
@@ -329,7 +333,7 @@ class ProductsService
                 $version = $good[DB::TABLE_GOODS__VERSION];
                 $imagesPaths = FileUtils::getFilesByPrefixByDescription(FileUtils::buildPath($catalogDir, $goodCode), Constants::SMALL_IMAGE, "jpg");
                 foreach ($imagesPaths as $imagePath) {
-                    array_push($result, Utils::normalizeAbsoluteImagePath($imagePath, ['v' => $version]));
+                    array_push($result, Utils::normalizeAbsoluteImagePath($imagePath));
                 }
             }
         }
