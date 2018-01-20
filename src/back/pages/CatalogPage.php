@@ -58,7 +58,7 @@ class CatalogPage extends APagesCreator{
             if (array_key_exists(UrlParameters::SEARCH_VALUE, $_GET)) {
                 $itemsType = new CatalogLoader();
                 $searchValue = Utils::getFromGET(UrlParameters::SEARCH_VALUE);
-                $itemsType->getItemSearchData($pageNumber, $itemsCount, $searchValue);
+                $itemsType->getItemSearchData($pageNumber - 1, $itemsCount, $searchValue);
                 if($itemsType->dataTotalCount == 0) return "";
                 $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'top'));
                 $mainTag->addChild($items->getItemsTable($pageNumber, $itemsCount, $itemsType->data, '', $searchValue));

@@ -47,10 +47,9 @@ class MainPage extends APagesCreator
     private function getCatalogItems()
     {
         $result = [$this->getCatalogItemsTitle()];
-        $dbGoods = new DBGoodsType();
         $catalogLoader = new CatalogLoader();
         $catalogLoader->getItemsMainData(1, 10);
-        $goods = $dbGoods->extractDataFromResponse($catalogLoader->data, DB::TABLE_GOODS___MAPPER);
+        $goods = $catalogLoader->data;
         $goodIndex = 0;
         $slideShowContainer = new Div();
         $slideShowContainer->addStyleClass("main_page_items_slideshow");

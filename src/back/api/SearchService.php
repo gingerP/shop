@@ -14,7 +14,7 @@ function extractProductId($product) {
 class SearchService
 {
 
-    public static function search($searchValue, $page = 0, $limit = 10)
+    public static function search($searchValue, $page = 0, $limit = 10, $includeNav = true, $includeContacts = true, $shouldNormalize = true)
     {
         $connection = (new DBConnection())->init();
         $addressType = (new DBAddressType())->setConnection($connection);
@@ -24,18 +24,22 @@ class SearchService
         $link = $connection->getLink();
         $escapedValue = mysqli_real_escape_string($link, $searchValue);
         $result = [];
-        $navs = $navKeysType->extractDataFromResponse($navKeysType->executeRequestLikeArrayWithLimit(
-            [DB::TABLE_NAV_KEY__VALUE],
-            [$escapedValue],
-            DB::TABLE_NAV_KEY__VALUE, 'asc', 0, 20
-        ));
-        $contacts = $addressType->extractDataFromResponse($addressType->executeRequestLikeArrayWithLimit(
-            [DB::TABLE_ADDRESS__ADDRESS, DB::TABLE_ADDRESS__EMAIL, DB::TABLE_ADDRESS__TITLE],
-            [$escapedValue, $escapedValue, $escapedValue],
-            DB::TABLE_ADDRESS__TITLE, 'asc', 0, 20
-        ));
-        $result['navs'] = self::normalizeNavs($navs);
-        $result['contacts'] = self::normalizeContacts($contacts);
+        if ($includeNav == true) {
+            $navs = $navKeysType->extractDataFromResponse($navKeysType->executeRequestLikeArrayWithLimit(
+                [DB::TABLE_NAV_KEY__VALUE],
+                [$escapedValue],
+                DB::TABLE_NAV_KEY__VALUE, 'asc', 0, 20
+            ));
+            $result['navs'] = $shouldNormalize == true ? self::normalizeNavs($navs) : $navs;
+        }
+        if ($includeContacts == true) {
+            $contacts = $addressType->extractDataFromResponse($addressType->executeRequestLikeArrayWithLimit(
+                [DB::TABLE_ADDRESS__ADDRESS, DB::TABLE_ADDRESS__EMAIL, DB::TABLE_ADDRESS__TITLE],
+                [$escapedValue, $escapedValue, $escapedValue],
+                DB::TABLE_ADDRESS__TITLE, 'asc', 0, 20
+            ));
+            $result['contacts'] = $shouldNormalize == true ? self::normalizeContacts($contacts) : $contacts;
+        }
         $products = $goodsType->extractDataFromResponse($goodsType->executeRequestLikeArrayWithLimit(
             [DB::TABLE_GOODS__NAME], [$escapedValue],
             DB::TABLE_GOODS__NAME, 'asc', 0, 200
@@ -49,12 +53,12 @@ class SearchService
                 DB::TABLE_GOODS__NAME, 'asc', 0, 200
             ))
         );
-        $result['products'] = self::normalizeProducts($products);
+        $result['products'] = $shouldNormalize == true ? self::normalizeProducts($products) : $products;
 
         return $result;
     }
 
-    private function normalizeProducts($products)
+    private static function normalizeProducts($products)
     {
         $normalized = [];
         if ($products) {
@@ -72,7 +76,7 @@ class SearchService
         return $normalized;
     }
 
-    private function normalizeContacts($contacts)
+    private static function normalizeContacts($contacts)
     {
         $normalized = [];
         if ($contacts) {
@@ -86,7 +90,7 @@ class SearchService
         return $normalized;
     }
 
-    private function normalizeNavs($navs)
+    private static function normalizeNavs($navs)
     {
         $normalized = [];
         if ($navs) {

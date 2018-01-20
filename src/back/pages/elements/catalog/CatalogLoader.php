@@ -15,60 +15,47 @@ class CatalogLoader {
     }
 
     public function getItemsMainData($pageNumber, $num) {
-        $goods = new DBGoodsType();
+        $Products = new DBGoodsType();
         $limitBegin = ($pageNumber - 1) * $num;
         $limitEnd = $num;
         if ($this->isAdminOrderEnabled()) {
-            $goods->getAdminSortedForCommon($limitBegin, $limitEnd);
+            $Products->getAdminSortedForCommon($limitBegin, $limitEnd);
         } else {
-            $goods->executeRequestWithLimit('', '', DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+            $Products->executeRequestWithLimit('', '', DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
         }
-        $this->data = $goods->getResponse();
-        $this->dataCount = $goods->getResponseSize();
-        $goods->executeTotalCount();
-        $this->dataTotalCount = $goods->getTotalCount();
+        $this->data = $Products->extractDataFromResponse($Products->getResponse());
+        $this->dataCount = $Products->getResponseSize();
+        $Products->executeTotalCount();
+        $this->dataTotalCount = $Products->getTotalCount();
     }
 
     public function getItemsMenuData($pageNumber, $num, $key) {
-        $goods = new DBGoodsType();
+        $Products = new DBGoodsType();
         $navKeys = new DBNavKeyType();
         $treeUtils = new TreeUtils();
         $navKeys->executeRequest('', '', DB::TABLE_ORDER);
         $tree = $treeUtils->buildTreeByLeafs();
         $keys = $treeUtils->getTreeLeafesForKey($tree, $key);
-        $goods->getGoodsKeyCount($keys);
-        $this->dataTotalCount = $goods->getTotalCount();
+        $Products->getGoodsKeyCount($keys);
+        $this->dataTotalCount = $Products->getTotalCount();
         $limitBegin = ($pageNumber - 1) * $num;
         $limitEnd = $num;
         if ($this->isAdminOrderEnabled()) {
-            $goods->getUserSortedForMenu($keys, $limitBegin, $limitEnd);
+            $Products->getUserSortedForMenu($keys, $limitBegin, $limitEnd);
         } else {
             $str = implode('|', $keys);
-            $goods->executeRequestRegExpWithLimit(DB::TABLE_GOODS__CATEGORY, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+            $Products->executeRequestRegExpWithLimit(DB::TABLE_GOODS__CATEGORY, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
         }
-        $this->data = $goods->getResponse();
-        $this->dataCount = $goods->getResponseSize();
+        $this->data = $Products->extractDataFromResponse($Products->getResponse());
+        $this->dataCount = count($this->data);
     }
 
     public function getItemSearchData($pageNumber, $num, $valueToSearch) {
-        $goods = new DBGoodsType();
-        $keyMas = array();
-        $valueMas = array();
-        array_push($keyMas, DB::TABLE_GOODS__NAME);
-        array_push($keyMas, DB::TABLE_GOODS__DESCRIPTION);
-        array_push($valueMas, "(".mb_convert_case($valueToSearch, MB_CASE_LOWER, "utf-8").")+");
-        array_push($valueMas, "(".mb_convert_case($valueToSearch, MB_CASE_LOWER, "utf-8").")+");
-        $limitBegin = ($pageNumber - 1) * $num;
-        $limitNum = $num;
-        if ($this->isAdminOrderEnabled()) {
-            $goods->getUserSortedForSearch($keyMas, $valueMas, $limitBegin, $limitNum);
-        } else {
-            $goods->executeRequestRegExpArrayWithLimit($keyMas, $valueMas, DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitNum);
-        }
-        $this->data = $goods->getResponse();
-        $this->dataCount = $goods->getResponseSize();
-        $goods->getGoodsSearchCount($keyMas, $valueMas);
-        $this->dataTotalCount = $goods->getTotalCount();
+        $Products = new DBGoodsType();
+        $searchResult = $Products->searchByNameDescription($valueToSearch, $pageNumber * $num, $num);
+        $this->data = $searchResult['list'];
+        $this->dataCount = count($searchResult['list']);
+        $this->dataTotalCount = $searchResult['totalCount'];
     }
 
 }

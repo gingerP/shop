@@ -16,7 +16,6 @@ class Item {
         TagUtils::createShadow($mainDiv);
         $mainDiv->addStyleClasses(["simple_item_metro", "ciic"]);
         $imagesCount = min(count($images), Constants::MAX_IMAGE_COUNT_METRO_VIEW);
-        $indexToSwitchRow = $imagesCount > 2? floor(($imagesCount -1) / 2) + 1: -1;
 
         $row0 = new Div();
         $row0->addStyleClass("images_row");
@@ -56,16 +55,11 @@ class Item {
         $blackOut->addChild($blackoutContainer);
 
         $mainDiv->addChild($row0);
-
-            $mainDiv->addStyleClass("cursor_pointer");
-            $link = TagUtils::createNote($trimName, "");
-            $link->addAttribute("itemprop", "name");
-            $blackOut->addChild($link);
-            $blackOut->addChild(self::getItemButton());
-
-
-
-
+        $mainDiv->addStyleClass("cursor_pointer");
+        $link = TagUtils::createNote($trimName, "");
+        $link->addAttribute("itemprop", "name");
+        $blackOut->addChild($link);
+        $blackOut->addChild(self::getItemButton());
 
         if ($previewsNum == 0) {
             $previewsColsNum = 0;

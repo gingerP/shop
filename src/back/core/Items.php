@@ -5,28 +5,19 @@ include_once("src/back/import/page");
 
 class Items {
 
-    public function getItemsTable($pageNumber, $num, $response, $key, $valueToSearch) {
+    public function getItemsTable($pageNumber, $num, $products, $key, $valueToSearch) {
         $mainTag = new Div();
         $tdNum = 3;
-        $tdNumTotal = $tdNum * 2 - 1;
         $indOnPage = 0;
         $items = 0;
         $td = 0;
-        $item = new Item;
         $rowIndex = 1;
-        $tdHeight = Utils::isSquareViewMode() ? 300 : 30;
-        $highLightId = Utils::getFromGET(UrlParameters::HIGH_LIGHT_ELEMENT);
 
-        $isMetro = array_key_exists(UrlParameters::VIEW_MODE, $_GET) && Utils::getFromGET(UrlParameters::VIEW_MODE) == "metro" || !array_key_exists(UrlParameters::VIEW_MODE, $_GET);
-        $isCompact = array_key_exists(UrlParameters::VIEW_MODE, $_GET) && Utils::getFromGET(UrlParameters::VIEW_MODE) == "compact";
-        $isExtend = array_key_exists(UrlParameters::VIEW_MODE, $_GET) && Utils::getFromGET(UrlParameters::VIEW_MODE) == "extend";
-        $isList = array_key_exists(UrlParameters::VIEW_MODE, $_GET) && Utils::getFromGET(UrlParameters::VIEW_MODE) == "list";
-        $rowViewClass = $isCompact? 'compact': ($isMetro? "metro": ($isExtend? "extend": ($isList? "list": "list")));
-        if ($response->num_rows !== 0) {
+        if (count($products) > 0) {
             $mainTag->addStyleClass("items_table");
             $rowView = new Div();
             $mainTag->addChild($rowView);
-            while ($product = mysqli_fetch_array($response)) {
+            while ($product = array_shift($products)) {
                 $items++;
                 $indOnPage++;
                 $td++;
@@ -37,7 +28,7 @@ class Items {
                 } elseif (Utils::isEven($td)) {
                     $td++;
                 }
-                $rowView->addStyleClass($rowViewClass);
+                $rowView->addStyleClass("metro");
                 $cellView = new A();
                 $rowView->addChild($cellView);
                 $keyItem = $product["key_item"];
@@ -48,62 +39,14 @@ class Items {
                     $images =  [$capImage];
                 }
                 $item = null;
-                $itemInfo = [];
-                if ($isMetro) {
-                    $info = Item::getMetroItemView(
-                        $product["name"],
-                        $images,
-                        $product[DB::TABLE_GOODS__VERSION],
-                        Utils::formatClotheTitle($product["name"])
-                    );
-                    $item = $info[0];
-                    $itemInfo = $info[1];
-                } elseif ($isCompact) {
-                    //$name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement
-                    $info = Item::getCompactItemView(
-                        $product["name"],
-                        $images,
-                        $product["key_item"],
-                        $pageNumber,
-                        $num,
-                        $key,
-                        $valueToSearch,
-                        $product['god_type'],
-                        Utils::formatClotheTitle($product["name"]),
-                        $highLightId == $product["key_item"]
-                    );
-                    $item = $info[0];
-                    $itemInfo = $info[1];
-                } elseif ($isExtend) {
-                    $info = Item::getSquareItemView(
-                        $product["name"],
-                        $images,
-                        $product["key_item"],
-                        $pageNumber,
-                        $num,
-                        $key,
-                        $valueToSearch,
-                        $product['god_type'],
-                        Utils::formatClotheTitle($product["name"])
-                    );
-                    $item = $info[0];
-                    $itemInfo = $info[1];
-                } elseif ($isList) {
-                    $info = Item::getLineItemView(
-                        $product["name"],
-                        $images,
-                        $product["key_item"],
-                        $pageNumber,
-                        $num,
-                        $key,
-                        $valueToSearch,
-                        $product['god_type'],
-                        Utils::trimFormatClotheTitle($product["name"]),
-                        $highLightId == $product["key_item"]
-                    );
-                    $item = $info[0];
-                    $itemInfo = $info[1];
-                }
+                $info = Item::getMetroItemView(
+                    $product["name"],
+                    $images,
+                    $product[DB::TABLE_GOODS__VERSION],
+                    Utils::formatClotheTitle($product["name"])
+                );
+                $item = $info[0];
+                $itemInfo = $info[1];
 
                 $cellView->addChild($item);
                 $cellView->addStyleClass("catalog_good_item");

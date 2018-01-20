@@ -189,6 +189,36 @@ class DBGoodsType extends DBType{
         return $this->response;
     }
 
+    public function searchByNameDescription($valueToSearch, $limitBegin = 0, $limitNum = 200, $order = DB::TABLE_GOODS__NAME, $orderRule = 'asc') {
+        $connection = (new DBConnection())->init();
+        $link = $connection->getLink();
+        $escapedValue = mysqli_real_escape_string($link, $valueToSearch);
+
+        $countSqlQuery = "
+            SELECT SUM(count) FROM
+            (
+              SELECT count(*) count FROM goods where name like '%$escapedValue%' 
+                union 
+              SELECT count(*) count FROM goods where description like '%$escapedValue%' and name not like '%$escapedValue%'
+            ) goods;";
+        $sqlQuery = "
+          SELECT * FROM 
+          (
+            SELECT * FROM goods where name like '%$escapedValue%'
+              union 
+            SELECT * FROM goods where description like '%$escapedValue%' and name not like '%$escapedValue%'
+          ) goods order by name like '%$escapedValue%' desc, name asc limit $limitBegin, $limitNum;";
+        $countData = $this->extractDataFromResponse($this->execute($countSqlQuery));
+        $products = $this->extractDataFromResponse($this->execute($sqlQuery));
+        //echo $sqlQuery."\n\n\n\n";
+        return [
+            'list' => $products,
+            'totalCount' => $countData[0][0],
+            'limitBegin' => $limitBegin,
+            'limitNum' => $limitNum
+        ];
+    }
+
     public function incrementVersion($id) {
         $this->execute("update ".
             $this->getTableName()." set ".
