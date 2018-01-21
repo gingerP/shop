@@ -179,7 +179,11 @@ define([
 
     function renderGoods() {
         service.load(function (goods) {
+            for(var index = 0; index < goods.length; index++) {
+                goods[index].image_path += '?' + Date.now();
+            }
             dataView.parse(goods, 'json');
+            dataView.refresh();
         });
     }
 

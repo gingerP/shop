@@ -71,3 +71,5 @@ grunt.initConfig({
         }
     }
 });
+
+grunt.task.registerTask('build', ['less', 'uglify']);

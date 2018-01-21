@@ -1,4 +1,9 @@
 <?php
+
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Content-type: application/json; charset=UTF-8');
+http_response_code(200);
+
 define('AU_ROOT', __DIR__.'/../../../');
 error_reporting(-1);
 include_once('src/back/import/db');
@@ -26,9 +31,6 @@ try {
     define('AU_CONFIG', $config);
     $GLOBALS['AU_MESSAGES'] = $messages;
     $GLOBALS['AU_SEC_PROTOCOL'] = 'HTTPS';
-
-    header('Content-type: application/json; charset=UTF-8');
-    http_response_code(200);
 
     if (array_key_exists('method', $_GET)) {
         $method = $_GET['method'];

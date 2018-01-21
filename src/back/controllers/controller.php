@@ -1,5 +1,8 @@
 <?php
+
 header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+
 define('AU_ROOT', __DIR__.'/../../../');
 $config = parse_ini_file('config/config.ini');
 $GLOBALS['config'] = $config;
@@ -7,6 +10,7 @@ define('AU_CONFIG', $config);
 include_once('src/back/import/import');
 include_once('src/back/import/page');
 include_once('src/back/labels/HttpStatuses.php');
+
 
 function sendNotFoundPage() {
     header('Content-Type: text/html; charset=utf-8');
