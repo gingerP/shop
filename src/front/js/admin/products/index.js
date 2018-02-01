@@ -5,8 +5,9 @@ require([
     'products/grid',
     'products/details',
     'products/images',
-    'products/toolbar'
-], function (ServiceEntities, Services, Components, Grid, Details, Images, Toolbar) {
+    'products/toolbar',
+    'dropbox/dropbox'
+], function (ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
@@ -108,5 +109,7 @@ require([
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
         Services.getDescriptionKeys(app.form.updateDescriptionConfig);
+        var dir = new AuDropboxDir();
+        dir.openPopup();
     })();
 });

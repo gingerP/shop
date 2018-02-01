@@ -1,0 +1,35 @@
+.dropbox {
+  &-data-view {
+    .dhx_dataview_default_item {
+      box-shadow: none;
+    }
+    .dhx_dataview_item {
+      padding: 10px;
+      border: 1px solid #ffffff !important;
+    }
+    .dhx_dataview_item.dhx_dataview_default_item_selected {
+      background: none;
+      border: 1px solid #a8dbfb !important;
+      color: #404040;
+      position: relative;
+    }
+  }
+  &-item {
+    &-img {
+      margin: 0 auto;
+      width: 64px;
+      display: block;
+    }
+
+    &-size,
+    &-name {
+      margin: 0 10px;
+      word-break: break-all;
+      text-align: center;
+    }
+    &-size {
+      color: #6f6f6f;
+      font-weight: bold;
+    }
+  }
+}
