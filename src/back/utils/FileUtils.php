@@ -63,6 +63,28 @@ class FileUtils
         return $files;
     }
 
+    public static function getFilesNamesByPrefixByDescription($rootPath, $prefix, $description)
+    {
+        if (strlen($prefix) == 0) {
+            $prefix = '.*';
+        }
+        $files = array();
+        if (file_exists($rootPath) && $dh = opendir($rootPath)) {
+            while (($file = readdir($dh)) !== false) {
+
+                if (filetype($rootPath . DIRECTORY_SEPARATOR . $file) == "file") {
+                    if (preg_match('/^' . $prefix . '.*(\.' . $description . ')$/', $file)) {
+                        array_push($files, $file);
+                    }
+                }
+            }
+            //sort($files);
+            closedir($dh);
+        }
+        sort($files);
+        return $files;
+    }
+
     public static function buildPath()
     {
         $args = func_num_args();

@@ -403,7 +403,9 @@ class Utils
     {
         $result = [];
         foreach ($mapping as $key => $value) {
-            if (array_key_exists($value, $source)) {
+            if (is_callable($value)) {
+                $result[$key] = $value($source[$key]);
+            } else if (array_key_exists($value, $source)) {
                 $result[$key] = $source[$value];
             }
         }

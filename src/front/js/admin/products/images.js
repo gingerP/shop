@@ -1,7 +1,7 @@
 define([
     'lodash',
     'common/services'
-], function(_, Services) {
+], function (_, Services) {
 
     function initImages(tabbar) {
         tabbar.addTab('b', 'Изображения');
@@ -16,6 +16,17 @@ define([
 
         }
 
+        var toolbar = tabbar.tabs('b').attachToolbar({
+            items: [
+                {id: 'add', type: 'button', pos: 0, text: 'Добавить фото'}
+            ],
+            onClick: function (id) {
+                if (id === 'add') {
+                    dataView.openDialog();
+                }
+            }
+        });
+
         var dataView = tabbar.cells('b').attachDataView({
             type: {
                 template: "<div class='image_template'>#image#<div class='title #titleClass#'>#title#</div></div>",
@@ -24,7 +35,6 @@ define([
             }
         });
 
-        dataView._auImages = [];
         dataView._auNewImagesEverAdded = 0;
 
         dataView.setCustomUserData = function (id, userData) {
@@ -46,37 +56,26 @@ define([
         };
 
         dataView.moveNext = function (id) {
-            var srcIndex = _.findIndex(this._auImages, {id: id});
-            var destIndex = 0;
-            var imageItem = this._auImages.splice(srcIndex, 1)[0];
-            if (srcIndex === this._auImages.length) {
-                destIndex = 0;
-                this._auImages.unshift(imageItem);
-            } else {
-                destIndex = srcIndex + 1;
-                this._auImages.splice(destIndex, 0, imageItem);
-            }
-            this.move(id, destIndex);
+            this.moveDown(id);
         };
 
         dataView.movePrev = function (id) {
-            var srcIndex = _.findIndex(this._auImages, {id: id});
-            var destIndex = 0;
-            var imageItem = this._auImages.splice(srcIndex, 1)[0];
-            if (srcIndex === 0) {
-                destIndex = this._auImages.length;
-                this._auImages.push(imageItem);
-            } else {
-                destIndex = srcIndex - 1;
-                this._auImages.splice(destIndex, 0, imageItem);
-            }
-            this.move(id, destIndex);
+            this.moveUp(id);
         };
 
         dataView.removeItem = function (id) {
-            var srcIndex = _.findIndex(this._auImages, {id: id});
-            this._auImages.splice(srcIndex, 1);
-            this.remove(id);
+            var self = this;
+            var data = this.get(id);
+            dhtmlx.confirm({
+                type: 'confirm-warning',
+                ok: 'Да', cancel: 'Нет',
+                text: "Вы уверены, что хотите удалить фото '" + data.title + "'?",
+                callback: function (result) {
+                    if (result) {
+                        self.remove(id);
+                    }
+                }
+            });
         };
 
         dataView.deleteFile = function (id) {
@@ -84,41 +83,37 @@ define([
             this.remove(id);
         };
 
-        dataView.attachEvent('onBeforeSelect', function (id, state) {
-            if (id == 'add') {
-                return false;
-            } else {
-
-            }
-        });
-        dataView.attachEvent("onBeforeDrop", function (context, ev) {
-            if (context.target === 'add' || context.start === 'add') {
-                return false;
-            }
-        });
-        dataView.attachEvent("onBeforeDrag", function (context, ev) {
-            if (context.start === 'add') {
-                return false;
-            }
-        });
         dataView.openDialog = function () {
             if (!this.isLocked()) {
+                var uploader = $('#file_upload');
+                if (!uploader.length) {
+                    $(document.body).append('<input type="file" name="fileToUpload" id="file_upload" onchange="app.images.uploadFile(this)">').trigger('click');
+                }
                 $('#file_upload').trigger('click');
             }
         };
         dataView.saveImages = function (id, callback) {
             var index = 0;
-            var images = _.map(this._auImages, function(imageItem, index) {
-                return {index: index, new: imageItem.isNew, image: imageItem.data};
+            var images = [];
+            _.each(this.serialize(), function (image) {
+                if (image.isRaw) {
+                    images.push({data: image.data, isNew: true});
+                } else {
+                    images.push({data: image.data, isNew: false});
+                }
             });
 
-            Services.uploadImagesForGood(+id, images, function() {
+            app.layout.progressOn();
+            Services.uploadImagesForGood(+id, images, function () {
+                app.layout.progressOff();
                 dhtmlx.message({
                     text: 'Изображения для товара успешно сохранены.',
                     expire: 3000,
                     type: 'dhx-message-success'
                 });
                 callback();
+            }).fail(function () {
+                app.layout.progressOff();
             });
         };
 
@@ -129,14 +124,15 @@ define([
             reader.onload = function (e) {
                 var id = 'new_' + U.getRandomString();
                 instance.setCustomUserData(id, {image: reader.result});
-                var imageItem = dataView.addImageItem(id, reader.result, true);
                 dataView._auNewImagesEverAdded++;
                 instance.add({
-                    id: imageItem.id,
-                    titleClass: 'image-new',
+                    id: id,
+                    titleClass: '',
                     title: 'Новое фото #' + dataView._auNewImagesEverAdded,
-                    image: '<img src="' + reader.result + '">' + instance.getItemViewButtons(imageItem.id)
-                }, imageItem.position);
+                    image: '<img src="' + reader.result + '">' + instance.getItemViewButtons(id),
+                    data: reader.result,
+                    isRaw: true
+                });
             };
             reader.readAsDataURL(file);
 
@@ -144,8 +140,10 @@ define([
 
         dataView.lock = function (state) {
             if (state) {
+                toolbar.disableItem('add');
                 $(this._obj).addClass('disable').removeClass('enable');
             } else {
+                toolbar.enableItem('add');
                 $(this._obj).addClass('enable').removeClass('disable');
             }
         };
@@ -156,73 +154,37 @@ define([
 
         dataView.clearImages = function () {
             var instance = this;
-            instance._auImages = [];
             dataView._auNewImagesEverAdded = 0;
             instance.clearAll();
-            instance.addDefaultItem();
-            instance.lock(false);
+            instance.lock(true);
         };
 
-        dataView.loadImages = function (id) {
+        dataView.loadImages = function (entity) {
             var instance = this;
+            var images = entity.images;
             instance.clearAll();
-            instance.addDefaultItem();
             instance.lock(false);
-            Services.getGoodImages(id, function (images) {
-                dataView._auImages = [];
-                dataView._auNewImagesEverAdded = 0;
-                if (images && images.length) {
-                    for (var imageIndex = 0; imageIndex < images.length; imageIndex++) {
-                        var pattern = new RegExp('[^\/]*$');
-                        var res = pattern.exec(images[imageIndex]);
-                        var imageItem = dataView.addImageItem(U.getRandomString(), images[imageIndex], false);
-                        instance.setCustomUserData(imageItem.id, {image: images[imageIndex]});
-                        instance.add({
-                            id: imageItem.id,
-                            titleClass: '',
-                            title: res.length ? res[0] : '',
-                            image: '<img src="/' + images[imageIndex] + '?' + Date.now() + '" class="exist_image">' + instance.getItemViewButtons(imageItem.id)
-                        }, imageItem.position);
-                    }
+            toolbar.enableItem('add');
+            if (images && images.length) {
+                for (var imageIndex = 0; imageIndex < images.length; imageIndex++) {
+                    var imageCode = images[imageIndex];
+                    var imagePath = 'images/catalog/' + entity.key_item + '/s_' + imageCode + '.jpg';
+                    var id = U.getRandomString();
+                    instance.add({
+                        id: id,
+                        titleClass: '',
+                        title: imageCode,
+                        image: '<img src="/' + imagePath + '?' + Date.now() + '" class="exist_image">' + instance.getItemViewButtons(id),
+                        data: imageCode
+                    });
                 }
-            })
-        };
-
-        dataView.addDefaultItem = function () {
-            var defaultItem = {
-                id: 'add',
-                title: '',
-                image: "<div onclick='app.images.openDialog(this);' class='image_template image_template_add_btn'>+</div>\
-                <form enctype='multipart/form-data' id='file_load_form'>\
-                <input type='file' style='visibility:hidden;' name='goods_images' onchange='app.images.uploadFile(this)' id='file_upload' />\
-                </form>"
-            };
-            this.add(defaultItem, 0);
-        };
-
-        dataView.addImageItem = function addImageItem(id, data, isNew) {
-            var imageItem = {
-                id: id,
-                isNew: isNew,
-                position: dataView._auImages.length,
-                newPosition: dataView._auImages.length,
-                data: data
-            };
-            dataView._auImages.push(imageItem);
-            return imageItem;
+            }
         };
 
         dataView.syncNewItemsTitle = function updateNewItemsTitle() {
             var newImagesIndex = 0;
-            _.forEach(this._auImages, function(image) {
-                if (image.isNew) {
-                    newImagesIndex++;
-                    dataView.update(image.id, {title: 'Новое фото #' + newImagesIndex})
-                }
-            });
         };
 
-        dataView.addDefaultItem();
         dataView.lock(true);
         return dataView;
     }

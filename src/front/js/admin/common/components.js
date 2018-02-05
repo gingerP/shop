@@ -18,8 +18,8 @@ define([], function() {
         },
         confirm: function (text, callback) {
             dhtmlx.confirm({
-                ok: "Да",
-                cancel: "Отмена",
+                ok: 'Да',
+                cancel: 'Отмена',
                 text: text,
                 callback: callback
             });
@@ -109,51 +109,52 @@ define([], function() {
                 parent: 'menu',
                 image_path: '/src/front/dhtmlx/imgs/',
                 items: [
-                    {id: "goods", text: "Товары"},
-                    {id: "tree", text: "Дерево навигации", disabled: true},
-                    {id: "prices", text: "Прайс-листы"},
-                    {id: "contacts", text: "Контакты"},
-                    {id: "booklets", text: "Буклеты"},
-                    {id: exitKey, text: "Выход"}
+                    {id: 'settings', text: 'Настройки'},
+                    {id: 'goods', text: 'Товары'},
+                    {id: 'tree', text: 'Дерево навигации', disabled: true},
+                    {id: 'prices', text: 'Прайс-листы', disabled: true},
+                    {id: 'contacts', text: 'Контакты', disabled: true},
+                    {id: 'booklets', text: 'Буклеты', disabled: true},
+                    {id: exitKey, text: 'Выход'}
                 ]
             });
-            menu.attachEvent("onClick", function (id, zoneId, cas) {
-                window.open(document.location.origin + "/admin/" + id, "_self");
+            menu.attachEvent('onClick', function (id, zoneId, cas) {
+                window.open(document.location.origin + '/admin/' + id, '_self');
             });
             var exitDOM = menu.idPull[menu.idPrefix + exitKey];
-            $("#" + exitDOM.id).css("position", "absolute").css("right", "0").css("background-color", "#F04B4B").css("display", "inline-block").css("cursor", "pointer").css("color", "#fff").css("font-weight", "bold").css("font-size", "12px").css("border-radius", "3px").css("box-shadow", "0px 0px 3px rgba(255, 255, 255, 0.5) inset").css("border", "1px solid #F04B4B");
+            $('#' + exitDOM.id).css('position', 'absolute').css('right', '0').css('background-color', '#F04B4B').css('display', 'inline-block').css('cursor', 'pointer').css('color', '#fff').css('font-weight', 'bold').css('font-size', '12px').css('border-radius', '3px').css('box-shadow', '0px 0px 3px rgba(255, 255, 255, 0.5) inset').css('border', '1px solid #F04B4B');
 
             return menu;
         },
 
         createToolbar: function (layout, handlers, buttons, cellName) {
             var config = [
-                {type: "button", id: "reload", text: "Обновить"},
-                {type: "button", id: "add", text: "Добавить"},
-                {type: "button", id: "save", text: "Сохранить"},
-                {type: "separator"},
-                {type: "button", id: "delete", text: "Удалить"}
+                {type: 'button', id: 'reload', text: 'Обновить'},
+                {type: 'button', id: 'add', text: 'Добавить'},
+                {type: 'button', id: 'save', text: 'Сохранить'},
+                {type: 'separator'},
+                {type: 'button', id: 'delete', text: 'Удалить'}
             ];
             if (U.hasContent(buttons)) {
                 var config = [];
                 var _buttons = {
-                    reload: {type: "button", id: "reload", text: "Обновить"},
-                    add: {type: "button", id: "add", text: "Добавить"},
-                    save: {type: "button", id: "save", text: "Сохранить"},
-                    delete: {type: "button", id: "delete", text: "Удалить"},
-                    loadBackground: {type: "button", id: "loadBackground", text: "Загрузить фон"},
-                    saveOrder: {type: "button", id: "saveOrder", text: "Настроить порядок"},
-                    separator: {type: "separator"},
-                    preview: {type: "button", id: "preview", text: "Просмотр"}
+                    reload: {type: 'button', id: 'reload', text: 'Обновить'},
+                    add: {type: 'button', id: 'add', text: 'Добавить'},
+                    save: {type: 'button', id: 'save', text: 'Сохранить'},
+                    delete: {type: 'button', id: 'delete', text: 'Удалить'},
+                    loadBackground: {type: 'button', id: 'loadBackground', text: 'Загрузить фон'},
+                    saveOrder: {type: 'button', id: 'saveOrder', text: 'Настроить порядок'},
+                    separator: {type: 'separator'},
+                    preview: {type: 'button', id: 'preview', text: 'Просмотр'}
                 };
                 for (var btnIndex = 0; btnIndex < buttons.length; btnIndex++) {
                     config.push(_buttons[buttons[btnIndex]]);
                 }
             }
-            var toolbar = layout.cells(cellName || "a").attachToolbar({items: config});
+            var toolbar = layout.cells(cellName || 'a').attachToolbar({items: config});
             if (typeof handlers != 'undefined') {
                 toolbar.customHandlers = handlers;
-                toolbar.attachEvent("onClick", function (id) {
+                toolbar.attachEvent('onClick', function (id) {
                     if (this.customHandlers.hasOwnProperty(id) && typeof this.customHandlers[id] == 'function') {
                         this.customHandlers[id]();
                     }
@@ -191,7 +192,7 @@ define([], function() {
         initDhtmlxWindow: function (vars, closeCallback) {
             var myWins = new dhtmlXWindows({
                 image_path: '/src/front/dhtmlx/imgs/',
-                skin: "dhx_blue"
+                skin: 'dhx_blue'
             });
             var _vars = {
                 id: U.getRandomString(),

@@ -117,7 +117,7 @@ abstract class DBType {
         if ($mapping != null && count($mapping) > 0) {
             $fields = implode(",", array_values($mapping));
         }
-        $this->request = "SELECT ".$fields." FROM ".$this->getTable();
+        $this->request = "SELECT ".$fields." FROM ".$this->getTable()." t;";
         $this->execute($this->request);
         Log::db("DBConnection.getList REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         return $this->response;

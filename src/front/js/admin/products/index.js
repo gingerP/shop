@@ -47,7 +47,8 @@ require([
     function getLoader() {
         return {
             reloadGrid: function (grid) {
-                Services.getGoods(null, function (goods) {
+                app.layout.progressOn();
+                return Services.getGoods(null).done(function (goods) {
                     grid.clearSelection();
                     grid.clearAll();
                     app.form.clear();
@@ -66,6 +67,9 @@ require([
                         }
                         grid.sortRows(0, 'int', 'asc');
                     }
+                    app.layout.progressOff();
+                }).fail(function() {
+                    app.layout.progressOff();
                 });
             }
         };

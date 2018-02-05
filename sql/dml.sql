@@ -23,3 +23,6 @@ ADD CONSTRAINT `fk_good_id`
 
 ALTER TABLE `augustova`.`goods`
 ADD COLUMN `version` VARCHAR(45) NOT NULL DEFAULT 0 AFTER `category`;
+
+ALTER TABLE `augustova`.`goods`
+ADD COLUMN `images` VARCHAR(5000) NOT NULL DEFAULT '[]' AFTER `version`;

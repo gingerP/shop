@@ -34,7 +34,6 @@ define([
                 App.form.lock();
                 App.form.oldGoodCode = null;
                 App.images.clearAll();
-                App.images.addDefaultItem();
                 App.images.lock(true);
             },
             add: function () {
