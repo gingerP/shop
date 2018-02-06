@@ -218,4 +218,18 @@ class FileUtils
         }
     }
 
+    public static function removeAllExcept($except, $dir) {
+        if (is_dir($dir)) {
+            if (file_exists($dir) && $dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    $isFile = filetype($dir . DIRECTORY_SEPARATOR . $file) == 'file';
+                    if ($isFile && !in_array($file, $except)) {
+                        self::unlinkPath($dir . DIRECTORY_SEPARATOR . $file);
+                    }
+                }
+                closedir($dh);
+            }
+        }
+    }
+
 }

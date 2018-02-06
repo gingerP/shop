@@ -92,7 +92,7 @@ define([
                 $('#file_upload').trigger('click');
             }
         };
-        dataView.saveImages = function (id, callback) {
+        dataView.saveImages = function (id) {
             var index = 0;
             var images = [];
             _.each(this.serialize(), function (image) {
@@ -104,17 +104,17 @@ define([
             });
 
             app.layout.progressOn();
-            Services.uploadImagesForGood(+id, images, function () {
-                app.layout.progressOff();
-                dhtmlx.message({
-                    text: 'Изображения для товара успешно сохранены.',
-                    expire: 3000,
-                    type: 'dhx-message-success'
+            return Services.uploadImagesForGood(+id, images)
+                .then(function () {
+                    app.layout.progressOff();
+                    dhtmlx.message({
+                        text: 'Изображения для товара успешно сохранены.',
+                        expire: 3000,
+                        type: 'dhx-message-success'
+                    });
+                }).catch(function () {
+                    app.layout.progressOff();
                 });
-                callback();
-            }).fail(function () {
-                app.layout.progressOff();
-            });
         };
 
         dataView.uploadFile = function (e) {
@@ -173,7 +173,7 @@ define([
                     instance.add({
                         id: id,
                         titleClass: '',
-                        title: imageCode,
+                        title: imageIndex + 1,
                         image: '<img src="/' + imagePath + '?' + Date.now() + '" class="exist_image">' + instance.getItemViewButtons(id),
                         data: imageCode
                     });

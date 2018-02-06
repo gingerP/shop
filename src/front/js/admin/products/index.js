@@ -48,7 +48,7 @@ require([
         return {
             reloadGrid: function (grid) {
                 app.layout.progressOn();
-                return Services.getGoods(null).done(function (goods) {
+                return Services.getGoods(null).then(function (goods) {
                     grid.clearSelection();
                     grid.clearAll();
                     app.form.clear();
@@ -68,7 +68,7 @@ require([
                         grid.sortRows(0, 'int', 'asc');
                     }
                     app.layout.progressOff();
-                }).fail(function() {
+                }).catch(function() {
                     app.layout.progressOff();
                 });
             }
@@ -111,6 +111,6 @@ require([
         app.toolbar = Toolbar.init(app, app.layout, app.grid);
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
-        Services.getDescriptionKeys(app.form.updateDescriptionConfig);
+        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig);
     })();
 });

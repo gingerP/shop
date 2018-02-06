@@ -8,11 +8,11 @@ define([
     function reloadImages() {
         layout.progressOn();
         return Services.readImagesFromCatalogToDb()
-            .done(function(response) {
+            .then(function(response) {
                 layout.progressOff();
                 dhtmlx.alert('Обработано товаров - ' + response.products + '<br>Обработано изображений - ' + response.images + '.');
             })
-            .fail(function() {
+            .catch(function() {
                 layout.progressOff();
             });
     }

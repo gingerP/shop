@@ -65,6 +65,7 @@ try {
                     break;
                 case 'logout':
                     loginRedirect($page);
+                    break;
                 default:
                     $page = new AdminPageProducts();
                     echo $page->getHtml();

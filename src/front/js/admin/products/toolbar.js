@@ -52,52 +52,6 @@ define([
                     grid.selectRowById(entity.id);
                 }
             },
-            saveDetails: function () {
-                var rowId = App.grid.getSelectedRowId();
-                var entity = App.grid.getUserData(rowId, 'entity');
-                var oldRowId = rowId;
-                var updater = {
-                    description: function (form, entity) {
-                        var formData = App.form.getFormData();
-                        var descriptions = [];
-                        for (var key in formData) {
-                            if (key.indexOf('k_') == 0) {
-                                descriptions.push(key + '=' + formData[key]);
-                            }
-                        }
-                        entity.description = descriptions.join('|');
-                    },
-                    god_type: function (form, entity) {
-                        var formData = App.form.getFormData();
-                        entity.god_type = formData.god_type ? 'HARD' : 'SIMPLE';
-                    }
-                };
-                Components.updateEntity(App.form, entity, updater);
-                App.layout.progressOn();
-                function reloadRow(entity) {
-                    App.grid.changeRowId(oldRowId, entity.id);
-                    App.grid.setUserData(entity.id, 'entity', entity);
-                    Components.updateGridRow(App.grid, entity.id, entity, App.gridRowConfig);
-                    App.grid.clearSelection();
-                    App.grid.selectRowById(entity.id);
-                }
-
-                function callback(data) {
-                    function callback() {
-                        Services.getGood(data, reloadRow);
-                        App.layout.progressOff();
-                    }
-
-                    App.serviceEntities.removeAll();
-                }
-
-                if (entity.hasOwnProperty('_isNew')) {
-                    entity.id = null;
-                    entity.key_item = null;
-                }
-                Components.prepareEntity(entity);
-                Services.updateGood(entity.id, entity, callback);
-            },
             save: function () {
                 var rowId = App.grid.getSelectedRowId();
                 var entity = App.grid.getUserData(rowId, 'entity');
@@ -105,27 +59,34 @@ define([
                 Components.updateEntity(App.form, entity, updater);
                 App.layout.progressOn();
 
-                if (entity._isNew === true ) {
+                if (entity._isNew === true) {
                     delete entity.id;
                     delete entity.key_item;
                 }
 
                 Components.prepareEntity(entity);
-                Services.updateGood(entity.id, entity,
-                    function callback(product) {
-                        function reload() {
-                            reloadRow(oldRowId, product);
-                            App.layout.progressOff();
-                        }
+                var id;
+                return Services.updateGood(entity.id, entity)
+                    .then(function callback(product) {
+                        App.layout.progressOff();
+                        id = product.id;
                         App.serviceEntities.removeAll();
                         dhtmlx.message({
                             text: 'Товар успешно сохранен.',
                             expire: 3000,
                             type: 'dhx-message-success'
                         });
-                        App.images.saveImages(product.id, reload);
-                    }
-                );
+                        return App.images.saveImages(product.id);
+                    })
+                    .then(function() {
+                        return Services.getGood(id);
+                    })
+                    .then(function(product) {
+                        reloadRow(oldRowId, product);
+                    })
+                    .catch(function () {
+                        App.layout.progressOff();
+                    });
             },
             saveOrder: function () {
                 function show() {
@@ -163,7 +124,7 @@ define([
                             if (entity.hasOwnProperty('_isNew')) {
                                 callback();
                             } else {
-                                Services.deleteGood(entity.id, function (result) {
+                                Services.deleteGood(entity.id).then(function (result) {
                                     if (result > 0) {
                                         callback();
                                     } else {

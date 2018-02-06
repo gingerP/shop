@@ -7,30 +7,24 @@ define([
     var dataView;
     var toolbar;
     var service = {
-        load: function (callback) {
-            Services.getGoodsAdminOrder(function(data) {
-                callback(convertGoodsWithOrder(data));
-            });
-        },
         save: function (data, callback) {
-            Services.saveGoodsOrder({
-                order: data
-            }, function (result) {
-                callback(result);
-            });
+            Services.saveGoodsOrder({order: data})
+                .then(function (result) {
+                    callback(result);
+                });
         }
     };
 
     function convertGoodsWithOrder(goods) {
         if (goods && goods.length) {
-            goods.sort(function(goodA, goodB) {
+            goods.sort(function (goodA, goodB) {
                 if (goodA.good_index != null && goodB.good_index != null) {
                     return Number(goodA.good_index) > Number(goodB.good_index) ? 1 : -1;
                 } else {
                     return Number(goodA.id) > Number(goodB.id) ? 1 : -1;
                 }
             });
-            goods.forEach(function(good, index) {
+            goods.forEach(function (good, index) {
                 good.good_index = index;
                 good.good_id = good.id;
             });
@@ -87,18 +81,18 @@ define([
         if (input) {
             input.placeholder = 'Введите для поиска...';
             input.className += ' goods-order-search';
-            $(input).on('input', function() {
+            $(input).on('input', function () {
 
             });
         }
-        toolbar.attachEvent('onClick', function(id){
+        toolbar.attachEvent('onClick', function (id) {
             var orderData = updateOrder();
-            service.save(orderData, function(result) {
+            service.save(orderData, function (result) {
                 console.info('Save order: ' + result);
                 renderGoods();
             });
         });
-        toolbar.attachEvent('onValueChange', function(id){
+        toolbar.attachEvent('onValueChange', function (id) {
         });
         toolbar.setSkin('material');
         return toolbar;
@@ -110,7 +104,7 @@ define([
             item.addClass('dragged');
             return true;
         });
-        view.attachEvent("onBeforeDrop", function(context) {
+        view.attachEvent("onBeforeDrop", function (context) {
             if (context.target == null) {
                 var item = $('[dhx_f_id=' + context.start + ']');
                 item.removeClass('dragged');
@@ -178,13 +172,15 @@ define([
     }
 
     function renderGoods() {
-        service.load(function (goods) {
-            for(var index = 0; index < goods.length; index++) {
-                goods[index].image_path += '?' + Date.now();
-            }
-            dataView.parse(goods, 'json');
-            dataView.refresh();
-        });
+        Services.getGoodsAdminOrder()
+            .then(convertGoodsWithOrder)
+            .then(function (goods) {
+                for (var index = 0; index < goods.length; index++) {
+                    goods[index].image_path += '?' + Date.now();
+                }
+                dataView.parse(goods, 'json');
+                dataView.refresh();
+            });
     }
 
     function updateOrder() {
@@ -192,7 +188,7 @@ define([
         var result = [];
         var index = 0;
         var id;
-        for(;index < count; index++) {
+        for (; index < count; index++) {
             id = dataView.idByIndex(index);
             result.push({
                 good_id: dataView.get(id).id,

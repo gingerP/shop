@@ -59,6 +59,7 @@ class ProductsService
     public static function updateGood($id, $values)
     {
         self::clearCache();
+        unset($values[DB::TABLE_GOODS__IMAGES]);
 
         $goodsType = new DBGoodsType();
         if (array_key_exists(DB::TABLE_GOODS__ID, $values)) {
@@ -81,10 +82,7 @@ class ProductsService
     public static function validate_updateImages()
     {
         $id = Utils::getFromPOST('id');
-        $data = Utils::getFromPOST('data');
-        if (is_null($data)) {
-            $data = [];
-        }
+        $data = Utils::getFromPOST('data', false);
         if (is_null($id)) {
             throw new BadRequestError('"id" field required.');
         } else if (!is_integer($id)) {
@@ -93,18 +91,10 @@ class ProductsService
             throw new BadRequestError('"data" should be array.');
         }
         foreach ($data as $image) {
-            if (!array_key_exists('index', $image)) {
-                throw new BadRequestError('"index" is required.');
-            } else if (!array_key_exists('new', $image)) {
-                throw new BadRequestError('"new" is required.');
-            } else if (!array_key_exists('image', $image)) {
-                throw new BadRequestError('"image" is required.');
-            } else if (count($image) !== 3) {
-                throw new BadRequestError('"data" item should contain only 3 keys.');
-            } else if (!is_bool($image['new'])) {
-                throw new BadRequestError('"new" should be boolean.');
-            } else if (!is_int($image['index'])) {
-                throw new BadRequestError('"index" should be numeric.');
+            if (!array_key_exists('isNew', $image)) {
+                throw new BadRequestError('"isNew" is required.');
+            } else if (!array_key_exists('data', $image)) {
+                throw new BadRequestError('"data" is required.');
             }
         }
     }
@@ -120,25 +110,41 @@ class ProductsService
     public static function updateImages($id, $imagesFromFront)
     {
         self::clearCache();
-        $isEmpty = is_null($imagesFromFront) || is_array($imagesFromFront) && count($imagesFromFront) == 0;
-        if ($isEmpty) {
-            $Products = new DBGoodsType();
-            $product = $Products->get($id);
-            $imagesOrder = [];
-            for ($imgIndex = 0; $imgIndex < count($imagesFromFront); $imgIndex++) {
-                $image = $imagesFromFront[$imgIndex];
-                $isNew = $image['new'] == 'true';
-                if ($isNew) {
-                    $imageName = self::saveNewImage($image['image'], $product[DB::TABLE_GOODS__KEY_ITEM]);
-                    array_push($imagesOrder, $imageName);
-                } else {
-                    array_push($imagesOrder, $image['image']);
-                }
+        $Products = new DBGoodsType();
+        $product = $Products->get($id);
+        $imagesOrder = [];
+        $productCode = $product[DB::TABLE_GOODS__KEY_ITEM];
+        for ($imgIndex = 0; $imgIndex < count($imagesFromFront); $imgIndex++) {
+            $image = $imagesFromFront[$imgIndex];
+            $isNew = $image['isNew'];
+            if ($isNew) {
+                $imageName = self::saveNewImage($image['data'], $productCode);
+                array_push($imagesOrder, $imageName);
+            } else {
+                array_push($imagesOrder, $image['data']);
             }
-
-            $product[DB::TABLE_GOODS__IMAGES] = $imagesOrder;
-            $Products->update($id, $product);
         }
+        $product = [];
+        $product[DB::TABLE_GOODS__IMAGES] = json_encode($imagesOrder);
+        $Products->update($id, $product);
+        self::deleteImagesAllExcept($imagesOrder, $productCode);
+    }
+
+    private static function deleteImagesAllExcept($imagesCodes, $productCode)
+    {
+        $Preferences = new DBPreferencesType();
+        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $productDir = FileUtils::buildPath($catalogPath, $productCode);
+        $except = [];
+        foreach ($imagesCodes as $imageCode) {
+            array_push(
+                $except,
+                Constants::SMALL_IMAGE . $imageCode . '.jpg',
+                Constants::MEDIUM_IMAGE . $imageCode . '.jpg',
+                Constants::LARGE_IMAGE . $imageCode . '.jpg'
+            );
+        }
+        FileUtils::removeAllExcept($except, $productDir);
     }
 
     public static function saveNewImage($base64Image, $productCode)
@@ -346,7 +352,8 @@ class ProductsService
             DB::TABLE_GOODS__NAME => $row[DB::TABLE_GOODS__NAME],
             DB::TABLE_GOODS__DESCRIPTION => $row[DB::TABLE_GOODS__DESCRIPTION],
             DB::TABLE_GOODS__IMAGE_PATH => $row[DB::TABLE_GOODS__IMAGE_PATH],
-            DB::TABLE_GOODS__CATEGORY => $row[DB::TABLE_GOODS__CATEGORY]
+            DB::TABLE_GOODS__CATEGORY => $row[DB::TABLE_GOODS__CATEGORY],
+            DB::TABLE_GOODS__IMAGES => json_decode($row[DB::TABLE_GOODS__IMAGES])
         ];
     }
 
@@ -412,16 +419,24 @@ class ProductsService
     {
         $dbGoods = new DBGoodsType();
         $data = $dbGoods->getAdminSortedForCommon(0, PHP_INT_MAX);
+        $dbPref = new DBPreferencesType();
+        $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         Log::db("getGoodsOrder ");
         $mappings = [
             DB::TABLE_GOODS__ID => DB::TABLE_GOODS__ID,
             DB::TABLE_GOODS__KEY_ITEM => DB::TABLE_GOODS__KEY_ITEM,
             DB::TABLE_GOODS__NAME => DB::TABLE_GOODS__NAME,
             DB::TABLE_USER_ORDER__GOOD_ID => DB::TABLE_USER_ORDER__GOOD_ID,
-            DB::TABLE_USER_ORDER__GOOD_INDEX => DB::TABLE_USER_ORDER__GOOD_INDEX
+            DB::TABLE_USER_ORDER__GOOD_INDEX => DB::TABLE_USER_ORDER__GOOD_INDEX,
+            DB::TABLE_GOODS__IMAGE_PATH => function ($imagePath, $product) use ($catalogPath) {
+                $images = json_decode($product[DB::TABLE_GOODS__IMAGES]);
+                if (count($images) > 0) {
+                    return FileUtils::buildPath(DIRECTORY_SEPARATOR, $catalogPath, $product[DB::TABLE_GOODS__KEY_ITEM], Constants::SMALL_IMAGE . $images[0] . ".jpg");
+                }
+                return "";
+            }
         ];
-        $goods = $dbGoods->extractDataFromResponse($data, $mappings);
-        return self::mergeImagesToGoods($goods);
+        return $dbGoods->extractDataFromResponse($data, $mappings);
     }
 
     private static function mergeImagesToGoods($goods)
