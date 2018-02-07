@@ -62,14 +62,16 @@ class SearchService
     {
         $normalized = [];
         if ($products) {
+            $Preferences = new DBPreferencesType();
+            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
             while ($product = array_shift($products)) {
                 $code = $product[DB::TABLE_GOODS__KEY_ITEM];
-                $version = $product[DB::TABLE_GOODS__VERSION];
-                $iconPath = FileUtils::getFirstFileInDirectoryByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, 'jpg');
+                $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
+                $imagesSmall = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::SMALL_IMAGE, $catalogPath);
                 array_push($normalized, [
                     'name' => $product[DB::TABLE_GOODS__NAME],
                     'url' => URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM], null, null, []),
-                    'icon' => Utils::normalizeAbsoluteImagePath($iconPath, ['v' => $version]),
+                    'icon' => $imagesSmall[0]
                 ]);
             }
         }

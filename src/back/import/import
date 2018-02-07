@@ -11,6 +11,7 @@ include_once("src/back/utils/FileUtils.php");
 include_once("src/back/utils/ImageEditor.php");
 include_once("src/back/utils/TreeUtils.php");
 include_once("src/back/utils/TagUtils.php");
+include_once("src/back/utils/ProductsUtils.php");
 
 include_once("src/back/labels/HttpStatuses.php");
 include_once("src/back/labels/Constants.php");

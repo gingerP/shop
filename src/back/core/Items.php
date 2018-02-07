@@ -17,6 +17,8 @@ class Items {
             $mainTag->addStyleClass("items_table");
             $rowView = new Div();
             $mainTag->addChild($rowView);
+            $Preferences = new DBPreferencesType();
+            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
             while ($product = array_shift($products)) {
                 $items++;
                 $indOnPage++;
@@ -31,9 +33,9 @@ class Items {
                 $rowView->addStyleClass("metro");
                 $cellView = new A();
                 $rowView->addChild($cellView);
-                $keyItem = $product["key_item"];
-                $images = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH.DIRECTORY_SEPARATOR.$keyItem.DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, 'jpg');
-
+                $code = $product["key_item"];
+                $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
+                $images = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
                 if (count($images) == 0) {
                     $capImage = FileUtils::getCapImage(Labels::CAP_IMAGE_FOR_CLOTHING);
                     $images =  [$capImage];

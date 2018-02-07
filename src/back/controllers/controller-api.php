@@ -85,10 +85,6 @@ try {
                     $id = Utils::getFromPOST('id');
                     $responseData = ProductsService::getGood($id);
                     break;
-                case 'getGoodImages':
-                    $id = Utils::getFromPOST('id');
-                    $responseData = ProductsService::getImages($id);
-                    break;
                 case 'deleteGood':
                     $id = Utils::getFromPOST('id');
                     Log::db($id);

@@ -39,18 +39,19 @@ class SingleItemPage extends APagesCreator
         $mainTag->addStyleClasses(["single_item"]);
         $product = mysqli_fetch_array($response);
         if ($product) {
-            $imagePathes = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, 'jpg');
-            $filesSmall = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::SMALL_IMAGE, "jpg");
-            $filesMedium = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, "jpg");
-            $firstImage = FileUtils::getFirstFileInDirectoryByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, Constants::MEDIUM_IMAGE, 'jpg');
-            if ($firstImage == '') {
-                $firstImage = FileUtils::getCapImage(Labels::CAP_IMAGE_FOR_CLOTHING);
-            }
-            sort($imagePathes);
-            sort($filesSmall);
-            sort($filesMedium);
+            $code = $product[DB::TABLE_GOODS__KEY_ITEM];
+            $Preferences = new DBPreferencesType();
+            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
 
-            $defaultBackgroundImage = $this->getFirstImage($itemId, Constants::MEDIUM_IMAGE);
+            $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
+            $imagesSmall = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
+            $imagesMedium = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
+
+            if (count($imagesMedium) == 0) {
+                $firstImage = FileUtils::getCapImage(Labels::CAP_IMAGE_FOR_CLOTHING);
+            } else {
+                $firstImage = $imagesMedium[0];
+            }
 
             $titleBlock = new Strong();
             $titleBlock->addStyleClasses(["title", "f-30"]);
@@ -70,12 +71,12 @@ class SingleItemPage extends APagesCreator
             $leftBlock->addStyleClasses(["left_block"]);
             $bigImg = new Div();
             $bigImg->addStyleClasses(["big_img", "float_left"]);
-            $bigImg->addAttribute("style", "background-image: url($defaultBackgroundImage);filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$defaultBackgroundImage',sizingMethod='scale');-ms-filter: \"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$defaultBackgroundImage',sizingMethod='scale')\";");
+            $bigImg->addAttribute("style", "background-image: url($firstImage);");
             $square = new Div();
             $square->addStyleClass("squareX");
             $zoom = new Div();
             $zoom->addStyleClass("zoom_image");
-            $zoom->addAttribute("style", "background-image: url(.$defaultBackgroundImage.)");
+            $zoom->addAttribute("style", "background-image: url(.$firstImage.)");
             $img1 = new Img();
             $img1->addAttribute("src", $firstImage);
             $img1->updateId("main_gallery_image");
@@ -84,13 +85,13 @@ class SingleItemPage extends APagesCreator
             $img2->updateId("img_effect");
             $imageIndexLabel = new Div();
             $imageIndexLabel->addStyleClass('image-gallery-position-label');
-            $imageIndexLabel->addChild('1 / ' . count($imagePathes));
+            $imageIndexLabel->addChild('1 / ' . count($imagesCodes));
             $square->addChildList([$zoom, $img1, $img2, $imageIndexLabel]);
             $square->addChildList($this->getImageSwitcher());
             $leftBlock->addChildList([
                 $square,
                 $this->getPreviewImages(
-                    $filesMedium,
+                    $imagesMedium,
                     Constants::MEDIUM_IMAGE . "images",
                     false,
                     $product[DB::TABLE_GOODS__VERSION]
@@ -98,8 +99,7 @@ class SingleItemPage extends APagesCreator
             ]);
             $rightBlock = new Div();
             $rightBlock->addStyleClasses(["right_block"]);
-            $overviewImgs = $this->getPreviewImages(
-                $filesSmall, Constants::SMALL_IMAGE . "images", true, $product[DB::TABLE_GOODS__VERSION]);
+            $overviewImgs = $this->getPreviewImages($imagesSmall, Constants::SMALL_IMAGE . "images", true);
             $overviewImgs->updateId("gallery");
             $overviewImgs->addStyleClass("w-100p");
             $rightBlock->addChildList([$overviewImgs]);
@@ -119,10 +119,6 @@ class SingleItemPage extends APagesCreator
         $mainTag->addStyleClass("description");
         $descriptionArray = Utils::getDescriptionArray($description);
 
-        /*        $headerDOM = new Div();
-                $headerDOM->addStyleClasses(["header", "f-20"]);
-                $headerDOM->addChild("Детали");
-                $mainTag->addChild($headerDOM);*/
         function filter($val)
         {
             return strlen($val) != 0;
@@ -188,15 +184,6 @@ class SingleItemPage extends APagesCreator
         return $mainTag->addChild($viewPort->addChild($overviewImages));
     }
 
-    private function getFirstImage($itemId, $size)
-    {
-        $fileList = FileUtils::getFilesByPrefixByDescription(Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $itemId . DIRECTORY_SEPARATOR, $size, 'jpg');
-        if (count($fileList) > 0) {
-            return $fileList[0];
-        }
-        return "";
-    }
-
     private function getImageSwitcher()
     {
         $leftArrow = new Div();
@@ -222,17 +209,5 @@ class SingleItemPage extends APagesCreator
         $leftArrow->addChild($leftArrowImg);
         $rightArrow->addChild($rightArrowImg);
         return [$leftArrow, $rightArrow];
-    }
-
-    private function getItemInfo($name, $description)
-    {
-        $mainTag = new Div();
-        $itemTitle = new Div();
-        $itemTitle->addStyleClasses(["title", "font_arial"]);
-        $itemTitle->addChild($name);
-        $itemDescription = new Div();
-        $itemDescription->addStyleClasses(["title", "font_arial"]);
-        $itemDescription->addChild($description);
-        return $mainTag->addChildList([$itemTitle, $itemDescription]);
     }
 }

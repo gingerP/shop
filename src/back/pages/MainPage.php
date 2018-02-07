@@ -49,24 +49,26 @@ class MainPage extends APagesCreator
         $result = [$this->getCatalogItemsTitle()];
         $catalogLoader = new CatalogLoader();
         $catalogLoader->getItemsMainData(1, 10);
-        $goods = $catalogLoader->data;
+        $products = $catalogLoader->data;
         $goodIndex = 0;
         $slideShowContainer = new Div();
         $slideShowContainer->addStyleClass("main_page_items_slideshow");
         $slideShow = new Div();
         $slideShow->addStyleClasses(["slide_show", "catalog_items"]);
-        if (count($goods) > 0) {
+        if (count($products) > 0) {
             $div02 = new Div();
             $div02->addStyleClass('items_table');
             $div02->addAttribute("style", "overflow: hidden;");
-            while ($goodIndex < count($goods)) {
-                //$name, $images, $itemId, $pageNumber, $num, $key, $valueToSearch, $type, $trimName, $isHighLightElement
-                $product = $goods[$goodIndex];
-                $images = FileUtils::getFilesByPrefixByDescription(
-                    Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $product[DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR,
-                    Constants::MEDIUM_IMAGE,
-                    'jpg'
-                );
+
+            $Preferences = new DBPreferencesType();
+            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+
+            while ($goodIndex < count($products)) {
+                $product = $products[$goodIndex];
+                $code = $product[DB::TABLE_GOODS__KEY_ITEM];
+
+                $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
+                $images = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
                 $info = Item::getMetroItemView(
                     $product["name"],
                     $images,
@@ -186,13 +188,15 @@ class MainPage extends APagesCreator
             $subSubContainer
         );
         $index = 0;
-        while ($index < count($products)) {
+
+        $Preferences = new DBPreferencesType();
+        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+            while ($index < count($products)) {
             $product = $products[$index];
-            $images = FileUtils::getFilesByPrefixByDescription(
-                FileUtils::buildPath(Constants::DEFAULT_ROOT_CATALOG_PATH, $product[DB::TABLE_GOODS__KEY_ITEM]),
-                Constants::MEDIUM_IMAGE,
-                'jpg'
-            );
+            $code = $product[DB::TABLE_GOODS__KEY_ITEM];
+
+            $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
+            $images = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
             $productCard = Item::getMetroItemView(
                 $product[DB::TABLE_GOODS__NAME],
                 $images,
