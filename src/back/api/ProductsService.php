@@ -114,6 +114,11 @@ class ProductsService
         $product = $Products->get($id);
         $imagesOrder = [];
         $productCode = $product[DB::TABLE_GOODS__KEY_ITEM];
+
+        $Preferences = new DBPreferencesType();
+        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        FileUtils::createDir(FileUtils::buildPath($catalogPath, $productCode));
+
         for ($imgIndex = 0; $imgIndex < count($imagesFromFront); $imgIndex++) {
             $image = $imagesFromFront[$imgIndex];
             $isNew = $image['isNew'];
