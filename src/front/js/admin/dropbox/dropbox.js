@@ -29,6 +29,7 @@ define([
             this._createWindow();
             this._createDataView();
             this._createStatusBar();
+            this._createToolBar();
         }
         // this._view.refresh();
 
@@ -45,23 +46,50 @@ define([
         this._win.setText('Dropbox images');
     };
 
-    AuDropboxDir.prototype._createStatusBar = function _createStatusBar () {
+    AuDropboxDir.prototype._createStatusBar = function _createStatusBar() {
         this._statusBar = this._win.attachStatusBar({height: 20});
     };
+
+    AuDropboxDir.prototype._createToolBar = function _createToolBar() {
+        var self = this;
+        this._toolbar = this._win.attachToolbar({
+            icon_path: '/images/icons/',
+            items: [
+                {id: 'back', type: 'button', text: 'Назад', img: 'back.png', img_disabled: 'new_dis.gif'},
+                {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'}
+            ]
+        });
+        this._toolbar
+            .attachEvent('onClick', function (id) {
+                switch(id) {
+                    case 'back':
+                        self._goBack();
+                        break;
+                    case 'reload':
+                        self._loadDir(true);
+                        break;
+                }
+            });
+    };
+
 
     AuDropboxDir.prototype._createDataView = function _createDataView() {
         this._view = this._win.attachDataView({
             drag: false,
-            select: true,
+            select: 'multiselect',
             type: {
                 template: "\
                 <div class='dropbox-item'>\
-                    <img src='#icon#' class='dropbox-item-img' alt='#name#'>\
-                    <div class='dropbox-item-name'>#name#</div>\
-                    <div class='dropbox-item-size'>#size#</div>\
+                    <div class='dropbox-item-img-container'>\
+                        <img src='#icon#' class='dropbox-item-img' alt='#name#'>\
+                    </div>\
+                    <div class='dropbox-item-text-container'>\
+                        <div class='dropbox-item-name'>#label#</div>\
+                        <div class='dropbox-item-size'>#size#</div>\
+                    </div>\
                 </div>",
                 width: 150,
-                height: 150
+                height: 200
             }
         });
 
@@ -105,9 +133,6 @@ define([
         var self = this;
         var prepared = self._prepareRawDropboxDataForDataView(items);
         self._view.clearAll();
-        if (self._canGoBack()) {
-            prepared.unshift(self._getBackItem());
-        }
         self._view.parse(prepared, 'json');
     };
 
@@ -122,15 +147,20 @@ define([
         return result;
     };
 
-    AuDropboxDir.prototype._loadDir = function _loadDir() {
+    AuDropboxDir.prototype._goBack = function _goBack() {
+        if (this._canGoBack()) {
+            this._currentDir = this._currentDir.replace(/\/?[^\/]*$/g, '');
+            this._loadDir();
+        }
+    };
+
+    AuDropboxDir.prototype._loadDir = function _loadDir(force) {
         var self = this;
         this._win.progressOn();
-        if (self._preparedCache[this._currentDir]) {
+        this._win.setText(this._currentDir);
+        if (!force && self._preparedCache[this._currentDir]) {
             self._view.clearAll();
             var items = self._preparedCache[this._currentDir];
-            if (self._canGoBack()) {
-                items = [self._getBackItem()].concat(items);
-            }
             self._view.parse(items, 'json');
             self._win.progressOff();
         } else {
@@ -145,11 +175,7 @@ define([
                 var prepared = self._prepareRawDropboxDataForDataView(response.entries);
                 self._view.clearAll();
                 self._updateCache(self._currentDir, prepared);
-                var items = prepared;
-                if (self._canGoBack()) {
-                    items = [self._getBackItem()].concat(items);
-                }
-                self._view.parse(items, 'json');
+                self._view.parse(prepared, 'json');
                 self._win.progressOff();
             }).catch(function (error) {
                 self._win.progressOff();
@@ -167,6 +193,7 @@ define([
                 tag: item['.tag'],
                 path: item.path_lower,
                 name: item.name,
+                label: item.name.length < 30 ? item.name : item.name.substr(0, 30) + '...',
                 icon: self._getFileIcon(item['.tag']),
                 size: item.size ? filesize(item.size).human() : ''
             };
@@ -188,17 +215,6 @@ define([
     AuDropboxDir.prototype._canGoBack = function _canGoBack() {
         var self = this;
         return self._currentDir.indexOf(self._rootDir) === 0 && self._currentDir.trim().length > self._rootDir.trim().length;
-    };
-
-    AuDropboxDir.prototype._getBackItem = function _getBackItem() {
-        return {
-            id: 'back',
-            name: 'Назад',
-            icon: this._getFileIcon('back'),
-            code: 'back',
-            size: '',
-            path: this._currentDir.replace(/\/?[^\/]*$/g, '')
-        };
     };
 
     AuDropboxDir.prototype._loadThumbnails = function _loadThumbnails(pathDir, filesPathes) {
@@ -243,7 +259,7 @@ define([
             return {
                 path: path,
                 format: 'jpeg',
-                size: 'w64h64'
+                size: 'w128h128'
             }
         });
     };

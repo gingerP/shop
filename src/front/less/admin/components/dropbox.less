@@ -9,18 +9,44 @@
     }
     .dhx_dataview_item.dhx_dataview_default_item_selected {
       background: none;
-      border: 1px solid #a8dbfb !important;
-      color: #404040;
       position: relative;
     }
   }
   &-item {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 1px #c5c5c5 inset;
+
     &-img {
-      margin: 0 auto;
-      width: 64px;
+      max-height: 128px;
       display: block;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      &-container {
+        position: relative;
+        overflow: hidden;
+        width: 150px;
+        height: 148px;
+      }
     }
 
+    &-container {
+      height: 100px;
+    }
+
+    &-text-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 52px;
+      width: 100%;
+    }
     &-size,
     &-name {
       margin: 0 10px;
@@ -31,5 +57,12 @@
       color: #6f6f6f;
       font-weight: bold;
     }
+  }
+}
+
+.dhx_dataview_default_item_selected {
+  border-color: none;
+  .dropbox-item {
+    box-shadow: 0 0 0px 2px #39c inset;
   }
 }
