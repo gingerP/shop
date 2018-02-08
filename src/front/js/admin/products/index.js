@@ -48,7 +48,8 @@ require([
     function getLoader() {
         return {
             reloadGrid: function (grid) {
-                Services.getGoods(null, function (goods) {
+                app.layout.progressOn();
+                return Services.getGoods(null).then(function (goods) {
                     grid.clearSelection();
                     grid.clearAll();
                     app.form.clear();
@@ -67,6 +68,9 @@ require([
                         }
                         grid.sortRows(0, 'int', 'asc');
                     }
+                    app.layout.progressOff();
+                }).catch(function() {
+                    app.layout.progressOff();
                 });
             }
         };
@@ -108,7 +112,7 @@ require([
         app.toolbar = Toolbar.init(app, app.layout, app.grid);
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
-        Services.getDescriptionKeys(app.form.updateDescriptionConfig);
+        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig);
         var dir = new AuDropboxDir();
         dir.openPopup();
     })();

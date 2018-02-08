@@ -21,7 +21,7 @@ define([
             app.toolbar.onStateChange(gridState);
             app.form.updateFormData(entity);
             if (!entity._isNew) {
-                app.images.loadImages(entity.id);
+                app.images.loadImages(entity);
             } else {
                 app.images.clearImages();
             }

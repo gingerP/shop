@@ -96,7 +96,7 @@ define([
     }
 
     function reloadGoodsKeysTree(form) {
-        Services.getGoodsKeys(
+        Services.getGoodsKeys().then(
             /**
              * @typedef {{
              *      home_view: string,

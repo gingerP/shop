@@ -1,8 +1,9 @@
 <?php
+include_once('src/back/labels/HttpStatuses.php');
 
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Content-type: application/json; charset=UTF-8');
-http_response_code(200);
+http_response_code(HttpStatuses::OK);
 
 define('AU_ROOT', __DIR__.'/../../../');
 error_reporting(-1);
@@ -20,7 +21,7 @@ function catchInternalError($error) {
         echo json_encode($error->toJson());
         return;
     }
-    http_response_code(500);
+    http_response_code(HttpStatuses::INTERNAL_SERVER_ERROR);
     $internalError = new InternalError($error);
     echo json_encode($internalError->toJson());
 }
@@ -83,10 +84,6 @@ try {
                 case 'getGood':
                     $id = Utils::getFromPOST('id');
                     $responseData = ProductsService::getGood($id);
-                    break;
-                case 'getGoodImages':
-                    $id = Utils::getFromPOST('id');
-                    $responseData = ProductsService::getImages($id);
                     break;
                 case 'deleteGood':
                     $id = Utils::getFromPOST('id');
@@ -163,9 +160,12 @@ try {
                 case 'getPublicPreferences':
                     $responseData = PreferencesService::getPublicPreferences();
                     break;
+                case 'readImagesFromCatalogToDb':
+                    $responseData = ProductsService::readImagesFromCatalogToDb();
+                    break;
                 default:
-                    http_response_code(401);
-                    $responseData = new BaseError('Method not found!', 500);
+                    http_response_code(HttpStatuses::NOT_FOUND);
+                    $responseData = (new NotFoundError("Method '$method' not found."))->toJson();
             }
             if (!$responseData) {
                 $responseData = [];

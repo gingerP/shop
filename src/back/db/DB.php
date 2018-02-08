@@ -38,6 +38,7 @@ class DB {
     const TABLE_GOODS__DESCRIPTION = 'description';
     const TABLE_GOODS__IMAGE_PATH = 'image_path';
     const TABLE_GOODS__VERSION = 'version';
+    const TABLE_GOODS__IMAGES = 'images';
 
     const TABLE_ADDRESS___NAME = 'address';
     const TABLE_ADDRESS__ID = 'address_id';

@@ -63,6 +63,28 @@ class FileUtils
         return $files;
     }
 
+    public static function getFilesNamesByPrefixByDescription($rootPath, $prefix, $description)
+    {
+        if (strlen($prefix) == 0) {
+            $prefix = '.*';
+        }
+        $files = array();
+        if (file_exists($rootPath) && $dh = opendir($rootPath)) {
+            while (($file = readdir($dh)) !== false) {
+
+                if (filetype($rootPath . DIRECTORY_SEPARATOR . $file) == "file") {
+                    if (preg_match('/^' . $prefix . '.*(\.' . $description . ')$/', $file)) {
+                        array_push($files, $file);
+                    }
+                }
+            }
+            //sort($files);
+            closedir($dh);
+        }
+        sort($files);
+        return $files;
+    }
+
     public static function buildPath()
     {
         $args = func_num_args();
@@ -193,6 +215,20 @@ class FileUtils
         if (!$res) {
             $error = error_get_last();
             throw new InternalError("Removing dir '$path' failed: " . $error['message']);
+        }
+    }
+
+    public static function removeAllExcept($except, $dir) {
+        if (is_dir($dir)) {
+            if (file_exists($dir) && $dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    $isFile = filetype($dir . DIRECTORY_SEPARATOR . $file) == 'file';
+                    if ($isFile && !in_array($file, $except)) {
+                        self::unlinkPath($dir . DIRECTORY_SEPARATOR . $file);
+                    }
+                }
+                closedir($dh);
+            }
         }
     }
 

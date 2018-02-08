@@ -1,4 +1,5 @@
 <?php
+include_once('src/back/labels/HttpStatuses.php');
 try {
     define('AU_ROOT', __DIR__.'/../../../');
     $config = parse_ini_file('config/config.ini');
@@ -49,6 +50,10 @@ try {
         if (AuthManager::isAuth()) {
             //AUTH SUCCESS
             switch ($page) {
+                case 'settings':
+                    $page = new SettingsPage();
+                    echo $page->getHtml();
+                    break;
                 case 'contacts':
                 case 'prices':
                 case 'tree':
@@ -60,6 +65,7 @@ try {
                     break;
                 case 'logout':
                     loginRedirect($page);
+                    break;
                 default:
                     $page = new AdminPageProducts();
                     echo $page->getHtml();
@@ -82,11 +88,11 @@ try {
     }
 
 } catch (Exception $e) {
-    http_response_code(500);
+    http_response_code(HttpStatuses::INTERNAL_SERVER_ERROR);
     header('Content-Type: application/json');
     echo json_encode(new InternalError($e));
 } catch (Error $e) {
-    http_response_code(500);
+    http_response_code(HttpStatuses::INTERNAL_SERVER_ERROR);
     header('Content-Type: application/json');
     echo json_encode(new InternalError($e));
 }
