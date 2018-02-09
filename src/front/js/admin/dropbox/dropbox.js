@@ -27,19 +27,37 @@ define([
     AuDropboxDir.prototype.openPopup = function openPopup() {
         if (!this._win) {
             this._createWindow();
-            this._createDataView();
+            this._createLayout();
             this._createStatusBar();
             this._createToolBar();
+            this._createDataView();
+            this._createPreview();
         }
         // this._view.refresh();
 
         this._loadDir();
     };
 
+    AuDropboxDir.prototype._createLayout = function _createLayout() {
+        this._layout = this._win.attachLayout({
+            pattern: '2U',
+            cells: [
+                {id: 'a', header: false},
+                {id: 'b', text: 'Просмотр', collapse: true, width: 300, header: true}
+            ]
+        });
+        this._layout.setOffsets({
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        });
+    };
+
     AuDropboxDir.prototype._createWindow = function _createWindow() {
         var wins = new dhtmlXWindows();
         var size = getMaxSize();
-        this._win = wins.createWindow("w1", 20, 30, size.width, size.height);
+        this._win = wins.createWindow('w1', 20, 30, size.width, size.height);
         this._win.centerOnScreen();
         this._win.setModal(true);
         this._win.setMaxDimension(size.width, size.height);
@@ -50,31 +68,50 @@ define([
         this._statusBar = this._win.attachStatusBar({height: 20});
     };
 
+    AuDropboxDir.prototype._createPreview = function _createPreview() {
+        var cellB = this._layout.cells('b');
+        this._previewCache = {};
+        this._previewId = 'dropbox-image-side-preview';
+        this._preview = cellB.attachHTMLString('<div id="' + this._previewId + '"></div>');
+        cellB.cell.className += ' dropbox-image-side-preview-container';
+    };
+
     AuDropboxDir.prototype._createToolBar = function _createToolBar() {
         var self = this;
-        this._toolbar = this._win.attachToolbar({
+        this._toolbar = this._layout.attachToolbar({
             icon_path: '/images/icons/',
             items: [
                 {id: 'back', type: 'button', text: 'Назад', img: 'back.png', img_disabled: 'new_dis.gif'},
-                {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'}
+                {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'},
+                {id: 'create_dir', type: 'button', text: 'Создать папку', img: 'create_dir.png'},
+                {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png'},
+                {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png'}
             ]
         });
         this._toolbar
             .attachEvent('onClick', function (id) {
-                switch(id) {
+                switch (id) {
                     case 'back':
                         self._goBack();
                         break;
                     case 'reload':
                         self._loadDir(true);
                         break;
+                    case 'create_dir':
+                        self._createDirDialog();
+                        break;
+                    case 'delete':
+                        self._deleteDialog();
+                        break;
+                    case 'rename':
+                        self._renameDialog();
                 }
             });
     };
 
 
     AuDropboxDir.prototype._createDataView = function _createDataView() {
-        this._view = this._win.attachDataView({
+        this._view = this._layout.cells('a').attachDataView({
             drag: false,
             select: 'multiselect',
             type: {
@@ -101,32 +138,25 @@ define([
 
     AuDropboxDir.prototype._initDataViewEvents = function _initDataViewEvents() {
         var self = this;
-        this._view.attachEvent('onItemDblClick', function (id, event, html) {
+        var cell = self._layout.cells('b');
+        this._view.attachEvent('onItemDblClick', function (id) {
             var data = self._view.get(id);
-            if (data && (data.tag === 'folder' || data.code === 'back')) {
+            if (data && data.tag === 'folder') {
                 self._currentDir = data.path;
                 self._loadDir();
+            } else if (data && data.tag === 'file' && cell.isCollapsed()) {
+                cell.expand();
+                self._openPreview(data.path);
             }
         });
-        /*        this._view.attachEvent('onXLS', function () {
-         this._currentDir++;
-         this._win.progressOn();
-         self._client.filesListFolder({
-         path: this._currentDir,
-         limit: this._pageSize
-         }).then(function (response) {
-         if (response.entries && response.entries.length) {
-         var forThumbnails = self._extractFilesForThumbnails(response.entries);
-         if (forThumbnails.length) {
-         return self._loadThumbnails(forThumbnails);
-         } else {
-         return response.entries;
-         }
-         }
-         }).then(function (items) {
-         self._renderRawItems(items);
-         });
-         });*/
+        this._view.attachEvent('onItemClick', function (id) {
+            var data = self._view.get(id);
+            var cell = self._layout.cells('b');
+            if (data && data.tag === 'file' && !cell.isCollapsed()) {
+                self._openPreview(data.path, data.name);
+            }
+        });
+
     };
 
     AuDropboxDir.prototype._renderRawItems = function _renderItems(items) {
@@ -182,6 +212,92 @@ define([
                 Toast.error(error.error);
             });
         }
+    };
+
+    AuDropboxDir.prototype._createDirDialog = function _createDirDialog() {
+        var self = this;
+        var result = prompt('Новая папка', 'Новая папка');
+        var cell = this._layout;
+        if (result) {
+            cell.progressOn();
+            this._createDir(self._currentDir + '/' + result)
+                .then(function() {
+                    self._loadDir(true);
+                    cell.progressOff();
+                })
+                .catch(function(error) {
+                    cell.progressOff();
+                })
+        }
+    };
+
+    AuDropboxDir.prototype._deleteDialog = function _deleteDialog() {
+        var self = this;
+        var selected = this._view.getSelected(true);
+        if (selected.length) {
+            var items = selected.map(function(id) {
+                return '\'' + self._view.get(id).name + '\'';
+            });
+            var result = confirm('Вы уверены что хотите удалить?\n' + items.join('\n'));
+            if (result) {
+                var cell = self._layout;
+                var pathes = selected.map(function(id) {
+                    return self._view.get(id).path;
+                });
+                cell.progressOn();
+                self._deleteItems(pathes)
+                    .then(function() {
+                        self._releaseCacheFor(pathes);
+                        setTimeout(function() {
+                            self._loadDir(true);
+                            cell.progressOff();
+                        }, 1000);
+                    })
+                    .catch(function() {
+                        cell.progressOff();
+                    })
+            }
+        }
+    };
+
+    AuDropboxDir.prototype._renameDialog = function _renameDialog() {
+        var self = this;
+        var selected = this._view.getSelected(true);
+        if (selected.length) {
+            var data = this._view.get(selected[0]);
+            var result = promt('Переименовать \'' + data.name + '\'', data.name);
+            if (result && result.trim() !== data.name) {
+                var cell = self._layout;
+                var pathes = selected.map(function(id) {
+                    return self._view.get(id).path;
+                });
+                cell.progressOn();
+                self._deleteItems(pathes)
+                    .then(function() {
+                        self._releaseCacheFor(pathes);
+                        setTimeout(function() {
+                            self._loadDir(true);
+                            cell.progressOff();
+                        }, 1000);
+                    })
+                    .catch(function() {
+                        cell.progressOff();
+                    })
+            }
+        }
+    };
+
+    AuDropboxDir.prototype._deleteItems = function _deleteItems(itemsPathes) {
+        var self = this;
+        var files = itemsPathes.map(function(file) {
+            return {path: file};
+        });
+        return self._client.filesDeleteBatch({entries: files});
+    };
+
+    AuDropboxDir.prototype._createDir = function _createDir(path) {
+        var self = this;
+        return self._client.filesCreateFolder({path: path, autorename: true});
     };
 
     AuDropboxDir.prototype._prepareRawDropboxDataForDataView = function _prepareRawDropboxDataForDataView(data) {
@@ -301,6 +417,24 @@ define([
         }
     };
 
+    AuDropboxDir.prototype._loadThumbnail = function _loadThumbnail(path) {
+        var self = this;
+        var cell = this._layout.cells('b');
+        cell.progressOn();
+        return self._client.filesGetThumbnail({
+            path: path,
+            format: 'png',
+            size: 'w640h480'
+        })
+            .then(function (data) {
+                cell.progressOff();
+                return data;
+            })
+            .catch(function () {
+                cell.progressOff();
+            });
+    };
+
     AuDropboxDir.prototype._thumbnailsProgressOff = function _thumbnailsProgressOff() {
         var self = this;
         clearInterval(this._thumbnailsProgress);
@@ -308,9 +442,64 @@ define([
         self._statusBar.setText('');
     };
 
+    AuDropboxDir.prototype._releaseCacheFor = function _releaseCacheFor(pathes) {
+        var self = this;
+        pathes.forEach(function(path) {
+            var keys = Object.keys(self._preparedCache);
+            keys.forEach(function(key) {
+                if (key.indexOf(path) === 0) {
+                    delete self._preparedCache[key];
+                }
+            });
+        });
+    };
+
     AuDropboxDir.prototype._updateCache = function _updateCache(path, preparedData) {
         this._preparedCache[path] = preparedData;
     };
+
+    AuDropboxDir.prototype._openPreview = function _openPreview(path, name) {
+        var self = this;
+        if (!self._hasThumbnailSupport(path)) {
+            this._setDefaultPreviewImage(name);
+        } else if (this._previewCache[path]) {
+            var cache = this._previewCache[path];
+            this._setPreviewImage(cache.name, cache.data);
+        } else {
+            var cell = self._layout.cells('b');
+            this._loadThumbnail(path)
+                .then(function (data) {
+                    cell.progressOn();
+                    var reader = new FileReader();
+                    reader.readAsDataURL(data.fileBlob);
+                    reader.onloadend = function() {
+                        self._previewCache[path] = {name: data.name, data: reader.result};
+                        self._setPreviewImage(data.name, reader.result);
+                        cell.progressOff();
+                    };
+                    reader.onerror = function() {
+                        cell.progressOff();
+                    };
+                })
+                .catch(function() {
+                    cell.progressOff();
+                });
+        }
+    };
+
+    AuDropboxDir.prototype._setPreviewImage = function _openPreview(name, data) {
+        document.getElementById(this._previewId).innerHTML = '<img src="' + data + '">';
+        this._layout.cells('b').setText('Просмотр - ' + name);
+    };
+
+    AuDropboxDir.prototype._setDefaultPreviewImage = function _setDefaultPreviewImage(name) {
+        this._setPreviewImage(name, '/images/icons/document.png');
+    };
+
+    AuDropboxDir.prototype._hasThumbnailSupport = function(name) {
+        return /\.(jpg|jpeg|png|mpeg)$/g.test(name);
+    };
+
 
     return AuDropboxDir;
 });
