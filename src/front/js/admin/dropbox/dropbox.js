@@ -1,8 +1,9 @@
 define([
     'dropbox-sdk',
     'common/toast',
-    'filesize'
-], function (DropboxSdk, Toast, filesize) {
+    'filesize',
+    'dropbox/dropbox-upload-manager'
+], function (DropboxSdk, Toast, filesize, AuDropboxUploadManager) {
     function getMaxSize() {
         var ratio = 0.9;
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -13,14 +14,37 @@ define([
         }
     }
 
+    function onError(error) {
+        var message = 'Unknown error';
+        if (typeof error === 'string') {
+            message = error;
+        } else if (error.message) {
+            message = error.message;
+        } else if (error.response && error.response.statusText) {
+            message = error.response.statusText;
+        }
+        dhtmlx.alert({
+            title: 'Alert',
+            type: 'alert-error',
+            text: '<span style="word-break: break-all">' + message + '</span>'
+        });
+    }
+
     function AuDropboxDir() {
         this._preparedCache = {};
         this._client = new DropboxSdk.Dropbox({accessToken: 'EoKj4M04V54AAAAAAAAaVZfQXj4qWQ1TSmSVSW4Qm203zf6DKsS1woE4XyScO-9z'});
         this._rootDir = '/augustova';
         this._currentDir = this._rootDir;
-        this._pageSize = 200;
+        this._pageSize = 500;
         this._thumbnailsPageSize = 20;
         this._pageNum = 0;
+        this._uploadsManager = new AuDropboxUploadManager(this._client, this._onUploadProgress.bind(this));
+        this._uploadStatusImages = {
+            started: '/images/icons/upload.png',
+            finished: '/images/icons/done.png',
+            failed: '/images/icons/failed.png',
+            ready: '/images/icons/minus.png'
+        };
         this._win;
     }
 
@@ -31,7 +55,9 @@ define([
             this._createStatusBar();
             this._createToolBar();
             this._createDataView();
+            this._createCellBTabbar();
             this._createPreview();
+            this._createUploads();
         }
         // this._view.refresh();
 
@@ -43,7 +69,7 @@ define([
             pattern: '2U',
             cells: [
                 {id: 'a', header: false},
-                {id: 'b', text: 'Просмотр', collapse: true, width: 300, header: true}
+                {id: 'b', width: 300, header: false}
             ]
         });
         this._layout.setOffsets({
@@ -52,6 +78,34 @@ define([
             bottom: 0,
             left: 0
         });
+    };
+
+    AuDropboxDir.prototype._createCellBTabbar = function _createCellBTabbar() {
+        var cellB = this._layout.cells('b');
+        this._cellBTabbar = cellB.attachTabbar({
+            align: 'left',
+            mode: 'top',
+            tabs: [
+                {id: 'preview', text: 'Просмотр', active: true},
+                {id: 'uploads', text: 'Загрузки'}
+            ]
+        });
+
+    };
+
+    AuDropboxDir.prototype._createUploads = function _createUploads() {
+        var self = this;
+        var cell = this._cellBTabbar.tabs('uploads');
+        var grid = cell.attachGrid();
+        grid.setImagePath('images/icons/');
+        grid.setHeader('Время загрузки, Файл, Прогресс');
+        grid.setInitWidths('100,300,100');
+        grid.setColAlign('left,left,left');
+        grid.setColTypes('ro,ro,img');
+        grid.setColSorting('str,str');
+        grid.init();
+        this._uploadsGrid = grid;
+        return this._uploadsGrid;
     };
 
     AuDropboxDir.prototype._createWindow = function _createWindow() {
@@ -69,7 +123,7 @@ define([
     };
 
     AuDropboxDir.prototype._createPreview = function _createPreview() {
-        var cellB = this._layout.cells('b');
+        var cellB = this._cellBTabbar.tabs('preview');
         this._previewCache = {};
         this._previewId = 'dropbox-image-side-preview';
         this._preview = cellB.attachHTMLString('<div id="' + this._previewId + '"></div>');
@@ -85,7 +139,8 @@ define([
                 {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'},
                 {id: 'create_dir', type: 'button', text: 'Создать папку', img: 'create_dir.png'},
                 {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png'},
-                {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png'}
+                {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png'},
+                {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png'}
             ]
         });
         this._toolbar
@@ -105,6 +160,10 @@ define([
                         break;
                     case 'rename':
                         self._renameDialog();
+                        break;
+                    case 'upload':
+                        self._fileUploadDialog();
+                        break;
                 }
             });
     };
@@ -221,11 +280,11 @@ define([
         if (result) {
             cell.progressOn();
             this._createDir(self._currentDir + '/' + result)
-                .then(function() {
+                .then(function () {
                     self._loadDir(true);
                     cell.progressOff();
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     cell.progressOff();
                 })
         }
@@ -235,25 +294,25 @@ define([
         var self = this;
         var selected = this._view.getSelected(true);
         if (selected.length) {
-            var items = selected.map(function(id) {
+            var items = selected.map(function (id) {
                 return '\'' + self._view.get(id).name + '\'';
             });
             var result = confirm('Вы уверены что хотите удалить?\n' + items.join('\n'));
             if (result) {
                 var cell = self._layout;
-                var pathes = selected.map(function(id) {
+                var pathes = selected.map(function (id) {
                     return self._view.get(id).path;
                 });
                 cell.progressOn();
                 self._deleteItems(pathes)
-                    .then(function() {
-                        self._releaseCacheFor(pathes);
-                        setTimeout(function() {
+                    .then(function () {
+                        self._releaseCacheForFiles(pathes);
+                        setTimeout(function () {
                             self._loadDir(true);
                             cell.progressOff();
                         }, 1000);
                     })
-                    .catch(function() {
+                    .catch(function () {
                         cell.progressOff();
                     })
             }
@@ -265,39 +324,75 @@ define([
         var selected = this._view.getSelected(true);
         if (selected.length) {
             var data = this._view.get(selected[0]);
-            var result = promt('Переименовать \'' + data.name + '\'', data.name);
-            if (result && result.trim() !== data.name) {
+            var result = prompt('Переименовать \'' + data.name + '\'', data.name);
+            if (result && result.trim() !== data.name && self._isItemNameValid(result)) {
                 var cell = self._layout;
-                var pathes = selected.map(function(id) {
-                    return self._view.get(id).path;
-                });
                 cell.progressOn();
-                self._deleteItems(pathes)
-                    .then(function() {
-                        self._releaseCacheFor(pathes);
-                        setTimeout(function() {
+                self._renameItem(data.path, result)
+                    .then(function () {
+                        self._releaseCacheForFiles([data.path]);
+                        setTimeout(function () {
                             self._loadDir(true);
                             cell.progressOff();
                         }, 1000);
                     })
-                    .catch(function() {
+                    .catch(function (error) {
                         cell.progressOff();
+                        onError(error);
                     })
             }
         }
     };
 
+    AuDropboxDir.prototype._fileUploadDialog = function _fileUploadDialog() {
+        var self = this;
+        var id = 'au-dropbox-upload-' + Date.now();
+        $(document.body).append('<input type="file" name="fileToUpload" id="' + id + '" multiple>');
+        self._$uploadInput = $('#' + id);
+        self._$uploadInput.on('change', function (event) {
+            self._uploadFiles(event.target.files);
+            self._$uploadInput.remove();
+        });
+        self._$uploadInput.trigger('click');
+    };
+
     AuDropboxDir.prototype._deleteItems = function _deleteItems(itemsPathes) {
         var self = this;
-        var files = itemsPathes.map(function(file) {
+        var files = itemsPathes.map(function (file) {
             return {path: file};
         });
         return self._client.filesDeleteBatch({entries: files});
     };
 
+    AuDropboxDir.prototype._renameItem = function _renameItem(itemPath, newName) {
+        var self = this;
+        var parentCatalog = itemPath.replace(/(.*\/)[^/]*$/g, '$1');
+        return self._client.filesMove({
+            from_path: itemPath,
+            to_path: parentCatalog + newName,
+            allow_shared_folder: false,
+            autorename: true
+        });
+    };
+
     AuDropboxDir.prototype._createDir = function _createDir(path) {
         var self = this;
         return self._client.filesCreateFolder({path: path, autorename: true});
+    };
+
+    AuDropboxDir.prototype._uploadFiles = function _uploadFiles(files) {
+        var self = this;
+        _.forEach(files, function (file) {
+            var id = Math.round(Math.random() * 100000000);
+            self._uploadsManager.addFile({
+                id: id,
+                input: file,
+                path: self._currentDir + '/' + file.name
+            });
+            var now = new Date();
+            var time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+            self._uploadsGrid.addRow(id, ['0 сек.', file.name, self._uploadStatusImages.ready]);
+        });
     };
 
     AuDropboxDir.prototype._prepareRawDropboxDataForDataView = function _prepareRawDropboxDataForDataView(data) {
@@ -349,14 +444,15 @@ define([
             }
         }
 
-        function onError() {
-            self._thumbnailsProgressOff();
-        }
-
         if (filesPathes.length <= this._thumbnailsPageSize) {
             self._thumbnailsProgressOn();
             responses = 1;
-            self._client.filesGetThumbnailBatch({entries: entries}).then(apply).catch(onError);
+            self._client.filesGetThumbnailBatch({entries: entries})
+                .then(apply)
+                .catch(function (error) {
+                    onError(error);
+                    self._thumbnailsProgressOff();
+                });
         } else {
             var num = Math.ceil(filesPathes.length / this._thumbnailsPageSize) - 1;
             responses = num + 1;
@@ -364,7 +460,12 @@ define([
             while (num >= 0) {
                 self._client.filesGetThumbnailBatch(
                     {entries: entries.splice(num * this._thumbnailsPageSize, this._thumbnailsPageSize)}
-                ).then(apply).catch(onError);
+                )
+                    .then(apply)
+                    .catch(function (error) {
+                        onError(error);
+                        self._thumbnailsProgressOff();
+                    });
                 num--;
             }
         }
@@ -430,8 +531,9 @@ define([
                 cell.progressOff();
                 return data;
             })
-            .catch(function () {
+            .catch(function (error) {
                 cell.progressOff();
+                onError(error);
             });
     };
 
@@ -442,11 +544,11 @@ define([
         self._statusBar.setText('');
     };
 
-    AuDropboxDir.prototype._releaseCacheFor = function _releaseCacheFor(pathes) {
+    AuDropboxDir.prototype._releaseCacheForFiles = function _releaseCacheForFiles(pathes) {
         var self = this;
-        pathes.forEach(function(path) {
+        pathes.forEach(function (path) {
             var keys = Object.keys(self._preparedCache);
-            keys.forEach(function(key) {
+            keys.forEach(function (key) {
                 if (key.indexOf(path) === 0) {
                     delete self._preparedCache[key];
                 }
@@ -466,23 +568,26 @@ define([
             var cache = this._previewCache[path];
             this._setPreviewImage(cache.name, cache.data);
         } else {
-            var cell = self._layout.cells('b');
+            var cell = self._cellBTabbar.tabs('preview');
             this._loadThumbnail(path)
                 .then(function (data) {
-                    cell.progressOn();
-                    var reader = new FileReader();
-                    reader.readAsDataURL(data.fileBlob);
-                    reader.onloadend = function() {
-                        self._previewCache[path] = {name: data.name, data: reader.result};
-                        self._setPreviewImage(data.name, reader.result);
-                        cell.progressOff();
-                    };
-                    reader.onerror = function() {
-                        cell.progressOff();
-                    };
+                    if (data) {
+                        cell.progressOn();
+                        var reader = new FileReader();
+                        reader.readAsDataURL(data.fileBlob);
+                        reader.onloadend = function () {
+                            self._previewCache[path] = {name: data.name, data: reader.result};
+                            self._setPreviewImage(data.name, reader.result);
+                            cell.progressOff();
+                        };
+                        reader.onerror = function () {
+                            cell.progressOff();
+                        };
+                    }
                 })
-                .catch(function() {
+                .catch(function (error) {
                     cell.progressOff();
+                    onError(error);
                 });
         }
     };
@@ -496,10 +601,23 @@ define([
         this._setPreviewImage(name, '/images/icons/document.png');
     };
 
-    AuDropboxDir.prototype._hasThumbnailSupport = function(name) {
+    AuDropboxDir.prototype._hasThumbnailSupport = function (name) {
         return /\.(jpg|jpeg|png|mpeg)$/g.test(name);
     };
 
+    AuDropboxDir.prototype._isItemNameValid = function (itemName) {
+        return !/\//g.test(itemName);
+    };
+
+    AuDropboxDir.prototype._onUploadProgress = function _onUploadProgress(id, options) {
+        var self = this;
+        var statusImage = self._uploadStatusImages[options.status] || self._uploadStatusImages.ready;
+        if (options.status === 'finished') {
+            var time = Math.round((options.finishedTime - options.startedTime) / 1000);
+            self._uploadsGrid.cells(id, 0).setValue(time + ' сек.');
+        }
+        self._uploadsGrid.cells(id, 2).setValue(statusImage);
+    };
 
     return AuDropboxDir;
 });
