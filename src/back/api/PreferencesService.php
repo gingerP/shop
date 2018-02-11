@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 10/31/14
- * Time: 12:19 AM
- */
 
 class PreferencesService {
 
@@ -13,5 +7,12 @@ class PreferencesService {
             'contacts_groups' => DBPreferencesType::getPreferenceValue(Constants::CONTACTS_GROUPS)
         ];
     }
+
+    public static function getAdminPreferences() {
+        return [
+            'dropbox_access_token' => DBPreferencesType::getPreferenceValue(Constants::DROPBOX_ACCESS_TOKEN)
+        ];
+    }
+
 
 } 

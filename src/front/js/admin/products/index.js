@@ -99,6 +99,11 @@ require([
         })
     }
 
+    function createDropboxComponent() {
+        var dir = new AuDropboxDir();
+        dir.openPopup();
+    }
+
     (function init() {
         U.dhtmlxDOMPreInit(document.documentElement, document.body);
         app.loader = getLoader();

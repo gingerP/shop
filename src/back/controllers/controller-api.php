@@ -47,6 +47,7 @@ try {
                 "deleteGood",
                 "getDescriptionKeys",
                 "getGoodsKeys",
+                "getAdminSettings",
                 "getNextGoodCode",
                 "uploadImagesForGood",
                 "updatePrices",
@@ -66,6 +67,9 @@ try {
         if (checkAccess($method)) {
             $responseData = [];
             switch ($method) {
+                case 'getAdminSettings':
+                    $responseData = PreferencesService::getAdminPreferences();
+                    break;
                 case 'getPrices':
                     $responseData = PriceService::getPrices();
                     break;

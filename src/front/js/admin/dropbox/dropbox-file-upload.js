@@ -20,8 +20,10 @@ define([], function() {
             ready: 'ready',
             started: 'started',
             failed: 'failed',
-            finished: 'finished'
+            finished: 'finished',
+            released: 'released'
         };
+        this._isReleased = false;
         this._uploadFailedTime = 0;
         this._uploadStartedTime = 0;
         this._uploadFinishedTime = 0;
@@ -34,6 +36,10 @@ define([], function() {
             this._started = true;
             return this._upload();
         }
+    };
+
+    AuDropboxFileUpload.prototype.getId = function getId() {
+        return this._id;
     };
 
     AuDropboxFileUpload.prototype.isStarted = function isStarted() {
@@ -52,6 +58,10 @@ define([], function() {
         return this._status === this._statuses.ready;
     };
 
+    AuDropboxFileUpload.prototype.isReleased = function isReady() {
+        return this._isReleased;
+    };
+
     AuDropboxFileUpload.prototype._readFileToBase64 = function _readFileToBase64() {
         var self = this;
         return new Promise(function(resolve, reject) {
@@ -68,6 +78,9 @@ define([], function() {
 
     AuDropboxFileUpload.prototype._upload = function _upload() {
         var self = this;
+        if (self.isReleased()) {
+            return;
+        }
         self._status = self._statuses.started;
         self._progressChanged();
         self._uploadStartedTime = Date.now();
@@ -114,6 +127,17 @@ define([], function() {
                 }
             });
         }, 0);
+    };
+
+    AuDropboxFileUpload.prototype.getParentDir = function getParentDir() {
+        return this._path.replace(/\/?[^\/]*$/g, '');
+    };
+
+    AuDropboxFileUpload.prototype.release = function release() {
+        var self = this;
+        self._inputFile = null;
+        self._client = null;
+        self._isReleased = true;
     };
 
     return AuDropboxFileUpload;

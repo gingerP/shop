@@ -1,9 +1,10 @@
 define([
+    'common/services',
     'dropbox-sdk',
     'common/toast',
     'filesize',
     'dropbox/dropbox-upload-manager'
-], function (DropboxSdk, Toast, filesize, AuDropboxUploadManager) {
+], function (Services, DropboxSdk, Toast, filesize, AuDropboxUploadManager) {
     function getMaxSize() {
         var ratio = 0.9;
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -28,40 +29,61 @@ define([
             type: 'alert-error',
             text: '<span style="word-break: break-all">' + message + '</span>'
         });
+        console.error(error);
     }
 
     function AuDropboxDir() {
         this._preparedCache = {};
-        this._client = new DropboxSdk.Dropbox({accessToken: 'EoKj4M04V54AAAAAAAAaVZfQXj4qWQ1TSmSVSW4Qm203zf6DKsS1woE4XyScO-9z'});
         this._rootDir = '/augustova';
         this._currentDir = this._rootDir;
         this._pageSize = 500;
         this._thumbnailsPageSize = 20;
         this._pageNum = 0;
-        this._uploadsManager = new AuDropboxUploadManager(this._client, this._onUploadProgress.bind(this));
+        this._options = {
+            maxDeleteBachTimes: 10,
+            deleteBatchCheckInterval: 500 //milliseconds
+        };
         this._uploadStatusImages = {
             started: '/images/icons/upload.png',
             finished: '/images/icons/done.png',
             failed: '/images/icons/failed.png',
             ready: '/images/icons/minus.png'
         };
+        $(document.body).append('<div class="dropbox-upload-input"></div>');
         this._win;
+        this._createClient();
     }
 
-    AuDropboxDir.prototype.openPopup = function openPopup() {
-        if (!this._win) {
-            this._createWindow();
-            this._createLayout();
-            this._createStatusBar();
-            this._createToolBar();
-            this._createDataView();
-            this._createCellBTabbar();
-            this._createPreview();
-            this._createUploads();
-        }
-        // this._view.refresh();
+    AuDropboxDir.prototype._createClient = function _createClient() {
+        var self = this;
+        Services.getAdminSettings()
+            .then(function (preferences) {
+                var token = preferences.dropbox_access_token;
+                self._client = new DropboxSdk.Dropbox({accessToken: token});
+                self._uploadsManager = new AuDropboxUploadManager(
+                    self._client, {},
+                    self._onUploadProgress.bind(self),
+                    self._onFilesBatchUploaded.bind(self)
+                );
+            })
+            .catch(onError);
+    };
 
-        this._loadDir();
+    AuDropboxDir.prototype.openPopup = function openPopup() {
+        var self = this;
+        if (!self._win) {
+            self._createWindow();
+            self._createLayout();
+            self._createStatusBar();
+            self._createToolBar();
+            self._createDataView();
+            self._createCellBTabbar();
+            self._createPreview();
+            self._createUploads();
+            self._createUploadsToolbar();
+        }
+
+        //this._loadDir();
     };
 
     AuDropboxDir.prototype._createLayout = function _createLayout() {
@@ -69,7 +91,7 @@ define([
             pattern: '2U',
             cells: [
                 {id: 'a', header: false},
-                {id: 'b', width: 300, header: false}
+                {id: 'b', width: 400, header: false}
             ]
         });
         this._layout.setOffsets({
@@ -95,27 +117,63 @@ define([
 
     AuDropboxDir.prototype._createUploads = function _createUploads() {
         var self = this;
-        var cell = this._cellBTabbar.tabs('uploads');
+        var cell = self._cellBTabbar.tabs('uploads');
         var grid = cell.attachGrid();
         grid.setImagePath('images/icons/');
-        grid.setHeader('Время загрузки, Файл, Прогресс');
-        grid.setInitWidths('100,300,100');
+        grid.setHeader(['Файл', 'Прогресс', 'Время загрузки']);
+        grid.setInitWidths('200,100,100');
         grid.setColAlign('left,left,left');
         grid.setColTypes('ro,ro,img');
         grid.setColSorting('str,str');
         grid.init();
-        this._uploadsGrid = grid;
-        return this._uploadsGrid;
+        self._uploadsGrid = grid;
+        return self._uploadsGrid;
+    };
+
+    AuDropboxDir.prototype._createUploadsToolbar = function _createUploadsToolbar() {
+        var self = this;
+        var cell = self._cellBTabbar.tabs('uploads');
+        var toolbar = cell.attachToolbar({
+            icon_path: '/images/icons/',
+            items: [
+                {id: 'clear', type: 'button', text: 'Очистить', img: 'clear.png', img_disabled: 'new_dis.gif'},
+                {
+                    id: 'clear_permanently',
+                    type: 'button',
+                    text: 'Отменить все',
+                    img: 'cancel.png',
+                    img_disabled: 'new_dis.gif'
+                }
+            ]
+        });
+        toolbar.attachEvent('onClick', function (id) {
+            switch (id) {
+                case 'clear':
+                    self._clearFinishedUploads();
+                    break;
+                case 'clear_permanently':
+                    self._clearAllUploads();
+                    break;
+            }
+        });
+        self._uploadTollbar = toolbar;
     };
 
     AuDropboxDir.prototype._createWindow = function _createWindow() {
+        var self = this;
         var wins = new dhtmlXWindows();
         var size = getMaxSize();
-        this._win = wins.createWindow('w1', 20, 30, size.width, size.height);
-        this._win.centerOnScreen();
-        this._win.setModal(true);
-        this._win.setMaxDimension(size.width, size.height);
-        this._win.setText('Dropbox images');
+        self._win = wins.createWindow('w1', 20, 30, size.width, size.height);
+        self._win.centerOnScreen();
+        self._win.setModal(true);
+        self._win.setMaxDimension(size.width, size.height);
+        self._win.setText('Dropbox images');
+        window.onresize = function () {
+            var size = getMaxSize();
+            self._win.setMaxDimension(size.width, size.height);
+            self._win.setDimension(size.width, size.height);
+            self._win.centerOnScreen();
+        };
     };
 
     AuDropboxDir.prototype._createStatusBar = function _createStatusBar() {
@@ -135,12 +193,14 @@ define([
         this._toolbar = this._layout.attachToolbar({
             icon_path: '/images/icons/',
             items: [
-                {id: 'back', type: 'button', text: 'Назад', img: 'back.png', img_disabled: 'new_dis.gif'},
+                {id: 'back', type: 'button', text: 'Назад', img: 'back.png'},
                 {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'},
                 {id: 'create_dir', type: 'button', text: 'Создать папку', img: 'create_dir.png'},
                 {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png'},
                 {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png'},
-                {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png'}
+                {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png'},
+                {id: 'sep1', type: 'separator'},
+                {id: 'upload', type: 'button', text: 'Добавить к товару', img: 'add.png'}
             ]
         });
         this._toolbar
@@ -268,7 +328,7 @@ define([
                 self._win.progressOff();
             }).catch(function (error) {
                 self._win.progressOff();
-                Toast.error(error.error);
+                onError(error);
             });
         }
     };
@@ -286,6 +346,7 @@ define([
                 })
                 .catch(function (error) {
                     cell.progressOff();
+                    onError(error);
                 })
         }
     };
@@ -312,8 +373,9 @@ define([
                             cell.progressOff();
                         }, 1000);
                     })
-                    .catch(function () {
+                    .catch(function (error) {
                         cell.progressOff();
+                        onError(error);
                     })
             }
         }
@@ -347,11 +409,12 @@ define([
     AuDropboxDir.prototype._fileUploadDialog = function _fileUploadDialog() {
         var self = this;
         var id = 'au-dropbox-upload-' + Date.now();
-        $(document.body).append('<input type="file" name="fileToUpload" id="' + id + '" multiple>');
+        $('.dropbox-upload-input').html('<input type="file" name="fileToUpload" id="' + id + '" multiple>');
         self._$uploadInput = $('#' + id);
         self._$uploadInput.on('change', function (event) {
+            self._cellBTabbar.tabs('uploads').setActive();
             self._uploadFiles(event.target.files);
-            self._$uploadInput.remove();
+            $('.dropbox-upload-input').html('');
         });
         self._$uploadInput.trigger('click');
     };
@@ -361,7 +424,38 @@ define([
         var files = itemsPathes.map(function (file) {
             return {path: file};
         });
-        return self._client.filesDeleteBatch({entries: files});
+        return self._client.filesDeleteBatch({entries: files})
+            .then(function (response) {
+                if (response['.tag'] === 'async_job_id') {
+                    return self._deleteBatchCheck(response.async_job_id, self._options.maxDeleteBachTimes);
+                }
+                return response;
+            });
+    };
+
+    AuDropboxDir.prototype._deleteBatchCheck = function _repeatDeleteBatchCheck(asyncJobId, maxRepeatTime) {
+        var self = this;
+        maxRepeatTime = maxRepeatTime || 0;
+        return self._client.filesDeleteBatchCheck({async_job_id: asyncJobId})
+            .then(function (response) {
+                var tag = response['.tag'];
+                if (tag === 'in_progress' && maxRepeatTime === 0) {
+                    throw new Error('Удаление выполняется слишком долго. Обновите папку через 10 секунд.');
+                } else if (tag === 'in_progress' && maxRepeatTime > 0) {
+                    return new Promise(function (resolve, reject) {
+                        setTimeout(function () {
+                            self._deleteBatchCheck(asyncJobId, maxRepeatTime - 1)
+                                .then(resolve)
+                                .catch(reject);
+                        }, self._options.deleteBatchCheckInterval);
+                    });
+
+                } else if (tag === 'complete') {
+                    return true;
+                } else if (tag === 'failed') {
+                    throw new Error('Удаление завершено с ошибкой. Обновите папку.');
+                }
+            });
     };
 
     AuDropboxDir.prototype._renameItem = function _renameItem(itemPath, newName) {
@@ -389,8 +483,6 @@ define([
                 input: file,
                 path: self._currentDir + '/' + file.name
             });
-            var now = new Date();
-            var time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
             self._uploadsGrid.addRow(id, ['0 сек.', file.name, self._uploadStatusImages.ready]);
         });
     };
@@ -435,8 +527,9 @@ define([
 
         function apply(response) {
             var entries = response.entries;
-            if (entries && entries.length) {
-                self._updateThumbnails(pathDir, entries);
+            var successThumbnails = self._filterSuccessThumbnails(response.entries);
+            if (successThumbnails && successThumbnails.length) {
+                self._updateThumbnails(pathDir, successThumbnails);
             }
             responses--;
             if (responses === 0) {
@@ -546,14 +639,23 @@ define([
 
     AuDropboxDir.prototype._releaseCacheForFiles = function _releaseCacheForFiles(pathes) {
         var self = this;
-        pathes.forEach(function (path) {
-            var keys = Object.keys(self._preparedCache);
-            keys.forEach(function (key) {
-                if (key.indexOf(path) === 0) {
-                    delete self._preparedCache[key];
-                }
-            });
+        var roots = [];
+        pathes.forEach(function (filePath) {
+            roots.push(filePath);
+            var root = self._getFileRootDir(filePath);
+            if (roots.indexOf(root) === -1) {
+                roots.push(root);
+            }
         });
+        roots.forEach(function (root) {
+            if (self._preparedCache.hasOwnProperty(root)) {
+                delete self._preparedCache[root];
+            }
+        });
+    };
+
+    AuDropboxDir.prototype._getFileRootDir = function _getFileRootDir(file) {
+        return file.replace(/^(.*)\/[^\/]*$/g, '$1');
     };
 
     AuDropboxDir.prototype._updateCache = function _updateCache(path, preparedData) {
@@ -611,12 +713,50 @@ define([
 
     AuDropboxDir.prototype._onUploadProgress = function _onUploadProgress(id, options) {
         var self = this;
+        var rowIndex = self._uploadsGrid.getRowIndex(id);
+        if (rowIndex === -1) {
+            return;
+        }
         var statusImage = self._uploadStatusImages[options.status] || self._uploadStatusImages.ready;
         if (options.status === 'finished') {
             var time = Math.round((options.finishedTime - options.startedTime) / 1000);
             self._uploadsGrid.cells(id, 0).setValue(time + ' сек.');
         }
         self._uploadsGrid.cells(id, 2).setValue(statusImage);
+    };
+
+    AuDropboxDir.prototype._onFilesBatchUploaded = function _onFilesBatchUploaded(options) {
+        var self = this;
+        if (options && options.lastParentDir === self._currentDir) {
+            self._loadDir(true);
+        }
+    };
+
+    AuDropboxDir.prototype._filterSuccessThumbnails = function _filterSuccessThumbnails(thumbnails) {
+        return _.filter(thumbnails, function (thumbnail) {
+            return thumbnail['.tag'] !== 'failure';
+        });
+    };
+
+    AuDropboxDir.prototype._clearFinishedUploads = function () {
+        var self = this;
+        self._uploadsGrid.forEachRow(function (rowId) {
+            var upload = self._uploadsManager.getUpload(rowId);
+            if (upload && (upload.isFinished() || upload.isFailed())) {
+                self._uploadsGrid.deleteRow(rowId);
+            }
+        });
+    };
+
+    AuDropboxDir.prototype._clearAllUploads = function () {
+        var self = this;
+        self._uploadsGrid.forEachRow(function (rowId) {
+            var upload = self._uploadsManager.getUpload(rowId);
+            if (upload && (upload.isFinished() || upload.isFailed() || upload.isReady())) {
+                self._uploadsGrid.deleteRow(rowId);
+                self._uploadsManager.releaseUpload(rowId);
+            }
+        });
     };
 
     return AuDropboxDir;

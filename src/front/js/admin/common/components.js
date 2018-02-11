@@ -122,26 +122,37 @@ define([], function() {
                 window.open(document.location.origin + '/admin/' + id, '_self');
             });
             var exitDOM = menu.idPull[menu.idPrefix + exitKey];
-            $('#' + exitDOM.id).css('position', 'absolute').css('right', '0').css('background-color', '#F04B4B').css('display', 'inline-block').css('cursor', 'pointer').css('color', '#fff').css('font-weight', 'bold').css('font-size', '12px').css('border-radius', '3px').css('box-shadow', '0px 0px 3px rgba(255, 255, 255, 0.5) inset').css('border', '1px solid #F04B4B');
+            $('#' + exitDOM.id)
+                .css('position', 'absolute')
+                .css('right', '0')
+                .css('background-color', '#F04B4B')
+                .css('display', 'inline-block')
+                .css('cursor', 'pointer')
+                .css('color', '#fff')
+                .css('font-weight', 'bold')
+                .css('font-size', '12px')
+                .css('border-radius', '3px')
+                .css('box-shadow', '0px 0px 3px rgba(255, 255, 255, 0.5) inset')
+                .css('border', '1px solid #F04B4B');
 
             return menu;
         },
 
         createToolbar: function (layout, handlers, buttons, cellName) {
             var config = [
-                {type: 'button', id: 'reload', text: 'Обновить'},
-                {type: 'button', id: 'add', text: 'Добавить'},
-                {type: 'button', id: 'save', text: 'Сохранить'},
+                {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png'},
+                {type: 'button', id: 'add', text: 'Добавить', img: 'add.png'},
+                {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png'},
                 {type: 'separator'},
-                {type: 'button', id: 'delete', text: 'Удалить'}
+                {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png'}
             ];
             if (U.hasContent(buttons)) {
                 var config = [];
                 var _buttons = {
-                    reload: {type: 'button', id: 'reload', text: 'Обновить'},
-                    add: {type: 'button', id: 'add', text: 'Добавить'},
-                    save: {type: 'button', id: 'save', text: 'Сохранить'},
-                    delete: {type: 'button', id: 'delete', text: 'Удалить'},
+                    reload: {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png'},
+                    add: {type: 'button', id: 'add', text: 'Добавить', img: 'add.png'},
+                    save: {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png'},
+                    delete: {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png'},
                     loadBackground: {type: 'button', id: 'loadBackground', text: 'Загрузить фон'},
                     saveOrder: {type: 'button', id: 'saveOrder', text: 'Настроить порядок'},
                     separator: {type: 'separator'},
@@ -151,7 +162,10 @@ define([], function() {
                     config.push(_buttons[buttons[btnIndex]]);
                 }
             }
-            var toolbar = layout.cells(cellName || 'a').attachToolbar({items: config});
+            var toolbar = layout.cells(cellName || 'a').attachToolbar({
+                icon_path: '/images/icons/',
+                items: config
+            });
             if (typeof handlers != 'undefined') {
                 toolbar.customHandlers = handlers;
                 toolbar.attachEvent('onClick', function (id) {

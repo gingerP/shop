@@ -82,6 +82,9 @@ define([
         readImagesFromCatalogToDb: function readImagesFromCatalogToDb() {
             return load('readImagesFromCatalogToDb').then(getData);
         },
+        getAdminSettings: function getAdminSettings() {
+            return load('getAdminSettings').then(getData);
+        },
         /*****************************************Booklets*************************************/
         listBooklets: function (mapping, callback) {
             return load('listBooklets', {mapping: mapping}, new Handlers(callback)).then(getData);
