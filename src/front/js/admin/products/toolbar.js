@@ -78,10 +78,10 @@ define([
                         });
                         return App.images.saveImages(product.id);
                     })
-                    .then(function() {
+                    .then(function () {
                         return Services.getGood(id);
                     })
-                    .then(function(product) {
+                    .then(function (product) {
                         reloadRow(oldRowId, product);
                     })
                     .catch(function () {
@@ -135,9 +135,16 @@ define([
                         }
                     }
                 });
+            },
+            storage: function storage() {
+                app.storage.open();
+                app.storage.hideAddToProductButton();
             }
         };
-        return Components.createToolbar(layout, handlers, ['reload', 'add', 'save', 'saveOrder', 'separator', 'delete']);
+        return Components.createToolbar(layout, handlers, [
+            'reload', 'add', 'save', 'saveOrder', 'separator', 'delete', 'separator',
+            {type: 'button', id: 'storage', text: 'Облако', img: 'storage.png', img_disabled: 'storage.png'}
+        ]);
     }
 
     return {

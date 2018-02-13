@@ -1,10 +1,11 @@
 define([
+    'common/observable',
     'common/services',
     'dropbox-sdk',
     'common/toast',
     'filesize',
     'dropbox/dropbox-upload-manager'
-], function (Services, DropboxSdk, Toast, filesize, AuDropboxUploadManager) {
+], function (Observable, Services, DropboxSdk, Toast, filesize, AuDropboxUploadManager) {
     function getMaxSize() {
         var ratio = 0.9;
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -32,9 +33,13 @@ define([
         console.error(error);
     }
 
-    function AuDropboxDir() {
+    function AuDropboxDir(rootDir) {
+        this._observable = new Observable();
+        this._events = {
+            addToProduct: 'addToProduct'
+        };
         this._preparedCache = {};
-        this._rootDir = '/augustova';
+        this._rootDir = rootDir || '/augustova';
         this._currentDir = this._rootDir;
         this._pageSize = 500;
         this._thumbnailsPageSize = 20;
@@ -54,22 +59,7 @@ define([
         this._createClient();
     }
 
-    AuDropboxDir.prototype._createClient = function _createClient() {
-        var self = this;
-        Services.getAdminSettings()
-            .then(function (preferences) {
-                var token = preferences.dropbox_access_token;
-                self._client = new DropboxSdk.Dropbox({accessToken: token});
-                self._uploadsManager = new AuDropboxUploadManager(
-                    self._client, {},
-                    self._onUploadProgress.bind(self),
-                    self._onFilesBatchUploaded.bind(self)
-                );
-            })
-            .catch(onError);
-    };
-
-    AuDropboxDir.prototype.openPopup = function openPopup() {
+    AuDropboxDir.prototype.open = function open() {
         var self = this;
         if (!self._win) {
             self._createWindow();
@@ -81,9 +71,50 @@ define([
             self._createPreview();
             self._createUploads();
             self._createUploadsToolbar();
+        } else {
+            self._win.show();
+            self._win.setModal(true);
         }
 
-        //this._loadDir();
+        self._loadDir();
+    };
+
+    AuDropboxDir.prototype.hide = function hide() {
+        var self = this;
+        if (self._win) {
+            self._win.hide();
+            self._win.setModal(false);
+        }
+    };
+
+    AuDropboxDir.prototype.showAddToProductButton = function showAddToProductButton() {
+        this._toolbar.showItem('sep1');
+        this._toolbar.showItem('upload');
+    };
+
+    AuDropboxDir.prototype.hideAddToProductButton = function hideAddToProductButton() {
+        this._toolbar.hideItem('sep1');
+        this._toolbar.hideItem('upload');
+    };
+
+    AuDropboxDir.prototype.onAddToProduct = function onAddToProduct(callback) {
+        this._observable.addListener(this._events.addToProduct, callback);
+    };
+
+    AuDropboxDir.prototype._createClient = function _createClient() {
+        var self = this;
+        Services.getAdminSettings()
+            .then(function (preferences) {
+                var token = preferences.dropbox_access_token;
+                self._rootDir = preferences.dropbox_root_directory || self._rootDir;
+                self._client = new DropboxSdk.Dropbox({accessToken: token});
+                self._uploadsManager = new AuDropboxUploadManager(
+                    self._client, {},
+                    self._onUploadProgress.bind(self),
+                    self._onFilesBatchUploaded.bind(self)
+                );
+            })
+            .catch(onError);
     };
 
     AuDropboxDir.prototype._createLayout = function _createLayout() {
@@ -168,6 +199,11 @@ define([
         self._win.setModal(true);
         self._win.setMaxDimension(size.width, size.height);
         self._win.setText('Dropbox images');
+        self._win.attachEvent('onClose', function () {
+            self._win.hide();
+            self._win.setModal(false);
+            return false;
+        });
         window.onresize = function () {
             var size = getMaxSize();
             self._win.setMaxDimension(size.width, size.height);
@@ -195,12 +231,12 @@ define([
             items: [
                 {id: 'back', type: 'button', text: 'Назад', img: 'back.png'},
                 {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'},
-                {id: 'create_dir', type: 'button', text: 'Создать папку', img: 'create_dir.png'},
+                {id: 'create-dir', type: 'button', text: 'Создать папку', img: 'create_dir.png'},
                 {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png'},
                 {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png'},
                 {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png'},
                 {id: 'sep1', type: 'separator'},
-                {id: 'upload', type: 'button', text: 'Добавить к товару', img: 'add.png'}
+                {id: 'add-to-product', type: 'button', text: 'Добавить к товару', img: 'add.png'}
             ]
         });
         this._toolbar
@@ -212,7 +248,7 @@ define([
                     case 'reload':
                         self._loadDir(true);
                         break;
-                    case 'create_dir':
+                    case 'create-dir':
                         self._createDirDialog();
                         break;
                     case 'delete':
@@ -224,8 +260,14 @@ define([
                     case 'upload':
                         self._fileUploadDialog();
                         break;
+                    case 'add-to-product':
+                        self._addToProduct();
+                        break;
                 }
             });
+
+        this._toolbar.hideItem('sep1');
+        this._toolbar.hideItem('upload');
     };
 
 
@@ -417,6 +459,21 @@ define([
             $('.dropbox-upload-input').html('');
         });
         self._$uploadInput.trigger('click');
+    };
+
+    AuDropboxDir.prototype._addToProduct = function _addToProduct() {
+        var selectedIds = this._view.getSelected(true);
+        var files = [];
+        while(selectedIds.length) {
+            var id = selectedIds.pop();
+            var itemData = this._view.get(id);
+            if (itemData.tag === 'file' && /\.(jpg|jpeg|png)$/ig.test(itemData.name)) {
+                files.push(itemData);
+            }
+        }
+        if (files.length) {
+            this._observable.propertyChange(this._events.addToProduct, files);
+        }
     };
 
     AuDropboxDir.prototype._deleteItems = function _deleteItems(itemsPathes) {

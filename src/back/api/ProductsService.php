@@ -2,6 +2,7 @@
 include_once('src/back/import/db');
 include_once('src/back/import/import');
 include_once('src/back/import/errors');
+include_once('src/back/lib/Dropbox/autoload.php');
 
 class ProductsService
 {
@@ -191,13 +192,6 @@ class ProductsService
         $imageEditorS->saveImage($imagePath, 100);
     }
 
-    private static function tryToDeleteFile($fileName)
-    {
-        if (file_exists($fileName)) {
-            unlink($fileName);
-        }
-    }
-
     public static function getGood($id)
     {
         $goodsType = new DBGoodsType();
@@ -275,26 +269,6 @@ class ProductsService
         return $dbGoods->extractDataFromResponse($data, $mappings);
     }
 
-    private static function mergeImagesToGoods($goods)
-    {
-        $goodIndex = 0;
-        while ($goodIndex < count($goods)) {
-            $goods[$goodIndex][DB::TABLE_GOODS__IMAGE_PATH] = '/' . Constants::DEFAULT_ROOT_CATALOG_PATH . DIRECTORY_SEPARATOR . $goods[$goodIndex][DB::TABLE_GOODS__KEY_ITEM] . DIRECTORY_SEPARATOR . Constants::SMALL_IMAGE . '001.jpg';
-            $goodIndex++;
-        }
-        return $goods;
-    }
-
-    private static function clearTreePath($path)
-    {
-        $ret = [];
-        for ($pathItemIndex = 0; $pathItemIndex < count($path); $pathItemIndex++) {
-            //$parentKey, $key, $value, $show, $homeViewMode
-            array_push($ret, new Tree($path[$pathItemIndex]->parentKey, $path[$pathItemIndex]->key, $path[$pathItemIndex]->value, null, null));
-        }
-        return $ret;
-    }
-
     private static function clearCache()
     {
         $cacheModel = new DBPagesCacheType();
@@ -360,5 +334,13 @@ class ProductsService
             }
         }
         return null;
+    }
+
+    private static function getDropboxClient() {
+        $Preferences = new DBPreferencesType();
+        $dropboxAccessToken = $Preferences->getPreference(Constants::DROPBOX_ACCESS_TOKEN)[DB::TABLE_PREFERENCES__VALUE];
+        list($appInfo, $clientIdentifier, $userLocale) = getAppConfig();
+        $accessToken = $_SESSION['access-token'];
+        return new dbx\Client($accessToken, $clientIdentifier, $userLocale, $appInfo->getHost());
     }
 }

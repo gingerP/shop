@@ -40,6 +40,12 @@ require([
                 {id: 'b', text: 'Детали товара'}
             ]
         });
+        layout.setOffsets({
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        });
         layout.cells('a').hideHeader();
         layout.detachHeader();
         return layout;
@@ -99,16 +105,12 @@ require([
         })
     }
 
-    function createDropboxComponent() {
-        var dir = new AuDropboxDir();
-        dir.openPopup();
-    }
-
     (function init() {
         U.dhtmlxDOMPreInit(document.documentElement, document.body);
         app.loader = getLoader();
         app.layout = initLayout();
         app.tabbar = initTabbar(app.layout);
+        app.storage = new AuDropboxDir();
         app.menu = Components.createMenu(app.layout);
         app.grid = Grid.init(app.layout);
         app.form = Details.init(app.tabbar);
@@ -118,7 +120,5 @@ require([
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
         Services.getDescriptionKeys().then(app.form.updateDescriptionConfig);
-        var dir = new AuDropboxDir();
-        dir.openPopup();
     })();
 });

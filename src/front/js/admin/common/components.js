@@ -1,5 +1,5 @@
-define([], function() {
-    if (typeof app == 'undefined') {
+define([], function () {
+    if (typeof app === 'undefined') {
         app = {};
     }
     app.dhtmlxImgsPath = '/src/front/dhtmlx/imgs/';
@@ -140,36 +140,59 @@ define([], function() {
 
         createToolbar: function (layout, handlers, buttons, cellName) {
             var config = [
-                {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png'},
-                {type: 'button', id: 'add', text: 'Добавить', img: 'add.png'},
-                {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png'},
+                {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png', img_disabled: 'reload.png'},
+                {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add.png'},
+                {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save.png'},
                 {type: 'separator'},
-                {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png'}
+                {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png', img_disabled: 'delete.png'}
             ];
             if (U.hasContent(buttons)) {
-                var config = [];
+                config = [];
                 var _buttons = {
-                    reload: {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png'},
-                    add: {type: 'button', id: 'add', text: 'Добавить', img: 'add.png'},
-                    save: {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png'},
-                    delete: {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png'},
+                    reload: {
+                        type: 'button',
+                        id: 'reload',
+                        text: 'Обновить',
+                        img: 'reload.png',
+                        img_disabled: 'reload.png'
+                    },
+                    add: {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add.png'},
+                    save: {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save.png'},
+                    delete: {
+                        type: 'button',
+                        id: 'delete',
+                        text: 'Удалить',
+                        img: 'delete.png',
+                        img_disabled: 'delete.png'
+                    },
                     loadBackground: {type: 'button', id: 'loadBackground', text: 'Загрузить фон'},
-                    saveOrder: {type: 'button', id: 'saveOrder', text: 'Настроить порядок'},
+                    saveOrder: {
+                        type: 'button',
+                        id: 'saveOrder',
+                        text: 'Настроить порядок',
+                        img: 'settings.png',
+                        img_disabled: 'settings.png'
+                    },
                     separator: {type: 'separator'},
                     preview: {type: 'button', id: 'preview', text: 'Просмотр'}
                 };
                 for (var btnIndex = 0; btnIndex < buttons.length; btnIndex++) {
-                    config.push(_buttons[buttons[btnIndex]]);
+                    var button = buttons[btnIndex];
+                    if (typeof button === 'string') {
+                        config.push(_buttons[button]);
+                    } else if (typeof button === 'object') {
+                        config.push(button);
+                    }
                 }
             }
-            var toolbar = layout.cells(cellName || 'a').attachToolbar({
+            var toolbar = layout./*cells(cellName || 'a').*/attachToolbar({
                 icon_path: '/images/icons/',
                 items: config
             });
-            if (typeof handlers != 'undefined') {
+            if (typeof handlers !== 'undefined') {
                 toolbar.customHandlers = handlers;
                 toolbar.attachEvent('onClick', function (id) {
-                    if (this.customHandlers.hasOwnProperty(id) && typeof this.customHandlers[id] == 'function') {
+                    if (this.customHandlers.hasOwnProperty(id) && typeof this.customHandlers[id] === 'function') {
                         this.customHandlers[id]();
                     }
                 });

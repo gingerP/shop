@@ -5,24 +5,52 @@ define([
 
     function initImages(tabbar) {
         tabbar.addTab('b', 'Изображения');
-        tabbar.attachEvent("onSelect", function (id, lastId) {
-            if (id == 'b') {
-                loadImages()
+
+        app.storage.onAddToProduct(function (files) {
+            if (!dataView.isLocked() && files && files.length) {
+                files.forEach(function (file) {
+                    var id = file.id + ':' + Date.now();
+                    dataView.add({
+                        id: id,
+                        titleClass: '',
+                        title: file.name + '. Облако.',
+                        image: '<img src="' + file.icon + '">' + dataView.getItemViewButtons(id),
+                        data: file.id,
+                        isRaw: true,
+                        origin: 'cloud'
+                    });
+                });
             }
-            return true;
+            app.storage.hide();
         });
 
-        function loadImages() {
-
-        }
-
         var toolbar = tabbar.tabs('b').attachToolbar({
+            icon_path: '/images/icons/',
             items: [
-                {id: 'add', type: 'button', pos: 0, text: 'Добавить фото'}
+                {
+                    id: 'add',
+                    type: 'button',
+                    text: 'Добавить фото из компьютера',
+                    img: 'add.png',
+                    img_disabled: 'add.png'
+                },
+                {
+                    id: 'add-from-cloud',
+                    type: 'button',
+                    text: 'Добавить фото из облака',
+                    img: 'storage.png',
+                    img_disabled: 'storage.png'
+                }
             ],
             onClick: function (id) {
-                if (id === 'add') {
-                    dataView.openDialog();
+                switch (id) {
+                    case 'add':
+                        dataView.openDialog();
+                        break;
+                    case 'add-from-cloud':
+                        app.storage.open();
+                        app.storage.showAddToProductButton();
+                        break
                 }
             }
         });
@@ -97,9 +125,9 @@ define([
             var images = [];
             _.each(this.serialize(), function (image) {
                 if (image.isRaw) {
-                    images.push({data: image.data, isNew: true});
+                    images.push({data: image.data, isNew: true, origin: image.origin});
                 } else {
-                    images.push({data: image.data, isNew: false});
+                    images.push({data: image.data, isNew: false, origin: 'augustova'});
                 }
             });
 
@@ -131,7 +159,8 @@ define([
                     title: 'Новое фото #' + dataView._auNewImagesEverAdded,
                     image: '<img src="' + reader.result + '">' + instance.getItemViewButtons(id),
                     data: reader.result,
-                    isRaw: true
+                    isRaw: true,
+                    origin: 'local'
                 });
             };
             reader.readAsDataURL(file);
@@ -141,9 +170,11 @@ define([
         dataView.lock = function (state) {
             if (state) {
                 toolbar.disableItem('add');
+                toolbar.disableItem('add-from-cloud');
                 $(this._obj).addClass('disable').removeClass('enable');
             } else {
                 toolbar.enableItem('add');
+                toolbar.enableItem('add-from-cloud');
                 $(this._obj).addClass('enable').removeClass('disable');
             }
         };
