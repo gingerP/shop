@@ -17,6 +17,22 @@ define([
                 entity.description = descriptions.join('|');
             }
         };
+        function onError(error) {
+            var message = 'Unknown error';
+            if (typeof error === 'string') {
+                message = error;
+            } else if (error.message) {
+                message = error.message;
+            } else if (error.response && error.response.statusText) {
+                message = error.response.statusText;
+            }
+            dhtmlx.alert({
+                title: 'Alert',
+                type: 'alert-error',
+                text: '<span style="word-break: break-all">' + message + '</span>'
+            });
+            console.error(error);
+        }
 
         function reloadRow(oldRowId, entity) {
             var index = App.grid.getRowIndex(oldRowId) + 1;
@@ -84,8 +100,9 @@ define([
                     .then(function (product) {
                         reloadRow(oldRowId, product);
                     })
-                    .catch(function () {
+                    .catch(function (error) {
                         App.layout.progressOff();
+                        onError(error);
                     });
             },
             saveOrder: function () {

@@ -2,8 +2,20 @@ define([
     'axios',
     'common/handlers'
 ], function (axios, Handlers) {
+
     function failed(error) {
-        var message = error.responseJSON && error.responseJSON.message || error.statusText || 'Неизвестная ошибка';
+        var message = 'Unknown error';
+        if (typeof error === 'string') {
+            message = error;
+        } else if (error.response && error.response.data && error.response.data.message) {
+            message = error.response.data.message;
+        } else if (error.message) {
+            message = error.message;
+        } else if (error.response && error.response.statusText) {
+            message = error.response.statusText;
+        } else {
+            message = error.responseJSON && error.responseJSON.message || error.statusText;
+        }
         dhtmlx.alert({
             title: 'Alert',
             type: 'alert-error',
@@ -14,6 +26,7 @@ define([
                 }
             }
         });
+        console.error(error);
     }
 
     function load(apiMethod, params, handlers) {
@@ -33,7 +46,7 @@ define([
     }
 
     function getData(response) {
-        return response.data;
+        return response && response.data;
     }
 
     return {

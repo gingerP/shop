@@ -140,8 +140,9 @@ define([
                         expire: 3000,
                         type: 'dhx-message-success'
                     });
-                }).catch(function () {
+                }).catch(function (error) {
                     app.layout.progressOff();
+                    throw error;
                 });
         };
 

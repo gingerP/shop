@@ -89,12 +89,12 @@ define([
 
     AuDropboxDir.prototype.showAddToProductButton = function showAddToProductButton() {
         this._toolbar.showItem('sep1');
-        this._toolbar.showItem('upload');
+        this._toolbar.showItem('add-to-product');
     };
 
     AuDropboxDir.prototype.hideAddToProductButton = function hideAddToProductButton() {
         this._toolbar.hideItem('sep1');
-        this._toolbar.hideItem('upload');
+        this._toolbar.hideItem('add-to-product');
     };
 
     AuDropboxDir.prototype.onAddToProduct = function onAddToProduct(callback) {
@@ -265,11 +265,7 @@ define([
                         break;
                 }
             });
-
-        this._toolbar.hideItem('sep1');
-        this._toolbar.hideItem('upload');
     };
-
 
     AuDropboxDir.prototype._createDataView = function _createDataView() {
         this._view = this._layout.cells('a').attachDataView({
@@ -467,7 +463,7 @@ define([
         while(selectedIds.length) {
             var id = selectedIds.pop();
             var itemData = this._view.get(id);
-            if (itemData.tag === 'file' && /\.(jpg|jpeg|png)$/ig.test(itemData.name)) {
+            if (itemData.tag === 'file' && /\.(jpg|jpeg)$/ig.test(itemData.name)) {
                 files.push(itemData);
             }
         }

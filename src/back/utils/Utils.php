@@ -231,7 +231,7 @@ class Utils
 
     public static function getPostSource()
     {
-        if (strpos($_SERVER['CONTENT_TYPE'], 'application/json') === 0) {
+        if (array_key_exists('CONTENT_TYPE', $_SERVER) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') === 0) {
             if (!array_key_exists('POST_JSON', $GLOBALS)) {
                 $GLOBALS['POST_JSON'] = json_decode(file_get_contents('php://input'), true);
             }

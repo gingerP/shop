@@ -2,7 +2,6 @@
 include_once('src/back/import/db');
 include_once('src/back/import/import');
 include_once('src/back/import/errors');
-include_once('src/back/lib/Dropbox/autoload.php');
 
 class ProductsService
 {
@@ -116,9 +115,20 @@ class ProductsService
         for ($imgIndex = 0; $imgIndex < count($imagesFromFront); $imgIndex++) {
             $image = $imagesFromFront[$imgIndex];
             $isNew = $image['isNew'];
+            $origin = $image['origin'];
             if ($isNew) {
-                $imageName = self::saveNewImage($image['data'], $productCode);
-                array_push($imagesOrder, $imageName);
+                if ($origin === 'cloud') {
+                    $filePath = $image['data'];
+                    $fileContent = DropboxService::downloadFile($filePath);
+                    if ($fileContent == false)  {
+                        continue;
+                    }
+                    $imageName = self::saveNewImageFromBinary($fileContent, $productCode);
+                    array_push($imagesOrder, $imageName);
+                } else {
+                    $imageName = self::saveNewImage($image['data'], $productCode);
+                    array_push($imagesOrder, $imageName);
+                }
             } else {
                 array_push($imagesOrder, $image['data']);
             }
@@ -144,6 +154,27 @@ class ProductsService
             );
         }
         FileUtils::removeAllExcept($except, $productDir);
+    }
+
+    public static function saveNewImageFromBinary($binaryImage, $productCode)
+    {
+        $Preferences = new DBPreferencesType();
+        $imageName = Utils::getRandomString(20);
+        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+
+        $smallImageName = FileUtils::buildPath($catalogPath, $productCode, Constants::SMALL_IMAGE . $imageName . '.jpg');
+        self::saveImageFromBinary($smallImageName, $binaryImage,
+            ['width' => Constants::SMALL_IMAGE_WIDTH, 'height' => Constants::SMALL_IMAGE_HEIGHT]
+        );
+        $mediumImageName = FileUtils::buildPath($catalogPath, $productCode, Constants::MEDIUM_IMAGE . $imageName . '.jpg');
+        self::saveImageFromBinary($mediumImageName, $binaryImage,
+            ['width' => Constants::MEDIUM_IMAGE_WIDTH, 'height' => Constants::MEDIUM_IMAGE_HEIGHT]
+        );
+        $largeImageName = FileUtils::buildPath($catalogPath, $productCode, Constants::LARGE_IMAGE . $imageName . '.jpg');
+        self::saveImageFromBinary($largeImageName, $binaryImage,
+            ['width' => Constants::LARGE_IMAGE_WIDTH, 'height' => Constants::LARGE_IMAGE_HEIGHT]
+        );
+        return $imageName;
     }
 
     public static function saveNewImage($base64Image, $productCode)
@@ -184,6 +215,17 @@ class ProductsService
             throw new Exception("base64_decode failed for $imagePath");
         }
         $isSaved = file_put_contents($imagePath, $decoded);
+        if ($isSaved === false) {
+            throw new Exception("$imagePath not saved");
+        }
+        $imageEditorS = new ImageEditor($imagePath);
+        $imageEditorS->resizeImage($imageSize['width'], $imageSize['height']);
+        $imageEditorS->saveImage($imagePath, 100);
+    }
+
+    private static function saveImageFromBinary($imagePath, $binaryData, $imageSize)
+    {
+        $isSaved = file_put_contents($imagePath, $binaryData);
         if ($isSaved === false) {
             throw new Exception("$imagePath not saved");
         }
