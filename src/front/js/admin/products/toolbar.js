@@ -159,7 +159,7 @@ define([
             }
         };
         return Components.createToolbar(layout, handlers, [
-            'reload', 'add', 'save', 'saveOrder', 'separator', 'delete', 'separator',
+            'reload', 'add', 'save', 'delete', 'separator','saveOrder',
             {type: 'button', id: 'storage', text: 'Облако', img: 'storage.png', img_disabled: 'storage.png'}
         ]);
     }

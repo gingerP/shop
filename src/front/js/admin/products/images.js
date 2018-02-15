@@ -32,14 +32,14 @@ define([
                     type: 'button',
                     text: 'Добавить фото из компьютера',
                     img: 'add.png',
-                    img_disabled: 'add.png'
+                    img_disabled: 'add_dis.png'
                 },
                 {
                     id: 'add-from-cloud',
                     type: 'button',
                     text: 'Добавить фото из облака',
                     img: 'storage.png',
-                    img_disabled: 'storage.png'
+                    img_disabled: 'storage_dis.png'
                 }
             ],
             onClick: function (id) {

@@ -167,13 +167,13 @@ define([
         var toolbar = cell.attachToolbar({
             icon_path: '/images/icons/',
             items: [
-                {id: 'clear', type: 'button', text: 'Очистить', img: 'clear.png', img_disabled: 'new_dis.gif'},
+                {id: 'clear', type: 'button', text: 'Очистить', img: 'clear.png', img_disabled: 'clear_dis.gif'},
                 {
                     id: 'clear_permanently',
                     type: 'button',
                     text: 'Отменить все',
                     img: 'cancel.png',
-                    img_disabled: 'new_dis.gif'
+                    img_disabled: 'cancel_dis.gif'
                 }
             ]
         });
@@ -229,14 +229,14 @@ define([
         this._toolbar = this._layout.attachToolbar({
             icon_path: '/images/icons/',
             items: [
-                {id: 'back', type: 'button', text: 'Назад', img: 'back.png'},
-                {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png'},
-                {id: 'create-dir', type: 'button', text: 'Создать папку', img: 'create_dir.png'},
-                {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png'},
-                {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png'},
-                {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png'},
+                {id: 'back', type: 'button', text: 'Назад', img: 'back.png', img_disabled: 'back_dis.png'},
+                {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png', img_disabled: 'reload_dis.png'},
+                {id: 'create-dir', type: 'button', text: 'Создать папку', img: 'create_dir.png', img_disabled: 'create_dir_dis.png'},
+                {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png', img_disabled: 'delete_dis.png'},
+                {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png', img_disabled: 'rename_dis.png'},
+                {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png', img_disabled: 'upload_dis.png'},
                 {id: 'sep1', type: 'separator'},
-                {id: 'add-to-product', type: 'button', text: 'Добавить к товару', img: 'add.png'}
+                {id: 'add-to-product', type: 'button', text: 'Добавить к товару', img: 'add.png', img_disabled: 'add_dis.png'}
             ]
         });
         this._toolbar

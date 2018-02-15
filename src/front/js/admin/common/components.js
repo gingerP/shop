@@ -140,11 +140,11 @@ define([], function () {
 
         createToolbar: function (layout, handlers, buttons, cellName) {
             var config = [
-                {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png', img_disabled: 'reload.png'},
-                {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add.png'},
-                {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save.png'},
+                {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png', img_disabled: 'reload_dis.png'},
+                {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add_dis.png'},
+                {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save_dis.png'},
                 {type: 'separator'},
-                {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png', img_disabled: 'delete.png'}
+                {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png', img_disabled: 'delete_dis.png'}
             ];
             if (U.hasContent(buttons)) {
                 config = [];
@@ -156,14 +156,14 @@ define([], function () {
                         img: 'reload.png',
                         img_disabled: 'reload.png'
                     },
-                    add: {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add.png'},
-                    save: {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save.png'},
+                    add: {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add_dis.png'},
+                    save: {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save_dis.png'},
                     delete: {
                         type: 'button',
                         id: 'delete',
                         text: 'Удалить',
                         img: 'delete.png',
-                        img_disabled: 'delete.png'
+                        img_disabled: 'delete_dis.png'
                     },
                     loadBackground: {type: 'button', id: 'loadBackground', text: 'Загрузить фон'},
                     saveOrder: {
@@ -171,7 +171,7 @@ define([], function () {
                         id: 'saveOrder',
                         text: 'Настроить порядок',
                         img: 'settings.png',
-                        img_disabled: 'settings.png'
+                        img_disabled: 'settings_dis.png'
                     },
                     separator: {type: 'separator'},
                     preview: {type: 'button', id: 'preview', text: 'Просмотр'}
