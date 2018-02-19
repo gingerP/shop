@@ -34,20 +34,49 @@ class DeliveryPage extends APagesCreator
         $mainTag->addChild("
             <div class='delivery-block f-15'>
                 <div class='delivery-placeholder'>
+                    <!--<div class='number-separator'></div>-->
                     <div class='delivery-description'>
-                        Для оформления доставки напишите нам или свяжитесь с нашим представителем.
+                        <div style='margin-bottom: 10px;'>Для оформления заказа нам необходима следующая информация о Вас:</div>
+                        
+                        <ul class='dresses-size-description-common'>
+                            <li class='dresses-size-label'>адрес доставки</li>
+                            <li class='dresses-size-label'>ФИО получателя</li>
+                            <li class='dresses-size-label'>контактный номер телефона</li>
+                            <li>а так же мерки без припусков, согласно следующей схеме:</li>
+                        </ul>
                     </div>
-                    <div class='number-separator'></div>
-                    <a href='tel:$NUMBER' class='delivery-phone-link'>
-                        <svg fill=\"#414141\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\">
-                            <path d=\"M0 0h24v24H0z\" fill=\"none\"/>
-                            <path d=\"M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z\"/>
-                        </svg>
-                    </a>
-                    <div class='delivery-phone-text-container'>
-                        <span class='delivery-phone-provider'>МТС</span>
-                        <span class='delivery-phone-text'>$NUMBER Галина</span>
-                     </div>             
+                    <div class='dresses-size-container'>
+                        <img src='/images/dresses_sizes.png' class='dresses-size-image'>
+                        <div class='dresses-size-description'>
+                            <ul class='dresses-size-list'>
+                                <li>
+                                    <div class='dresses-size-number'>1</div>
+                                    <div class='dresses-size-list-text'><span class='dresses-size-label'>Обхват груди</span> - измеряется вокруг туловища по самым выступающим точкам грудных желез.</div>
+                                </li>
+                                <li>
+                                    <div class='dresses-size-number'>2</div>
+                                    <div class='dresses-size-list-text'><span class='dresses-size-label'>Обхват талии</span> - измеряется вокруг туловища на уровне линии талии.</div>
+                                </li>
+                                <li>
+                                    <div class='dresses-size-number'>3</div>
+                                    <div class='dresses-size-list-text'><span class='dresses-size-label'>Обхват бёдер</span> - измеряется в области на 20 см ниже линии талии.</div>
+                                </li>
+                                <li>
+                                    <div class='dresses-size-number'>4</div>
+                                    <div class='dresses-size-list-text dresses-size-label'>Рост</div>
+                                </li>
+                            </ul>
+                            <div>
+                                <div class='dresses-size-description-label'>Расчет стоимости заказа, доставляемого почтой по всем регионам  РБ:</div>
+                                <span>
+                                    К цене товара необходимо добавить оплату за почтовое отправление. <br>
+                                    На  данный  момент она составляет примерно 6,00  бел. рублей. <br>
+                                    При получении следует учитывать дополнительную плату  3 % от суммы вашего заказа  почте (за электронный перевод денежных средств).
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                               
                 </div>
             </div>
             

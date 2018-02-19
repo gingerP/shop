@@ -1,0 +1,69 @@
+@import (reference) "../variables";
+
+.dresses {
+  &-size {
+    &-label {
+      font-weight: bold;
+      color: #414141;
+    }
+    &-description {
+      float: left;
+      width: ~'calc(100% - 150px)';
+      padding: 0 50px;
+      box-sizing: border-box;
+      &-common {
+        padding-left: 30px;
+        margin: 0;
+        li {
+          padding: 5px;
+        }
+      }
+      &-label {
+        padding: 10px 0;
+        color: #414141;
+        font-weight: bold;
+      }
+    }
+    &-container {
+      overflow: hidden;
+    }
+    &-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      &-text {
+        padding: 15px 0 15px 40px;
+      }
+    }
+    &-image {
+      max-width: 150px;
+      float: left;
+    }
+    &-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid gray;
+      text-align: center;
+      line-height: 30px;
+      color: #fa0809;
+      margin: 8px 0;
+      position: absolute;
+      font-weight: bold;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .dresses-size-description,
+  .dresses-size-image {
+    float: none;
+    margin: 0 auto;
+    display: block;
+  }
+  .dresses-size-description {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+}
