@@ -49,7 +49,7 @@ class EmailService
             $product = $Products->getByCode($fromProductCode);
             if (!is_null($product)) {
                 $productUrl =
-                    URLBuilder::getCatalogLinkForSingleItem($product["key_item"], null, null, []);
+                    'http://augustova.by/'.URLBuilder::getCatalogLinkForSingleItem($product["key_item"], null, null, []);
                 $productName = $product[DB::TABLE_GOODS__NAME];
                 $html .= "<hr><br>
                         <span style=\"font-weight: bold;\">
