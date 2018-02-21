@@ -34,6 +34,7 @@ class EmailService
 
     private static function getHtmlMessage($messageBody, $senderEmail, $senderName, $fromProductCode)
     {
+        $publicUrl = DBPreferencesType::getPreferenceValue(Constants::PUBLIC_URL);
         $escapedMessageBody = htmlentities($messageBody);
         $html = "<!doctype html>
                     <html>
@@ -48,8 +49,10 @@ class EmailService
             $Products = new DBGoodsType();
             $product = $Products->getByCode($fromProductCode);
             if (!is_null($product)) {
-                $productUrl =
-                    'http://augustova.by/'.URLBuilder::getCatalogLinkForSingleItem($product["key_item"], null, null, []);
+                $productUrl = FileUtils::buildPath(
+                    $publicUrl,
+                    URLBuilder::getCatalogLinkForSingleItem($product["key_item"], null, null, [])
+                );
                 $productName = $product[DB::TABLE_GOODS__NAME];
                 $html .= "<hr><br>
                         <span style=\"font-weight: bold;\">

@@ -83,7 +83,7 @@ define([], function () {
         prepareEntity: function (entity) {
             if (entity) {
                 for (var key in entity) {
-                    if (key.indexOf('_') == 0) {
+                    if (key.indexOf('_') === 0) {
                         delete entity[key];
                     } else if (entity[key] instanceof Array) {
                         for (var arrIndex = 0; arrIndex < entity[key].length; arrIndex++) {
@@ -114,7 +114,7 @@ define([], function () {
                     {id: 'tree', text: 'Дерево навигации', disabled: true},
                     {id: 'prices', text: 'Прайс-листы', disabled: true},
                     {id: 'contacts', text: 'Контакты', disabled: true},
-                    {id: 'booklets', text: 'Буклеты', disabled: true},
+                    {id: 'booklets', text: 'Буклеты'},
                     {id: exitKey, text: 'Выход'}
                 ]
             });
@@ -138,7 +138,7 @@ define([], function () {
             return menu;
         },
 
-        createToolbar: function (layout, handlers, buttons, cellName) {
+        createToolbar: function (layout, handlers, buttons) {
             var config = [
                 {type: 'button', id: 'reload', text: 'Обновить', img: 'reload.png', img_disabled: 'reload_dis.png'},
                 {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add_dis.png'},
@@ -185,7 +185,7 @@ define([], function () {
                     }
                 }
             }
-            var toolbar = layout./*cells(cellName || 'a').*/attachToolbar({
+            var toolbar = layout.attachToolbar({
                 icon_path: '/images/icons/',
                 items: config
             });
@@ -237,12 +237,12 @@ define([], function () {
                 top: 30,
                 width: 300,
                 height: 200,
-                center: true,
+                center: true
             };
             $.extend(true, _vars, vars || {});
             var win = myWins.createWindow(_vars);
             win.attachEvent('onClose', function () {
-                if (typeof closeCallback == 'function') {
+                if (typeof closeCallback === 'function') {
                     closeCallback();
                 }
                 this.hide();

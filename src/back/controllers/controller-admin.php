@@ -54,11 +54,14 @@ try {
                     $page = new SettingsPage();
                     echo $page->getHtml();
                     break;
+                case 'booklets':
+                    $page = new AdminPageBooklets();
+                    echo $page->getHtml();
+                    break;
                 case 'contacts':
                 case 'prices':
                 case 'tree':
                 case 'goods':
-                case 'booklets':
                 case 'bookletpreview':
                     $page = new AdminPageProducts();
                     echo $page->getHtml();

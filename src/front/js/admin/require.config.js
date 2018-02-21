@@ -7,7 +7,6 @@ require.config({
         jquery: '../ext/jquery-2.1.4.min',
         axios: '../ext/axios.min'
     },
-    shim: {
-    },
+    shim: {},
     waitSeconds: 15
 });

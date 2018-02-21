@@ -1,5 +1,5 @@
 require([
-    'common/serviceEntities',
+    'common/service-entities',
     'common/services',
     'common/components',
     'settings/photo-tab'
@@ -7,23 +7,6 @@ require([
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
-    }
-
-    function initTreeGoodsKeys(form) {
-        var tree = new dhtmlXTreeObject(form.getContainer('tree'), '100%', '100%', 'GN');
-        tree.setImagePath(app.dhtmlxImgsPath + 'dhxtree_material/');
-        app.loader.reloadGoodsKeysTree(tree);
-        $(tree.allTree).attr('v-core-tree', 'goods_keys');
-        tree.lock = function lockTree() {
-            $('.tree-nav-keys').prop('disabled', true);
-        };
-        tree.unlock = function unlockTree() {
-            $('.tree-nav-keys').prop('disabled', false);
-        };
-        tree.unselectAll = function unselectAll() {
-            $('.tree-nav-keys').removeAttr('checked')
-        };
-        return tree;
     }
 
     function createLayout() {

@@ -40,6 +40,7 @@ class Constants {
     const LIST_DELIMITER = ";";
     const MAX_IMAGE_COUNT_METRO_VIEW = 5;
     const FEEDBACK_MAIL = "FEEDBACK_EMAIL";
+    const PUBLIC_URL = "PUBLIC_URL";
     const CATALOG_PATH = "CATALOG_PATH";
     const SYSTEM_MAIL = "SYSTEM_EMAIL";
     const WATERMARK_MEDIUM_PATH = "WATERMARK_MEDIUM_PATH";
