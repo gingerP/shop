@@ -8,31 +8,50 @@
 
 include_once("src/back/import/db");
 
-class DBErrorType extends DBType {
+class DBErrorType extends DBType
+{
     protected $tableName = DB::TABLE_ERRORS___NAME;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         return $this;
     }
 
-    protected function getTable() {
+    protected function getTable()
+    {
         return $this->tableName;
     }
 
-    protected function getTableName() {
+    protected function getTableName()
+    {
         return $this->tableName;
     }
 
-    protected function getIndexColumn() {
+    protected function getIndexColumn()
+    {
         return DB::TABLE_ERRORS__ID;
     }
 
-    protected function getOrder() {
+    protected function getOrder()
+    {
         return DB::TABLE_ERRORS___ORDER;
     }
 
-    public function createException($error) {
+    public function saveExceptionFromParams($name, $message, $stack = '')
+    {
+        $this->update(null,
+            [
+                DB::TABLE_ERRORS__NAME => $name,
+                DB::TABLE_ERRORS__STACK => $stack,
+                DB::TABLE_ERRORS__DATE => date('Y-m-d H:i:s'),
+                DB::TABLE_ERRORS__MESSAGE => $message
+            ]
+        );
+    }
+
+    public function createException($error)
+    {
         if (is_array($error)) {
             $this->update(null,
                 [

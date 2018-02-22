@@ -1,6 +1,7 @@
 define([
+    'common/toast',
     'common/services'
-], function (Services) {
+], function (Toast, Services) {
     var api;
     var win;
     var WIN_ID = 'goods-order-config';
@@ -11,7 +12,8 @@ define([
             Services.saveGoodsOrder({order: data})
                 .then(function (result) {
                     callback(result);
-                });
+                })
+                .catch(Toast.error);
         }
     };
 
@@ -180,7 +182,8 @@ define([
                 }
                 dataView.parse(goods, 'json');
                 dataView.refresh();
-            });
+            })
+            .catch(Toast.error);
     }
 
     function updateOrder() {

@@ -123,7 +123,9 @@ define([
         this.$parentContainer = null;
         this.controller = null;
         this.editor = null;
-        this.$itemDOM.remove();
+        if (this.$itemDOM) {
+            this.$itemDOM.remove();
+        }
         this.draggable = null;
         this.resizable = null;
         this.booklet.clearHightLight();

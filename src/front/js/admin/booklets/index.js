@@ -3,13 +3,9 @@ require([
     'common/components',
     'booklets/booklet-component',
     'booklets/booklet-controller',
-    'booklets/booklet-item-component',
-    'booklets/booklet-item-controller',
+    'common/toast',
     'booklets/handlebars-helpers'
-], function (Services, Components, BookletComponent, BookletController,
-             BookletItem, BookletItemController, HandlebarsHelpers) {
-
-
+], function (Services, Components, BookletComponent, BookletController, Toast) {
 
     function initFullPreviewPage(id) {
         var sizeRatio = 4;
@@ -53,6 +49,7 @@ require([
                     })
                 }
             })
+            .catch(Toast.error)
     }
 
     function initLayout() {
@@ -165,6 +162,7 @@ require([
                     app.bookletsToolbar.onStateChange({hasSelection: false});
                     app.bookletDetailsToolbar.onStateChange(unSelectionStateDetails);
                 })
+                .catch(Toast.error)
         };
 
         grid.addNewBooklet = function () {
@@ -200,6 +198,7 @@ require([
                             app.bookletsList.clearSelection();
                             app.bookletsList.selectRowById(newId);
                         })
+                        .catch(Toast.error)
                 });
             },
             delete: function () {
@@ -221,7 +220,7 @@ require([
                 app.booklet.addNewItem();
             },
             loadBackground: function () {
-                bookletBackgroundWindow.show();
+                //BookletBackground.show();
             },
             preview: function () {
                 var entity = app.booklet.controller.getEntity();
@@ -231,14 +230,31 @@ require([
             }
         };
 
-        bookletBackgroundWindow.addSelectCallback(function (imageObject) {
-            if (imageObject) {
-                app.booklet.updateBackground(imageObject.image);
+        /*BookletBackground.addSelectCallback(function (imageObject) {
+         if (imageObject) {
+         app.booklet.updateBackground(imageObject.image);
+         }
+         });*/
+        var toolbar = Components.createToolbar(layout, handlers, [
+            'add',
+            'preview',
+            {
+                type: 'buttonSelect', id: 'templates', text: 'Разметка',
+                options: [
+                    {type: 'button', id: '2-col', text: '2 колонки'},
+                    {type: 'button', id: '3-col', text: '3 колонки'}
+                ]
+            },
+            {
+                type: 'button', id: 'loadBackgroundLocal', text: 'Загрузить фон с компьютера', img: 'computer.png',
+                img_disabled: 'computer_dis.png'
+            },
+            {
+                type: 'button', id: 'loadBackgroundDropbox', text: 'Загрузить фон из облака', img: 'storage.png',
+                img_disabled: 'storage_dis.png'
             }
-        });
-        var toolbar = Components.createToolbar(layout, handlers, ['add', 'loadBackground', 'preview']);
+        ]);
         toolbar.onStateChange(unSelectionStateDetails);
-        initTemplatesList(toolbar);
         return toolbar;
     }
 
@@ -249,7 +265,6 @@ require([
         ];
         var index = 0;
         var item;
-        toolbar.addButtonSelect('templates', null, "Шаблоны", [], null, null, true);
         while (index <= cfg.length - 1) {
             item = cfg[index];
             toolbar.addListOption(
@@ -310,103 +325,6 @@ require([
         res *= Math.ceil(size.height / 225);
         return res;
     }
-
-    bookletBackgroundWindow = (function () {
-        var selectCallbacks = [];
-        var win = null;
-        var form = null;
-        var dataView = null;
-        var bookletBackgroundWindowInstance = null;
-        var selected = null;
-
-        function unselectAll() {
-            selected = null;
-            if (dataView) {
-                dataView.unselectAll();
-            }
-        }
-
-        function initForm(window) {
-            var formConfig = [
-                {type: 'container', name: 'images', inputWidth: 730, inputHeight: 410},
-                {
-                    type: 'block', blockOffset: 7, width: 730, list: [
-                    {type: 'button', name: 'cancel', value: 'Закрыть'},
-                    {type: 'newcolumn'},
-                    {type: 'button', name: 'ok', value: 'Выбрать', offsetLeft: 520}
-                ]
-                }
-            ];
-            var form = window.attachForm(formConfig);
-            form.attachEvent('onButtonClick', function (name) {
-                if (name == 'ok') {
-                    var selectedId = dataView.getSelected();
-                    if (U.hasContent(selectedId)) {
-                        selected = dataView.get(selectedId);
-                    }
-
-                }
-                if (name == 'cancel') {
-                    unselectAll();
-                }
-                bookletBackgroundWindowInstance.hide();
-            });
-            return form;
-        }
-
-        function initDataView(container) {
-            var view = new dhtmlXDataView({
-                container: container,
-                drag: false,
-                select: true,
-                template: "<img class='booklet_select_preview' src='#image#'/>"
-            });
-            Services.getBookletBackgrounds()
-                .then(function (backgrounds) {
-                    if (backgrounds && backgrounds.length) {
-                        backgrounds.forEach(function (image) {
-                            view.add({id: U.getRandomString(), image: "/" + image});
-                        })
-                    }
-                    //console.info(backgrounds);
-                });
-            return view;
-        }
-
-        function closeCallback() {
-            return function () {
-                selectCallbacks.forEach(function (_callback) {
-                    _callback(selected);
-                })
-            }
-        }
-
-        return {
-            show: function () {
-                bookletBackgroundWindowInstance = this;
-                if (!win) {
-                    win = Components.initDhtmlxWindow({
-                        width: 740,
-                        height: 500
-                    }, closeCallback());
-                    form = initForm(win);
-                    dataView = initDataView(form.getContainer('images'));
-                }
-                win.show();
-            },
-            hide: function () {
-                bookletBackgroundWindowInstance = this;
-                win.close();
-            },
-            addSelectCallback: function (callback) {
-                bookletBackgroundWindowInstance = this;
-                if (typeof callback == 'function') {
-                    selectCallbacks.push(callback);
-                }
-                unselectAll();
-            }
-        }
-    })();
 
     //initHandlebarsExtensions();
     if (U.hasContent(URL_PARAMS.id)) {

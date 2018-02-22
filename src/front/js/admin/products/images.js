@@ -1,7 +1,8 @@
 define([
     'lodash',
-    'common/services'
-], function (_, Services) {
+    'common/services',
+    'common/toast'
+], function (_, Services, Toast) {
 
     function initImages(tabbar) {
         tabbar.addTab('b', 'Изображения');
@@ -142,7 +143,7 @@ define([
                     });
                 }).catch(function (error) {
                     app.layout.progressOff();
-                    throw error;
+                    Toast.error(error);
                 });
         };
 

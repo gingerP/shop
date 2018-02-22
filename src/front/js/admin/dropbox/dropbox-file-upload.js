@@ -1,15 +1,8 @@
-'use strict';
-define([], function() {
+define([
+    'common/toast'
+], function(Toast) {
+    'use strict';
 
-    function onError(error) {
-        var message = typeof error === 'string' ? error : (error.message ? error.message : 'Unknown error');
-        var stack = error.stack ? '<br>' + error.stack : '';
-        dhtmlx.alert({
-            title: 'Alert',
-            type: 'alert-error',
-            text: '<span style="word-break: break-all">' + message + stack + '</span>'
-        });
-    }
     function AuDropboxFileUpload(client, id, inputFile, path) {
         this._client = client;
         this._progress = [];
@@ -94,7 +87,7 @@ define([], function() {
                 });
             })
             .catch(function(error) {
-                onError(error);
+                Toast.error(error);
                 self._uploadFailedTime = Date.now();
                 self._statusDescription = error;
                 self._status = self._statuses.failed;

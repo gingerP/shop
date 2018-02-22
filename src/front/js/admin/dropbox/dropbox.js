@@ -16,23 +16,6 @@ define([
         }
     }
 
-    function onError(error) {
-        var message = 'Unknown error';
-        if (typeof error === 'string') {
-            message = error;
-        } else if (error.message) {
-            message = error.message;
-        } else if (error.response && error.response.statusText) {
-            message = error.response.statusText;
-        }
-        dhtmlx.alert({
-            title: 'Alert',
-            type: 'alert-error',
-            text: '<span style="word-break: break-all">' + message + '</span>'
-        });
-        console.error(error);
-    }
-
     function AuDropboxDir(rootDir) {
         this._observable = new Observable();
         this._events = {
@@ -114,7 +97,7 @@ define([
                     self._onFilesBatchUploaded.bind(self)
                 );
             })
-            .catch(onError);
+            .catch(Toast.error);
     };
 
     AuDropboxDir.prototype._createLayout = function _createLayout() {
@@ -366,7 +349,7 @@ define([
                 self._win.progressOff();
             }).catch(function (error) {
                 self._win.progressOff();
-                onError(error);
+                Toast.error(error);
             });
         }
     };
@@ -384,7 +367,7 @@ define([
                 })
                 .catch(function (error) {
                     cell.progressOff();
-                    onError(error);
+                    Toast.error(error);
                 })
         }
     };
@@ -413,7 +396,7 @@ define([
                     })
                     .catch(function (error) {
                         cell.progressOff();
-                        onError(error);
+                        Toast.error(error);
                     })
             }
         }
@@ -438,7 +421,7 @@ define([
                     })
                     .catch(function (error) {
                         cell.progressOff();
-                        onError(error);
+                        Toast.error(error);
                     })
             }
         }
@@ -596,7 +579,7 @@ define([
             self._client.filesGetThumbnailBatch({entries: entries})
                 .then(apply)
                 .catch(function (error) {
-                    onError(error);
+                    Toast.error(error);
                     self._thumbnailsProgressOff();
                 });
         } else {
@@ -609,7 +592,7 @@ define([
                 )
                     .then(apply)
                     .catch(function (error) {
-                        onError(error);
+                        Toast.error(error);
                         self._thumbnailsProgressOff();
                     });
                 num--;
@@ -679,7 +662,7 @@ define([
             })
             .catch(function (error) {
                 cell.progressOff();
-                onError(error);
+                Toast.error(error);
             });
     };
 
@@ -742,7 +725,7 @@ define([
                 })
                 .catch(function (error) {
                     cell.progressOff();
-                    onError(error);
+                    Toast.error(error);
                 });
         }
     };

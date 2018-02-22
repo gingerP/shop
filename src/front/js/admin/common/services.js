@@ -16,6 +16,7 @@ define([
         } else {
             message = error.responseJSON && error.responseJSON.message || error.statusText;
         }
+        api.saveError(message, typeof error.stack === 'string' ? error.stack : '');
         dhtmlx.alert({
             title: 'Alert',
             type: 'alert-error',
@@ -49,7 +50,10 @@ define([
         return response && response.data;
     }
 
-    return {
+    var api = {
+        saveError: function(message, stack) {
+            return load('saveError', {message: message, stack: stack, pageUrl: window.location.href}).then(getData);
+        },
         getAddresses: function (id, callback) {
             return load('getAddresses', {id: -1}, new Handlers(callback)).then(getData);
         },
@@ -103,7 +107,7 @@ define([
             return load('listBooklets', {mapping: mapping}, new Handlers(callback)).then(getData);
         },
         getBooklet: function (id, mapping, callback) {
-            return load('getBooklet', {id: id, mapping: mapping}, new Handlers(callback)).then(getData);
+            return load('getBooklet', {id: id, mapping: mapping}).then(getData);
         },
         saveBooklet: function (data, callback) {
             return load('saveBooklet', {data: data}, new Handlers(callback)).then(getData);
@@ -114,5 +118,6 @@ define([
         getBookletBackgrounds: function (callback) {
             return load('getBookletBackgrounds', null, new Handlers(callback)).then(getData);
         }
-    }
+    };
+    return api;
 });

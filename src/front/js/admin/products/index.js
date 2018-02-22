@@ -1,4 +1,5 @@
 require([
+    'common/toast',
     'common/service-entities',
     'common/services',
     'common/components',
@@ -7,7 +8,7 @@ require([
     'products/images',
     'products/toolbar',
     'dropbox/dropbox'
-], function (ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
+], function (Toast, ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
@@ -38,29 +39,31 @@ require([
         return {
             reloadGrid: function (grid) {
                 app.layout.progressOn();
-                return Services.getGoods(null).then(function (goods) {
-                    grid.clearSelection();
-                    grid.clearAll();
-                    app.form.clear();
-                    app.serviceEntities.removeAll();
-                    var gridState = {
-                        hasSelection: false
-                    };
-                    app.toolbar.onStateChange(gridState);
-                    if (goods.length) {
-                        for (var goodIndex = 0; goodIndex < goods.length; goodIndex++) {
-                            goods[goodIndex]._num = goodIndex + 1;
-                            var array = Components.prepareEntityToGrid(goods[goodIndex], app.gridRowConfig);
-                            var rowId = grid.addRow(goods[goodIndex].id, array);
-                            grid.setUserData(goods[goodIndex].id, 'entity', goods[goodIndex]);
-                            grid.setCellTextStyle(goods[goodIndex].id, 0, 'color:#9e9e9e;');
+                return Services.getGoods(null)
+                    .then(function (goods) {
+                        grid.clearSelection();
+                        grid.clearAll();
+                        app.form.clear();
+                        app.serviceEntities.removeAll();
+                        var gridState = {
+                            hasSelection: false
+                        };
+                        app.toolbar.onStateChange(gridState);
+                        if (goods.length) {
+                            for (var goodIndex = 0; goodIndex < goods.length; goodIndex++) {
+                                goods[goodIndex]._num = goodIndex + 1;
+                                var array = Components.prepareEntityToGrid(goods[goodIndex], app.gridRowConfig);
+                                var rowId = grid.addRow(goods[goodIndex].id, array);
+                                grid.setUserData(goods[goodIndex].id, 'entity', goods[goodIndex]);
+                                grid.setCellTextStyle(goods[goodIndex].id, 0, 'color:#9e9e9e;');
+                            }
+                            grid.sortRows(0, 'int', 'asc');
                         }
-                        grid.sortRows(0, 'int', 'asc');
-                    }
-                    app.layout.progressOff();
-                }).catch(function() {
-                    app.layout.progressOff();
-                });
+                        app.layout.progressOff();
+                    }).catch(function (error) {
+                        app.layout.progressOff();
+                        Toast.error(error);
+                    });
             }
         };
     }
@@ -102,6 +105,6 @@ require([
         app.toolbar = Toolbar.init(app, app.layout, app.grid);
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
-        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig);
+        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig).catch(Toast.error);
     })();
 });

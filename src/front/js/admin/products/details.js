@@ -1,8 +1,9 @@
 define([
     'lodash',
     'common/services',
-    'common/components'
-], function (_, Services, Components) {
+    'common/components',
+    'common/toast'
+], function (_, Services, Components, Toast) {
 
     function initForm(tabbar) {
         tabbar.addTab('a', 'Детали товара', null, null, true);
@@ -96,42 +97,43 @@ define([
     }
 
     function reloadGoodsKeysTree(form) {
-        Services.getGoodsKeys().then(
-            /**
-             * @typedef {{
+        Services.getGoodsKeys()
+            .then(
+                /**
+                 * @typedef {{
              *      home_view: string,
              *      id: number,
              *      key_item: string,
              *      parent_key: string,
              *      value: string
              * }} Category
-             * @param {Category[]} data
-             */
-            function (data) {
-                form._au_categories_data = [];
-                if (data.length) {
-                    var allKeys = {};
-                    var preparedData = normalizeCategories(data);
-                    for (var dataIndex = 0; dataIndex < preparedData.length; dataIndex++) {
-                        var entity = preparedData[dataIndex];
-                        form._au_categories_data.push({code: entity.key_item, parent: entity.parent_key});
-                        allKeys[entity.key_item] = allKeys[entity.key_item] || 0;
-                        allKeys[entity.parent_key] = 1;
-                        var value = _.map(entity.row, function(item, index, list) {
-                            var categoryClassName = 'category-level category-' + index + ' ' + (index === list.length - 1 ? 'category-last' : '');
-                            return '<span class="' + categoryClassName + '">' + item.value + '(' + item.key_item + ')</span>';
-                        }).join(' > ');
-                        form.addItem(
-                            'categories_1',
-                            {
-                                type: 'radio', name: 'category', value: entity.key_item, label: value,
-                                labelWidth: 380, inputWidth: 20, inputLeft: -10, position: 'label-right'
-                            }
-                        );
+                 * @param {Category[]} data
+                 */
+                function (data) {
+                    form._au_categories_data = [];
+                    if (data.length) {
+                        var allKeys = {};
+                        var preparedData = normalizeCategories(data);
+                        for (var dataIndex = 0; dataIndex < preparedData.length; dataIndex++) {
+                            var entity = preparedData[dataIndex];
+                            form._au_categories_data.push({code: entity.key_item, parent: entity.parent_key});
+                            allKeys[entity.key_item] = allKeys[entity.key_item] || 0;
+                            allKeys[entity.parent_key] = 1;
+                            var value = _.map(entity.row, function (item, index, list) {
+                                var categoryClassName = 'category-level category-' + index + ' ' + (index === list.length - 1 ? 'category-last' : '');
+                                return '<span class="' + categoryClassName + '">' + item.value + '(' + item.key_item + ')</span>';
+                            }).join(' > ');
+                            form.addItem(
+                                'categories_1',
+                                {
+                                    type: 'radio', name: 'category', value: entity.key_item, label: value,
+                                    labelWidth: 380, inputWidth: 20, inputLeft: -10, position: 'label-right'
+                                }
+                            );
+                        }
                     }
-                }
-            }
-        );
+                })
+            .catch(Toast.error);
     }
 
     /**

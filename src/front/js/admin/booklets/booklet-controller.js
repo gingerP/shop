@@ -1,7 +1,8 @@
 define([
     'common/services',
-    'common/service-entities'
-], function (Services, ServiceEntities) {
+    'common/service-entities',
+    'common/toast'
+], function (Services, ServiceEntities, Toast) {
     'use strict';
 
     function generateId(id) {
@@ -71,17 +72,19 @@ define([
 
     BookletController.prototype.load = function (id, callback) {
         var instance = this;
-        Services.getBooklet(id, {}, function (data) {
-            instance.owner.clear();
-            instance.owner.controller.setEntity(data);
-            instance.owner.render();
-            if (data.bordersTemplate) {
-                instance.owner.setTemplate(data.bordersTemplate);
-            }
-            if (typeof callback == 'function') {
-                callback(data);
-            }
-        });
+        Services.getBooklet(id)
+            .then(function (data) {
+                instance.owner.clear();
+                instance.owner.controller.setEntity(data);
+                instance.owner.render();
+                if (data.bordersTemplate) {
+                    instance.owner.setTemplate(data.bordersTemplate);
+                }
+                if (typeof callback == 'function') {
+                    callback(data);
+                }
+            })
+            .catch(Toast.error);
     };
 
     BookletController.prototype.save = function (callback) {
@@ -89,9 +92,11 @@ define([
         var id = entity.id;
         entity.id = entity._isNew ? null : entity.id;
         Components.prepareEntity(entity);
-        Services.saveBooklet(entity, function (result) {
-            callback(id, result);
-        });
+        Services.saveBooklet(entity)
+            .then(function (result) {
+                callback(id, result);
+            })
+            .catch(Toast.error);
     };
 
     BookletController.prototype.delete = function (callback) {
@@ -104,7 +109,9 @@ define([
         }
 
         if (!this.entity._isNew) {
-            Services.deleteBooklet(this.entity.id, localCallback);
+            Services.deleteBooklet(this.entity.id)
+                .then(localCallback)
+                .catch(Toast.error);
         } else {
             localCallback();
         }

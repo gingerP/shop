@@ -17,6 +17,7 @@ define([
                 entity.description = descriptions.join('|');
             }
         };
+
         function onError(error) {
             var message = 'Unknown error';
             if (typeof error === 'string') {
@@ -141,13 +142,14 @@ define([
                             if (entity.hasOwnProperty('_isNew')) {
                                 callback();
                             } else {
-                                Services.deleteGood(entity.id).then(function (result) {
-                                    if (result > 0) {
-                                        callback();
-                                    } else {
-                                        console.info('nothing to delete!');
-                                    }
-                                });
+                                Services.deleteGood(entity.id)
+                                    .then(function (result) {
+                                        if (result > 0) {
+                                            callback();
+                                        } else {
+                                            console.info('nothing to delete!');
+                                        }
+                                    });
                             }
                         }
                     }
@@ -159,7 +161,7 @@ define([
             }
         };
         return Components.createToolbar(layout, handlers, [
-            'reload', 'add', 'save', 'delete', 'separator','saveOrder',
+            'reload', 'add', 'save', 'delete', 'separator', 'saveOrder',
             {type: 'button', id: 'storage', text: 'Облако', img: 'storage.png', img_disabled: 'storage.png'}
         ]);
     }

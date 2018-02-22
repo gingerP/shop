@@ -19,9 +19,9 @@ class BookletService {
         $dbBookletType = new DBBookletsType();
         $result = $dbBookletType->get($id);
         if (count($mapping) > 0) {
-            $result = json_encode(Utils::extractObject($result, $mapping));
+            $result = Utils::extractObject($result, $mapping);
         } else {
-            $result = json_encode(unserialize($result[DB::TABLE_BOOKLET__DATA]));
+            $result = unserialize($result[DB::TABLE_BOOKLET__DATA]);
         }
         return $result == null? "[]": $result;
     }

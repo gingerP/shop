@@ -39,24 +39,25 @@ try {
         {
             $result = true;
             $securedMethods = [
-                "getGoods",
-                "getAdminOrder",
-                "updateGood",
-                "getGood",
-                "getGoodImages",
-                "deleteGood",
-                "getDescriptionKeys",
-                "getGoodsKeys",
-                "getAdminSettings",
-                "getNextGoodCode",
-                "uploadImagesForGood",
-                "updatePrices",
-                "listBooklets",
-                "getBooklet",
-                "saveBooklet",
-                "deleteBooklet",
-                "getBookletBackgrounds",
-                "saveOrder"
+                'getGoods',
+                'getAdminOrder',
+                'updateGood',
+                'getGood',
+                'getGoodImages',
+                'deleteGood',
+                'getDescriptionKeys',
+                'getGoodsKeys',
+                'getAdminSettings',
+                'getNextGoodCode',
+                'uploadImagesForGood',
+                'updatePrices',
+                'listBooklets',
+                'getBooklet',
+                'saveBooklet',
+                'deleteBooklet',
+                'getBookletBackgrounds',
+                'saveOrder',
+                'saveError'
             ];
             if (in_array($methodName, $securedMethods)) {
                 $result = isset($_SERVER[$GLOBALS['AU_SEC_PROTOCOL']]) && SessionManager::sessionStart() && AuthManager::isAuth();
@@ -139,6 +140,12 @@ try {
                     $offset = Utils::getFromGETWithDefault('limit', 10);
                     $responseData = SearchService::search($search, $page, $offset);
                     break;
+                case 'saveError':
+                    $message = Utils::getFromPOST('message', false);
+                    $stack = Utils::getFromPOST('stack', false);
+                    $pageUrl = Utils::getFromPOST('pageUrl', false);
+                    $responseData = ErrorsService::saveError($message, $stack, $pageUrl);
+                    break;
                 /*****************************************Booklets*************************************/
                 case 'listBooklets':
                     $mapping = Utils::getFromPOST('mapping');
@@ -148,7 +155,7 @@ try {
                     //json_encode() will execute in BookletService::get() method
                     $id = Utils::getFromPOST('id');
                     $mapping = Utils::getFromPOST('mapping');
-                    echo BookletService::get($id, $mapping);
+                    $responseData = BookletService::get($id, $mapping);
                     break;
                 case 'saveBooklet':
                     $data = Utils::getFromPOST('data');

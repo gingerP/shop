@@ -1,6 +1,13 @@
 define([], function () {
     'use strict';
 
+    Handlebars.registerHelper('equal', function(a, b, opts) {
+        if(a == b) // Or === depending on your needs
+            return opts.fn(this);
+        else
+            return opts.inverse(this);
+    });
+
     Handlebars.registerHelper('sizeHandler', function (size) {
         return Math.ceil(size.width / 135) * Math.ceil(size.height / 225);
     });

@@ -1,7 +1,7 @@
-'use strict';
 define([
     'dropbox/dropbox-file-upload'
 ], function (AuDropboxFileUpload) {
+    'use strict';
 
     function AuDropboxUploadManager(client, options, statusListener, batchUploadedListener) {
         this._client = client;
