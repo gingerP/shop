@@ -63,7 +63,7 @@ define([], function () {
         return '';
     });
     Handlebars.registerHelper('renderItemImage', function (image) {
-        return image ? (image.indexOf('data:image') == 0 ? image : '/booklet_images/' + image ) : "";
+        return image ? (image.indexOf('data:') === 0 ? image : '/booklet_images/' + image ) : "";
     });
     Handlebars.registerHelper('renderItemNumberVisible', function (number) {
         return !number ? "display: none;" : "";

@@ -1,7 +1,7 @@
 define([
-    'common/toast',
+    'common/dialog',
     'common/services'
-], function (Toast, Services) {
+], function (Dialog, Services) {
     var api;
     var win;
     var WIN_ID = 'goods-order-config';
@@ -13,7 +13,7 @@ define([
                 .then(function (result) {
                     callback(result);
                 })
-                .catch(Toast.error);
+                .catch(Dialog.error);
         }
     };
 
@@ -149,7 +149,7 @@ define([
         return {
             width: w * ratio,
             height: h * ratio
-        }
+        };
     }
 
     function init() {
@@ -183,7 +183,7 @@ define([
                 dataView.parse(goods, 'json');
                 dataView.refresh();
             })
-            .catch(Toast.error);
+            .catch(Dialog.error);
     }
 
     function updateOrder() {

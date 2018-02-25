@@ -58,6 +58,10 @@ try {
                     $page = new AdminPageBooklets();
                     echo $page->getHtml();
                     break;
+                case 'cloud':
+                    $page = new AdminPageCloud();
+                    echo $page->getHtml();
+                    break;
                 case 'contacts':
                 case 'prices':
                 case 'tree':

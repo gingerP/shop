@@ -11,6 +11,17 @@ Class ImageEditor
     private $imageResized;
     private $fileName;
 
+    function __construct($fileName)
+    {
+        // *** Open up the file
+        $this->fileName = $fileName;
+        $this->image = $this->openImage($this->fileName);
+
+        // *** Get width and height
+        $this->width = imagesx($this->image);
+        $this->height = imagesy($this->image);
+    }
+
     public static function newImageBase64($base64)
     {
         $tmpDir = FileUtils::getTmpDir();
@@ -23,48 +34,59 @@ Class ImageEditor
         $file = file_put_contents($path, base64_decode($base64PrefixLess));
         chmod($path, 0777);
         if ($file == true) {
-            $instance = new ImageEditor($path);
+            return new ImageEditor($path);
         }
-        return $instance;
+        return null;
     }
 
-    function __construct($fileName)
+    public static function newImageFromBinary($binaryImage, $imageExtension)
     {
-        // *** Open up the file
-        $this->fileName = $fileName;
-        $this->image = $this->openImage($this->fileName);
-
-        // *** Get width and height
-        $this->width = imagesx($this->image);
-        $this->height = imagesy($this->image);
+        $tmpDir = FileUtils::getTmpDir();
+        $imageName = Utils::getRandomString() . '.' . $imageExtension;
+        $path = FileUtils::buildPath($tmpDir, $imageName);
+        FileUtils::createDir($tmpDir);
+        //chmod($tmpDir, 0777);
+        $file = file_put_contents($path, $binaryImage);
+        //chmod($path, 0777);
+        if ($file == true) {
+            return new ImageEditor($path);
+        }
+        $error = error_get_last();
+        throw new InternalError($error['message']);
     }
 
     private function openImage($file)
     {
         // *** Get extension
         $extension = strtolower(strrchr($file, '.'));
-
-        try {
         switch ($extension) {
+            case '.JPG':
+            case '.JPEG':
             case '.jpg':
             case '.jpeg':
                 $img = imagecreatefromjpeg($file);
                 break;
+            case '.GIF':
             case '.gif':
                 $img = imagecreatefromgif($file);
                 break;
             case '.png':
+            case '.PNG':
                 $img = imagecreatefrompng($file);
                 break;
             default:
                 $img = false;
                 break;
         }
-        }catch (Exception $e) {
-            echo $e->getTraceAsString();
-        }finally{
+        if ($img == false) {
+            $error = error_get_last();
+            throw new InternalError($error['message']);
         }
         return $img;
+    }
+
+    public function getImagePath() {
+        return $this->fileName;
     }
 
     public function resizeImage($newWidth, $newHeight, $option = "auto")
@@ -224,6 +246,8 @@ Class ImageEditor
         }
 
         switch ($extension) {
+            case '.JPG':
+            case '.JPEG':
             case '.jpg':
             case '.jpeg':
                 if (imagetypes() & IMG_JPG) {
@@ -231,12 +255,14 @@ Class ImageEditor
                 }
                 break;
 
+            case '.GIF':
             case '.gif':
                 if (imagetypes() & IMG_GIF) {
                     imagegif($this->image, $savePath);
                 }
                 break;
 
+            case '.PNG':
             case '.png':
                 // *** Scale quality from 0-100 to 0-9
                 $scaleQuality = round(($imageQuality / 100) * 9);

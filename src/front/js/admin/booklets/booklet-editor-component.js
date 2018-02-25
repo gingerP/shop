@@ -41,10 +41,11 @@ define([
     </div>";
     }
 
-    BookletEditorComponent.prototype.init = function (controller) {
+    BookletEditorComponent.prototype.init = function (controller, cloud) {
         this.controller = controller;
-        this.labelTemplates = undefined;
-        this._win = undefined;
+        /**@type AuDropboxDir*/
+        this._cloud = cloud;
+        this._cloud.onAddToProduct(this._onAddFromCloud.bind(this));
         return this;
     };
 
@@ -84,19 +85,18 @@ define([
 
     BookletEditorComponent.prototype._resetImageLoader = function () {
         var self = this;
-        $('#' + this.imageLoaderId)
-            .replaceWith(this.imageLoader)
-            .on('change', '.' + this.imageLoaderId,
-                function () {
-                    var file = this.files[0];
-                    var reader = new FileReader();
-                    reader.onload = function () {
-                        self._form.setItemValue('_image', reader.result);
-                        $('.booklet_item_image').attr('src', reader.result).data('isbase64', true);
-                        self._resetImageLoader();
-                    };
-                    reader.readAsDataURL(file);
-                });
+        $('#' + this.imageLoaderId).replaceWith(this.imageLoader);
+        $('#' + this.imageLoaderId).on('change', '.' + this.imageLoaderId,
+            function () {
+                var file = this.files[0];
+                var reader = new FileReader();
+                reader.onload = function () {
+                    self._form.setItemValue('_image', reader.result);
+                    $('.booklet_item_image').attr('src', reader.result).data('isBase64', true);
+                    self._resetImageLoader();
+                };
+                reader.readAsDataURL(file);
+            });
     };
 
     BookletEditorComponent.prototype._createForm = function _createForm() {
@@ -154,9 +154,11 @@ define([
         self._form.attachEvent('onButtonClick', function (name) {
             switch (name) {
                 case 'image_load_locally':
+                    self._resetImageLoader();
                     $('#' + self.imageLoaderId + ' .' + self.imageLoaderId).trigger('click');
                     break;
                 case 'image_load_cloud':
+                    self._cloud.open();
                     break;
             }
         });
@@ -189,16 +191,23 @@ define([
             image: function (form, entity) {
                 var $image = $('#booklet_item_image');
                 var data = $image.data();
-                if (data.isbase64) {
+                if (data.isBase64) {
                     entity.image = $image.attr('src');
+                }
+                if (data.isCloud) {
+                    entity.cloudId = data.cloudId;
+                    entity.cloudMetaFileExtension = data.cloudMetaFileExtension;
                 }
             },
             listLabels: function (form, entity) {
                 var notExcistingTypes = Object.keys(self.parent.controller.labelTypes);
                 for (var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
                     var label = entity.listLabels[labelIndex];
-                    notExcistingTypes.splice(notExcistingTypes.indexOf(label.type), 1);
-                    label.text = $('#' + label.type).val();
+                    var indexLabelNon = notExcistingTypes.indexOf(label.type);
+                    if (indexLabelNon >= 0) {
+                        notExcistingTypes.splice(indexLabelNon, 1);
+                        label.text = $('#' + label.type).val();
+                    }
                 }
                 if (notExcistingTypes.length) {
                     for (var labelIndex = 0; labelIndex < notExcistingTypes.length; labelIndex++) {
@@ -229,7 +238,7 @@ define([
                     if (entity.image.indexOf('data:image') !== 0) {
                         $image.attr('src', formatBookletImage(entity.image));
                     } else {
-                        $image.data('isbase64', true);
+                        $image.data('isBase64', true);
                         $image.attr('src', entity.image);
                     }
                 }
@@ -310,17 +319,44 @@ define([
         return {};
     };
 
+    BookletEditorComponent.prototype._onAddFromCloud = function _onAddFromCloud(imagesInfo) {
+        if (imagesInfo && imagesInfo.length) {
+            var self = this;
+            var imageData = imagesInfo[0];
+            var imageBase64 = imageData.info.icon;
+            if (imageData.preview) {
+                imageBase64 = imageData.preview.data;
+            }
+            self._form.setItemValue('_image', imageBase64);
+            var extension = imageData.info.name.replace(/.*(jpg|jpeg)$/gi, '$1');
+            $('.booklet_item_image')
+                .attr('src', imageBase64)
+                .data({
+                    isBase64: true,
+                    isCloud: true,
+                    cloudId: imageData.info.id,
+                    cloudMetaFileExtension: extension
+                });
+            self._cloud.hide();
+        }
+    };
+
     BookletEditorComponent.prototype.clear = function () {
         var self = this;
         if (this._form) {
             this._form.forEachItem(function (name) {
                 var type = self._form.getItemType(name);
-                if (['input'].indexOf(type) >= 0 && name.indexOf('_') != 0) {
+                if (['input'].indexOf(type) >= 0 && name.indexOf('_') !== 0) {
                     self._form.setItemValue(name);
                 }
             });
             $('#booklet-item-image-preview .booklet_item_image_label').val('');
-            $('#booklet_item_image').attr('src', '').removeData('isbase64');
+            $('#booklet_item_image')
+                .attr('src', '')
+                .removeData('isBase64')
+                .removeData('isCloud')
+                .removeData('cloudId')
+                .removeData('cloudMetaFileExtension');
             this._resetImageLoader();
             this.labelTemplates.unselectAll();
         }

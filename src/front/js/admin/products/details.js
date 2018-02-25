@@ -2,8 +2,8 @@ define([
     'lodash',
     'common/services',
     'common/components',
-    'common/toast'
-], function (_, Services, Components, Toast) {
+    'common/dialog'
+], function (_, Services, Components, Dialog) {
 
     function initForm(tabbar) {
         tabbar.addTab('a', 'Детали товара', null, null, true);
@@ -133,7 +133,7 @@ define([
                         }
                     }
                 })
-            .catch(Toast.error);
+            .catch(Dialog.error);
     }
 
     /**

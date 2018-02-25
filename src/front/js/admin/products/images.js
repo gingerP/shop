@@ -1,21 +1,26 @@
 define([
     'lodash',
     'common/services',
-    'common/toast'
-], function (_, Services, Toast) {
+    'common/dialog'
+], function (_, Services, Dialog) {
 
     function initImages(tabbar) {
         tabbar.addTab('b', 'Изображения');
 
         app.storage.onAddToProduct(function (files) {
             if (!dataView.isLocked() && files && files.length) {
-                files.forEach(function (file) {
+                files.forEach(function (fileData) {
+                    var file = fileData.info;
+                    var imageBase64 = file.icon;
+                    if (fileData.preview) {
+                        imageBase64 = fileData.preview.data;
+                    }
                     var id = file.id + ':' + Date.now();
                     dataView.add({
                         id: id,
                         titleClass: '',
                         title: file.name + '. Облако.',
-                        image: '<img src="' + file.icon + '">' + dataView.getItemViewButtons(id),
+                        image: '<img src="' + imageBase64 + '">' + dataView.getItemViewButtons(id),
                         data: file.id,
                         isRaw: true,
                         origin: 'cloud'
@@ -143,7 +148,7 @@ define([
                     });
                 }).catch(function (error) {
                     app.layout.progressOff();
-                    Toast.error(error);
+                    Dialog.error(error);
                 });
         };
 

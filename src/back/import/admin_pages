@@ -6,5 +6,6 @@ include_once("src/back/pages/admin/AdminPageLogin.php");
 include_once("src/back/pages/admin/AdminPagePrices.php");
 include_once("src/back/pages/admin/AdminPageTree.php");
 include_once("src/back/pages/admin/AdminPageBooklets.php");
+include_once("src/back/pages/admin/AdminPageCloud.php");
 include_once("src/back/pages/admin/SettingsPage.php");
 include_once("src/back/pages/admin/Components.php");

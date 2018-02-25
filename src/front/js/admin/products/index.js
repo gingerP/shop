@@ -1,5 +1,5 @@
 require([
-    'common/toast',
+    'common/dialog',
     'common/service-entities',
     'common/services',
     'common/components',
@@ -8,7 +8,7 @@ require([
     'products/images',
     'products/toolbar',
     'dropbox/dropbox'
-], function (Toast, ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
+], function (Dialog, ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
@@ -62,7 +62,7 @@ require([
                         app.layout.progressOff();
                     }).catch(function (error) {
                         app.layout.progressOff();
-                        Toast.error(error);
+                        Dialog.error(error);
                     });
             }
         };
@@ -105,6 +105,6 @@ require([
         app.toolbar = Toolbar.init(app, app.layout, app.grid);
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
-        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig).catch(Toast.error);
+        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig).catch(Dialog.error);
     })();
 });

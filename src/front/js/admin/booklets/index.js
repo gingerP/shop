@@ -1,58 +1,13 @@
 require([
-    'dropbox/dropbox',
     'common/services',
     'common/components',
+    'common/dialog',
     'booklets/booklet-component',
     'booklets/booklet-controller',
     'booklets/booklet-background-component',
-    'common/toast',
+    'booklets/booklet-full-page-preview',
     'booklets/handlebars-helpers'
-], function (Dropbox, Services, Components, BookletComponent, BookletController, BookletBackground, Toast) {
-
-    function initFullPreviewPage(id) {
-        var sizeRatio = 4;
-        var initialViewportSize = {
-            width: 1000,
-            height: 720
-        };
-
-        function updateItemSize(dom, size) {
-            dom.style.width = (size.width * sizeRatio || 0) + 'px';
-            dom.style.height = (size.height * sizeRatio || 0) + 'px';
-        }
-
-        function updateItemPosition(dom, position) {
-            TweenLite.to(dom, 0, {
-                x: position.x * sizeRatio,
-                y: position.y * sizeRatio
-            });
-        }
-
-        Services.getBooklet(id)
-            .then(function (booklet) {
-                document.body.style.overflow = 'initial';
-                var container = document.createElement('DIV');
-                container.id = 'fullpreview';
-                document.body.appendChild(container);
-                var dom = U.compilePrefillHandlebar('fullpreviewContainer', booklet);
-                container.appendChild(dom);
-                var viewport = document.getElementsByClassName('viewport')[0];
-                viewport.style.width = (initialViewportSize.width * sizeRatio) + 'px';
-                viewport.style.height = (initialViewportSize.height * sizeRatio) + 'px';
-                if (booklet.listItems && booklet.listItems.length) {
-                    booklet.listItems.forEach(function (item) {
-                        var itemDOM = document.getElementById(item.id);
-                        if (itemDOM) {
-                            updateItemPosition(itemDOM, item.position);
-                            updateItemSize(itemDOM, item.size);
-                        } else {
-                            console.warn('DOM object for id=' + item.id + ' was not rendered!');
-                        }
-                    });
-                }
-            })
-            .catch(Toast.error);
-    }
+], function (Services, Components, Dialog, BookletComponent, BookletController, BookletBackground, FullPagePreview) {
 
     function initLayout() {
         var layout = new dhtmlXLayoutObject({
@@ -61,7 +16,7 @@ require([
             pattern: '2U',
             cells: [
                 {id: 'a', text: 'Буклеты', width: 400},
-                {id: 'b', text: 'Предпросмотр'}
+                {id: 'b', text: 'Редактирование'}
             ]
         });
         layout.setOffsets({
@@ -144,7 +99,7 @@ require([
                     app.bookletsToolbar.onStateChange({hasSelection: false});
                     app.bookletDetailsToolbar.onStateChange(app.unSelectionStateDetails);
                 })
-                .catch(Toast.error);
+                .catch(Dialog.error);
         };
 
         grid.addNewBooklet = function () {
@@ -171,24 +126,46 @@ require([
                 }
             },
             save: function () {
-                app.booklet.save(function (oldId, newId) {
-                    app.bookletsToolbar.onStateChange(app.selectionState);
-                    app.bookletDetailsToolbar.onStateChange(app.selectionStateDetails);
-                    Services.getBooklet(newId, {id: 'booklet_id', name: 'name'})
-                        .then(function (data) {
-                            Components.updateGridRow(app.bookletsList, oldId, data, ['id', 'name'], newId);
-                            app.bookletsList.clearSelection();
-                            app.bookletsList.selectRowById(newId);
-                        })
-                        .catch(Toast.error);
-                });
+                var oldId;
+                var newId;
+                app.layout.progressOn();
+                return app.booklet.save()
+                    .then(function (saveResult) {
+                        oldId = saveResult[0];
+                        newId = saveResult[1];
+                        app.bookletsToolbar.onStateChange(app.selectionState);
+                        app.bookletDetailsToolbar.onStateChange(app.selectionStateDetails);
+                        return Services.getBooklet(newId, {id: 'booklet_id', name: 'name'});
+                    })
+                    .then(function (data) {
+                        Components.updateGridRow(app.bookletsList, oldId, data, ['id', 'name'], newId);
+                        app.bookletsList.clearSelection();
+                        app.bookletsList.selectRowById(newId);
+                        app.layout.progressOff();
+                        Dialog.success('Буклет успешно сохранен.');
+                    })
+                    .catch(function (error) {
+                        app.layout.progressOff();
+                        Dialog.error(error);
+                    });
             },
             delete: function () {
-                app.booklet.delete(function () {
-                    app.bookletsList.deleteSelectedRows();
-                    app.bookletsToolbar.onStateChange(app.unSelectionState);
-                    app.bookletDetailsToolbar.onStateChange(app.unSelectionStateDetails);
-                });
+                return Dialog.confirm('Вы уверены, что хотите удалить буклет?')
+                    .then(function () {
+                        app.layout.progressOn();
+                        return app.booklet.delete()
+                            .then(function () {
+                                app.bookletsList.deleteSelectedRows();
+                                app.bookletsToolbar.onStateChange(app.unSelectionState);
+                                app.bookletDetailsToolbar.onStateChange(app.unSelectionStateDetails);
+                                app.layout.progressOff();
+                                Dialog.success('Буклет успешно удален.');
+                            })
+                            .catch(function (error) {
+                                app.layout.progressOff();
+                                Dialog.error(error);
+                            });
+                    });
             }
         };
         var toolbar = Components.createToolbar(layout, handlers);
@@ -229,7 +206,7 @@ require([
             },
             {
                 type: 'button', id: 'setBackground', text: 'Установить фон', img: 'background.png',
-                img_disabled: 'background.png'
+                img_disabled: 'background_dis.png'
             }
         ]);
         toolbar.onStateChange(app.unSelectionStateDetails);
@@ -250,20 +227,11 @@ require([
     function initBookletPreview(app, layout) {
         layout.cells('b').attachHTMLString('<div id=\'booklets\'></div>');
         var booklet = new BookletComponent(document.getElementById('booklets'), new BookletController().init()).init();
-        //booklet.enable();
         return booklet;
     }
 
-    function evaluateSizeMultiplayer(size) {
-        var res = 1;
-        res *= Math.ceil(size.width / 135);
-        res *= Math.ceil(size.height / 225);
-        return res;
-    }
-
-    //initHandlebarsExtensions();
     if (U.hasContent(URL_PARAMS.id)) {
-        initFullPreviewPage(URL_PARAMS.id);
+        FullPagePreview.render(URL_PARAMS.id);
     } else {
         initPage();
     }

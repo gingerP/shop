@@ -99,7 +99,7 @@ define([
         $.extend(this.entity, this.clearItemTemplate);
         this.entity.listLabels.forEach(function (label) {
             $.extend(label, itemInstance.clearLabelTemplate);
-        })
+        });
     };
 
     return BookletItemController;

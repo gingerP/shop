@@ -103,20 +103,20 @@ define([
             return load('getAdminSettings').then(getData);
         },
         /*****************************************Booklets*************************************/
-        listBooklets: function (mapping, callback) {
-            return load('listBooklets', {mapping: mapping}, new Handlers(callback)).then(getData);
+        listBooklets: function (mapping) {
+            return load('listBooklets', {mapping: mapping}).then(getData);
         },
-        getBooklet: function (id, mapping, callback) {
+        getBooklet: function (id, mapping) {
             return load('getBooklet', {id: id, mapping: mapping}).then(getData);
         },
         saveBooklet: function (data, callback) {
             return load('saveBooklet', {data: data}, new Handlers(callback)).then(getData);
         },
-        deleteBooklet: function (id, callback) {
-            return load('deleteBooklet', {id: id}, new Handlers(callback)).then(getData);
+        deleteBooklet: function (id) {
+            return load('deleteBooklet', {id: id}).then(getData);
         },
-        getBookletBackgrounds: function (callback) {
-            return load('getBookletBackgrounds', null, new Handlers(callback)).then(getData);
+        getBookletBackgrounds: function () {
+            return load('getBookletBackgrounds').then(getData);
         }
     };
     return api;

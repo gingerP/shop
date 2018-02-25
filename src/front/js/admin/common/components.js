@@ -109,13 +109,14 @@ define([], function () {
                 parent: 'menu',
                 image_path: '/src/front/dhtmlx/imgs/',
                 items: [
-                    {id: 'settings', text: 'Настройки'},
-                    {id: 'goods', text: 'Товары'},
+                    {id: 'settings', text: 'Настройки', enabled: true},
+                    {id: 'goods', text: 'Товары', enabled: true},
+                    {id: 'booklets', text: 'Буклеты', enabled: true},
+                    {id: 'cloud', text: 'Облако', enabled: true},
                     {id: 'tree', text: 'Дерево навигации', disabled: true},
                     {id: 'prices', text: 'Прайс-листы', disabled: true},
                     {id: 'contacts', text: 'Контакты', disabled: true},
-                    {id: 'booklets', text: 'Буклеты'},
-                    {id: exitKey, text: 'Выход'}
+                    {id: exitKey, text: 'Выход', img: '/images/icons/exit.png'}
                 ]
             });
             menu.attachEvent('onClick', function (id, zoneId, cas) {
@@ -131,9 +132,9 @@ define([], function () {
                 .css('color', '#fff')
                 .css('font-weight', 'bold')
                 .css('font-size', '12px')
-                .css('border-radius', '3px')
-                .css('box-shadow', '0px 0px 3px rgba(255, 255, 255, 0.5) inset')
-                .css('border', '1px solid #F04B4B');
+                .css('height', '32px')
+                .css('line-height', '29px')
+                .css('padding', '2px 20px');
 
             return menu;
         },
@@ -193,7 +194,7 @@ define([], function () {
                 toolbar.customHandlers = handlers;
                 toolbar.attachEvent('onClick', function (id) {
                     if (this.customHandlers.hasOwnProperty(id) && typeof this.customHandlers[id] === 'function') {
-                        this.customHandlers[id]();
+                        return this.customHandlers[id]();
                     }
                 });
             }

@@ -10,7 +10,9 @@ define([], function () {
     };
 
     Observable.prototype.propertyChange = function (propertyName, state, owner) {
-        if (typeof propertyName === 'string' && propertyName.length > 1 && this.listeners[propertyName].length) {
+        var shouldProceed = typeof propertyName === 'string' && propertyName.length > 1
+            && this.listeners[propertyName] && this.listeners[propertyName].length;
+        if (shouldProceed) {
             for (var listenerIndex = 0; listenerIndex < this.listeners[propertyName].length; listenerIndex++) {
                 var listenerFunction = this.listeners[propertyName][listenerIndex];
                 if (typeof listenerFunction === 'function') {

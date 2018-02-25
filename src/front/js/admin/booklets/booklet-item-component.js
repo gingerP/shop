@@ -1,6 +1,7 @@
 define([
+    'common/dialog',
     'booklets/booklet-item-controller'
-], function (BookletItemController) {
+], function (Dialog, BookletItemController) {
     'use strict';
 
     function BookletItem(booklet, $parentContainer, editor) {
@@ -31,7 +32,7 @@ define([
             this.$itemDOM = $(this.$itemDOM);
             this.initEvents();
             this.updateSize();
-            this.updatePosition()
+            this.updatePosition();
         }
         return this;
     };
@@ -42,40 +43,47 @@ define([
     };
 
     BookletItem.prototype.initEvents = function () {
-        var itemInstance = this;
-        this.$itemDOM.on('click', '.edit-item', function () {
-            itemInstance.editor.updateRelations(itemInstance);
-            itemInstance.editor.show();
-            itemInstance.editor.populateData(itemInstance.controller.getEntity());
+        var self = this;
+        self.$itemDOM.on('click', '.edit-item', function () {
+            self.editor.updateRelations(self);
+            self.editor.show();
+            self.editor.populateData(self.controller.getEntity());
         });
-        this.$itemDOM.on('click', '.clear-item', function () {
-            itemInstance.clear();
+        self.$itemDOM.on('click', '.clear-item', function () {
+            Dialog.confirm('Вы уверены, что хотитеть очистить содержимое?')
+                .then(function () {
+                    self.clear();
+                });
         });
-        this.$itemDOM.on('click', '.delete-item', function () {
-            itemInstance.booklet.deleteItem(itemInstance);
-            itemInstance.unload();
+        self.$itemDOM.on('click', '.delete-item', function () {
+            Dialog.confirm('Вы уверены, что хотите удалить весь элемент?')
+                .then(function () {
+                    self.booklet.deleteItem(self);
+                    self.unload();
+                });
         });
 
-        this.draggable = undefined;
-        if (U.hasContent(this.getId())) {
-            var selector = "#" + this.getId();
-            this.resizable = $(selector).resizable({
+        self.draggable = null;
+        if (U.hasContent(self.getId())) {
+            var selector = "#" + self.getId();
+            self.resizable = $(selector).resizable({
                 delay: 0,
                 resize: function (event, ui) {
-                    ui.size.width = itemInstance.booklet.sizeRules[itemInstance.booklet.itemSizeCode].width(ui.size.width);
-                    ui.size.height = itemInstance.booklet.sizeRules[itemInstance.booklet.itemSizeCode].height(ui.size.height);
-                    itemInstance.controller.updateEntity({size: {width: ui.size.width, height: ui.size.height}});
+                    var sizeRule = self.booklet.sizeRules[self.booklet.itemSizeCode];
+                    ui.size.width = sizeRule.width(ui.size.width);
+                    ui.size.height = sizeRule.height(ui.size.height);
+                    self.controller.updateEntity({size: {width: ui.size.width, height: ui.size.height}});
                 }
             }).on('mouseup', function () {
-                itemInstance.booklet.clearHightLight();
+                self.booklet.clearHightLight();
             });
 
-            $('.ui-resizable-handle', this.resizable).attr('data-clickable', true);
-            this.draggable = Draggable.create(selector, {
-                type: "x,y",
+            $('.ui-resizable-handle', self.resizable).attr('data-clickable', true);
+            self.draggable = Draggable.create(selector, {
+                type: 'x,y',
                 edgeResistance: 0.5,
                 autoScroll: 0.5,
-                bounds: this.$parentContainer,
+                bounds: self.$parentContainer,
                 lockedAxis: true,
                 throwProps: true,
                 snap: {
@@ -88,22 +96,22 @@ define([
                 },
                 liveSnap: {
                     x: function (end) {
-                        var poss = itemInstance.booklet.checkPosToSnapX(end, itemInstance.controller.getSize().width);
-                        itemInstance.booklet.highLightX(poss[0], poss[1]);
+                        var poss = self.booklet.checkPosToSnapX(end, self.controller.getSize().width);
+                        self.booklet.highLightX(poss[0], poss[1]);
                         var res = U.hasContent(poss[0]) ? poss[0] : end;
-                        itemInstance.controller.updateEntity({position: {x: res}});
+                        self.controller.updateEntity({position: {x: res}});
                         return res;
                     },
                     y: function (end) {
-                        var poss = itemInstance.booklet.checkPosToSnapY(end, itemInstance.controller.getSize().height);
-                        itemInstance.booklet.highLightY(poss[0], poss[1]);
+                        var poss = self.booklet.checkPosToSnapY(end, self.controller.getSize().height);
+                        self.booklet.highLightY(poss[0], poss[1]);
                         var res = U.hasContent(poss[0]) ? poss[0] : end;
-                        itemInstance.controller.updateEntity({position: {y: res}});
+                        self.controller.updateEntity({position: {y: res}});
                         return res;
                     }
                 },
                 onDragEnd: function () {
-                    itemInstance.booklet.clearHightLight();
+                    self.booklet.clearHightLight();
                 }
             });
         }

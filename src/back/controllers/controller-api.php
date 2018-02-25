@@ -158,7 +158,7 @@ try {
                     $responseData = BookletService::get($id, $mapping);
                     break;
                 case 'saveBooklet':
-                    $data = Utils::getFromPOST('data');
+                    $data = Utils::getFromPOST('data', false);
                     $responseData = BookletService::save($data);
                     break;
                 case 'deleteBooklet':

@@ -27,35 +27,59 @@ class BookletService {
     }
 
     public static function save($booklet) {
-        $id = $booklet[self::$bookletIdKey];
-        $dbBookletType = new DBBookletsType();
+        if (is_null($booklet)) {
+            return [];
+        }
+        $id = array_key_exists(self::$bookletIdKey, $booklet) ? $booklet[self::$bookletIdKey] : null;
+
+        $bookletCode = array_key_exists(self::$bookletCodeKey, $booklet) ? $booklet[self::$bookletCodeKey] : null;
+        if (is_null($bookletCode) || $bookletCode == '') {
+            $bookletCode = Utils::getRandomString();
+        }
+
+        $bookletName = array_key_exists(self::$bookletNameKey, $booklet) ? $booklet[self::$bookletNameKey] : null;
+        if (is_null($bookletName) || $bookletName == '') {
+            $bookletName = $bookletCode;
+        }
+
+        $Booklets = new DBBookletsType();
         //is new
-        if ($booklet[self::$bookletIdKey] == null && strlen($booklet[self::$bookletIdKey]) == 0) {
-            $id = $dbBookletType->update(null, [
-                DB::TABLE_BOOKLET__NAME => $booklet[self::$bookletNameKey],
-                DB::TABLE_BOOKLET__CREATED => time(),
-                DB::TABLE_BOOKLET__UPDATED => time()
+        if (is_null($id)) {
+            $id = $Booklets->update(null, [
+                DB::TABLE_BOOKLET__NAME => $bookletName,
+                DB::TABLE_BOOKLET__CREATED => date("Y-m-d H:i:s"),
+                DB::TABLE_BOOKLET__UPDATED => date("Y-m-d H:i:s"),
+                DB::TABLE_BOOKLET__CODE => $bookletCode,
             ]);
             $booklet[self::$bookletIdKey] = $id;
-            $booklet[self::$bookletCodeKey] = Utils::getRandomString();
+            $booklet[self::$bookletCodeKey] = $bookletCode;
         }
-        if ($booklet != null && count($booklet[self::$bookletItemsKey]) > 0) {
-            for ($itemIndex = 0; $itemIndex < count($booklet[self::$bookletItemsKey]); $itemIndex++) {
-                $item = $booklet[self::$bookletItemsKey][$itemIndex];
-                if (Utils::isBase64($item[self::$itemImageKey])) {
+        $bookletImages = $booklet[self::$bookletItemsKey];
+        $bookletImagesCount = count($bookletImages);
+        if ($bookletImagesCount > 0) {
+            for ($itemIndex = 0; $itemIndex < $bookletImagesCount; $itemIndex++) {
+                $item = $bookletImages[$itemIndex];
+                if (array_key_exists('cloudId', $item)) {
+                    $fileCloudId = $item['cloudId'];
+                    $imageExtension = $item['cloudMetaFileExtension'];
+                    $imageName = Utils::getRandomString().".".$imageExtension;
+                    $imageBinary = DropboxService::downloadFile($fileCloudId);
+                    $imageUrl = self::saveBookletBinaryImage($bookletCode, $imageName, $imageBinary, $imageExtension);
+                    unset($item['cloudId']);
+                    unset($item['cloudMetaFileExtension']);
+                    $item[self::$itemImageKey] = $imageUrl;
+                } else if (Utils::isBase64($item[self::$itemImageKey])) {
                     $imageExtension = Utils::getImageExtensionFromBase64($item[self::$itemImageKey]);
-                    $imageUrl = self::saveBookletImage($booklet[self::$bookletCodeKey], Utils::getRandomString().".".$imageExtension, $item[self::$itemImageKey]);
+                    $imageName = Utils::getRandomString().".".$imageExtension;
+                    $imageUrl = self::saveBookletImage($bookletCode, $imageName, $item[self::$itemImageKey]);
                     $item[self::$itemImageKey] = $imageUrl;
                 }
                 $booklet[self::$bookletItemsKey][$itemIndex] = $item;
             }
         }
 
-        $dbBookletType->update($id, [
-            DB::TABLE_BOOKLET__NAME => $booklet[self::$bookletNameKey],
-            DB::TABLE_BOOKLET__CREATED => $booklet[self::$bookletCreatedKey],
-            DB::TABLE_BOOKLET__UPDATED => time(),
-            DB::TABLE_BOOKLET__CODE => $booklet[self::$bookletCodeKey],
+        $Booklets->update($id, [
+            DB::TABLE_BOOKLET__UPDATED => date("Y-m-d H:i:s"),
             DB::TABLE_BOOKLET__DATA => serialize($booklet)
         ]);
 
@@ -63,8 +87,8 @@ class BookletService {
     }
 
     public static function delete($id) {
-        $dbBookletType = new DBBookletsType();
-        return $dbBookletType->delete($id);
+        $Booklets = new DBBookletsType();
+        return $Booklets->delete($id);
     }
 
     public static function getBookletBackgroundImages() {
@@ -82,6 +106,20 @@ class BookletService {
         $imageEditor = ImageEditor::newImageBase64($base64Image);
         $bookletImagePath = FileUtils::buildPath($bookletImagesRoot, $bookletCode, $imageName);
         $imageEditor->saveImage($bookletImagePath);
+        FileUtils::unlinkPath($imageEditor->getImagePath());
+        return FileUtils::buildPath($bookletCode, $imageName);
+    }
+
+    private static function saveBookletBinaryImage($bookletCode, $imageName, $binaryImage, $imageExtension) {
+        $bookletImagesRoot = DBPreferencesType::getPreferenceValue(Constants::BOOKLET_IMAGE_PATH);
+        $bookletImageDirectory = FileUtils::buildPath($bookletImagesRoot, $bookletCode);
+        FileUtils::createDir($bookletImageDirectory);
+
+        $imageEditor = ImageEditor::newImageFromBinary($binaryImage, $imageExtension);
+        $bookletImagePath = FileUtils::buildPath($bookletImagesRoot, $bookletCode, $imageName);
+
+        $imageEditor->saveImage($bookletImagePath);
+        FileUtils::unlinkPath($imageEditor->getImagePath());
         return FileUtils::buildPath($bookletCode, $imageName);
     }
 }

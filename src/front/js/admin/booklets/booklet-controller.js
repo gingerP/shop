@@ -2,8 +2,8 @@ define([
     'common/components',
     'common/services',
     'common/service-entities',
-    'common/toast'
-], function (Components, Services, ServiceEntities, Toast) {
+    'common/dialog'
+], function (Components, Services, ServiceEntities, Dialog) {
     'use strict';
 
     function generateId(id) {
@@ -85,37 +85,38 @@ define([
                     callback(data);
                 }
             })
-            .catch(Toast.error);
+            .catch(Dialog.error);
     };
 
-    BookletController.prototype.save = function (callback) {
+    BookletController.prototype.save = function () {
         var entity = this.updateEntity();
         var id = entity.id;
         entity.id = entity._isNew ? null : entity.id;
         Components.prepareEntity(entity);
-        Services.saveBooklet(entity)
+        return Services.saveBooklet(entity)
             .then(function (result) {
-                callback(id, result);
+                return [id, result];
             })
-            .catch(Toast.error);
+            .catch(Dialog.error);
     };
 
-    BookletController.prototype.delete = function (callback) {
-        var instance = this;
+    BookletController.prototype.delete = function () {
+        var self = this;
 
         function localCallback() {
-            instance.owner.clear();
-            instance.clear();
-            callback();
+            self.owner.clear();
+            self.clear();
         }
 
         if (!this.entity._isNew) {
-            Services.deleteBooklet(this.entity.id)
+            return Services.deleteBooklet(this.entity.id)
                 .then(localCallback)
-                .catch(Toast.error);
-        } else {
-            localCallback();
+                .catch(Dialog.error);
         }
+        return new Promise(function (resolve) {
+            localCallback();
+            resolve();
+        });
     };
 
     BookletController.prototype.clear = function () {

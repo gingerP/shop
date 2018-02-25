@@ -1,8 +1,8 @@
 define([
     'common/components',
     'common/services',
-    'common/toast'
-], function (Components, Services, Toast) {
+    'common/dialog'
+], function (Components, Services, Dialog) {
     var selectCallbacks = [];
     var win = null;
     var form = null;
@@ -17,18 +17,19 @@ define([
         }
     }
 
-    function initForm(window) {
+    function initForm(dhxWin) {
         var formConfig = [
             {type: 'container', name: 'images', inputWidth: 730, inputHeight: 410},
             {
-                type: 'block', blockOffset: 7, width: 730, list: [
-                {type: 'button', name: 'cancel', value: 'Закрыть'},
-                {type: 'newcolumn'},
-                {type: 'button', name: 'ok', value: 'Выбрать', offsetLeft: 520}
-            ]
+                type: 'block', blockOffset: 7, width: 730,
+                list: [
+                    {type: 'button', name: 'cancel', value: 'Закрыть'},
+                    {type: 'newcolumn'},
+                    {type: 'button', name: 'ok', value: 'Выбрать', offsetLeft: 520}
+                ]
             }
         ];
-        var form = window.attachForm(formConfig);
+        var form = dhxWin.attachForm(formConfig);
         form.attachEvent('onButtonClick', function (name) {
             if (name === 'ok') {
                 var selectedId = dataView.getSelected();
@@ -50,18 +51,22 @@ define([
             container: container,
             drag: false,
             select: true,
-            template: "<img class='booklet_select_preview' src='#image#'/>"
+            type: {
+                template: "<img class='booklet_select_preview' src='#image#'/>",
+                width: 210,
+                height: 115
+            }
         });
         Services.getBookletBackgrounds()
             .then(function (backgrounds) {
                 if (backgrounds && backgrounds.length) {
                     backgrounds.forEach(function (image) {
                         view.add({id: U.getRandomString(), image: "/" + image});
-                    })
+                    });
                 }
                 //console.info(backgrounds);
             })
-            .catch(Toast.error);
+            .catch(Dialog.error);
         return view;
     }
 
@@ -69,8 +74,8 @@ define([
         return function () {
             selectCallbacks.forEach(function (_callback) {
                 _callback(selected);
-            })
-        }
+            });
+        };
     }
 
     return {
@@ -82,6 +87,7 @@ define([
                     height: 520,
                     caption: 'Выбрать фон'
                 }, closeCallback());
+                win.cell.className += ' booklet-background-component';
                 form = initForm(win);
                 dataView = initDataView(form.getContainer('images'));
             }
@@ -98,5 +104,5 @@ define([
             }
             unselectAll();
         }
-    }
+    };
 });

@@ -1,8 +1,9 @@
 define([
+    'dropbox/dropbox',
     'booklets/booklet-editor-controller',
     'booklets/booklet-editor-component',
     'booklets/booklet-item-component'
-], function (BookletEditorController, BookletEditorComponent, BookletItem) {
+], function (Dropbox, BookletEditorController, BookletEditorComponent, BookletItem) {
     'use strict';
 
     function BookletComponent(domParentContainer, controller) {
@@ -14,16 +15,16 @@ define([
         this.controller = controller;
         this.controller.owner = this;
         this.items = [];
-        this.editorWindow = undefined;
         this.template = '3c2c';
         this.itemSizeCode = '135x225';
         this.initGridRules();
         this.initSizeRules();
+        this._cloud = new Dropbox();
     }
 
     BookletComponent.prototype.init = function () {
         var editorWindowController = new BookletEditorController();
-        this.editorWindow = new BookletEditorComponent(this).init(editorWindowController);
+        this.editorWindow = new BookletEditorComponent(this).init(editorWindowController, this._cloud);
 
         //this.enable(false);
         return this;
@@ -45,7 +46,9 @@ define([
         if (entity.listItems && entity.listItems.length) {
             var bookletInstance = this;
             entity.listItems.forEach(function (bookletItemEntity) {
-                var bookletItem = new BookletItem(bookletInstance, bookletInstance.$bookletItemsDOM, bookletInstance.editorWindow).init(bookletItemEntity);
+                var bookletItem =
+                    new BookletItem(bookletInstance, bookletInstance.$bookletItemsDOM, bookletInstance.editorWindow)
+                        .init(bookletItemEntity);
                 bookletInstance.bookletItems.push(bookletItem);
                 bookletItem.render();
             });
@@ -57,7 +60,7 @@ define([
         $('.background img', this.$bookletDOM).attr('src', image);
     };
 
-    BookletComponent.prototype.renderBorders = function (bordersTemplate) {
+    BookletComponent.prototype.renderBorders = function () {
         $('.borders', this.$bookletDOM).html(Handlebars.compile($('#borders-default').html())());
     };
 
@@ -120,12 +123,12 @@ define([
         return this;
     };
 
-    BookletComponent.prototype.save = function (callback) {
-        this.controller.save(callback);
+    BookletComponent.prototype.save = function () {
+        return this.controller.save();
     };
 
-    BookletComponent.prototype.delete = function (callback) {
-        this.controller.delete(callback);
+    BookletComponent.prototype.delete = function () {
+        return this.controller.delete();
     };
 
     BookletComponent.prototype.populate = function (entity) {
@@ -141,7 +144,6 @@ define([
     BookletComponent.prototype.createNewBooklet = function () {
         this.clear();
         var entity = this.controller.createNewBooklet();
-        /*    this.propertyChange('state', [entity]);*/
         this.render(entity);
         return entity;
     };

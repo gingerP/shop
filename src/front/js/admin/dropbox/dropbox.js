@@ -1,11 +1,12 @@
 define([
+    'lodash',
     'common/observable',
     'common/services',
     'dropbox-sdk',
-    'common/toast',
+    'common/dialog',
     'filesize',
     'dropbox/dropbox-upload-manager'
-], function (Observable, Services, DropboxSdk, Toast, filesize, AuDropboxUploadManager) {
+], function (_, Observable, Services, DropboxSdk, Dialog, filesize, AuDropboxUploadManager) {
     function getMaxSize() {
         var ratio = 0.9;
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -16,6 +17,11 @@ define([
         };
     }
 
+    /**
+     *
+     * @class AuDropboxDir
+     * @param {string} rootDir cloud root dir
+     */
     function AuDropboxDir(rootDir) {
         this._observable = new Observable();
         this._events = {
@@ -38,9 +44,27 @@ define([
             ready: '/images/icons/minus.png'
         };
         $(document.body).append('<div class="dropbox-upload-input"></div>');
-        this._win;
         this._createClient();
     }
+
+    AuDropboxDir.prototype.openAsPage = function openAsPage(parent) {
+        var self = this;
+        self._createLayout(parent);
+        self._createStatusBar();
+        self._createToolBar();
+        self._createDataView();
+        self._createCellBTabbar();
+        self._createPreview();
+        self._createUploads();
+        self._createUploadsToolbar();
+        if (self._createClientDefered) {
+            self._createClientDefered.then(function () {
+                self._loadDir();
+            });
+        } else {
+            self._loadDir();
+        }
+    };
 
     AuDropboxDir.prototype.open = function open() {
         var self = this;
@@ -84,9 +108,13 @@ define([
         this._observable.addListener(this._events.addToProduct, callback);
     };
 
+    AuDropboxDir.prototype.getLayout = function getLayout() {
+        return this._layout;
+    };
+
     AuDropboxDir.prototype._createClient = function _createClient() {
         var self = this;
-        Services.getAdminSettings()
+        self._createClientDefered = Services.getAdminSettings()
             .then(function (preferences) {
                 var token = preferences.dropbox_access_token;
                 self._rootDir = preferences.dropbox_root_directory || self._rootDir;
@@ -96,18 +124,33 @@ define([
                     self._onUploadProgress.bind(self),
                     self._onFilesBatchUploaded.bind(self)
                 );
+                self._createClientDefered = null;
             })
-            .catch(Toast.error);
+            .catch(function (error) {
+                self._createClientDefered = null;
+                Dialog.error(error);
+            });
     };
 
-    AuDropboxDir.prototype._createLayout = function _createLayout() {
-        this._layout = this._win.attachLayout({
-            pattern: '2U',
-            cells: [
-                {id: 'a', header: false},
-                {id: 'b', width: 400, header: false}
-            ]
-        });
+    AuDropboxDir.prototype._createLayout = function _createLayout(parent) {
+        if (parent) {
+            this._layout = new dhtmlXLayoutObject({
+                parent: document.body,
+                pattern: '2U',
+                cells: [
+                    {id: 'a', header: false},
+                    {id: 'b', width: 400, header: false}
+                ]
+            });
+        } else {
+            this._layout = this._win.attachLayout({
+                pattern: '2U',
+                cells: [
+                    {id: 'a', header: false},
+                    {id: 'b', width: 400, header: false}
+                ]
+            });
+        }
         this._layout.setOffsets({
             top: 0,
             right: 0,
@@ -181,22 +224,22 @@ define([
         self._win.centerOnScreen();
         self._win.setModal(true);
         self._win.setMaxDimension(size.width, size.height);
-        self._win.setText('Dropbox images');
+        self._setTitle('Облако');
         self._win.attachEvent('onClose', function () {
             self._win.hide();
             self._win.setModal(false);
             return false;
         });
         window.onresize = function () {
-            var size = getMaxSize();
-            self._win.setMaxDimension(size.width, size.height);
-            self._win.setDimension(size.width, size.height);
+            var currentWinSize = getMaxSize();
+            self._win.setMaxDimension(currentWinSize.width, currentWinSize.height);
+            self._win.setDimension(currentWinSize.width, currentWinSize.height);
             self._win.centerOnScreen();
         };
     };
 
     AuDropboxDir.prototype._createStatusBar = function _createStatusBar() {
-        this._statusBar = this._win.attachStatusBar({height: 20});
+        this._statusBar = (this._win || this._layout).attachStatusBar({height: 20});
     };
 
     AuDropboxDir.prototype._createPreview = function _createPreview() {
@@ -214,12 +257,24 @@ define([
             items: [
                 {id: 'back', type: 'button', text: 'Назад', img: 'back.png', img_disabled: 'back_dis.png'},
                 {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png', img_disabled: 'reload_dis.png'},
-                {id: 'create-dir', type: 'button', text: 'Создать папку', img: 'create_dir.png', img_disabled: 'create_dir_dis.png'},
+                {
+                    id: 'create-dir',
+                    type: 'button',
+                    text: 'Создать папку',
+                    img: 'create_dir.png',
+                    img_disabled: 'create_dir_dis.png'
+                },
                 {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png', img_disabled: 'delete_dis.png'},
                 {id: 'rename', type: 'button', text: 'Переименовать', img: 'edit.png', img_disabled: 'edit_dis.png'},
-                {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png', img_disabled: 'upload_dis.png'},
+                {
+                    id: 'upload',
+                    type: 'button',
+                    text: 'Загрузить файлы',
+                    img: 'upload.png',
+                    img_disabled: 'upload_dis.png'
+                },
                 {id: 'sep1', type: 'separator'},
-                {id: 'add-to-product', type: 'button', text: 'Добавить к товару', img: 'add.png', img_disabled: 'add_dis.png'}
+                {id: 'add-to-product', type: 'button', text: 'Выбрать', img: 'add.png', img_disabled: 'add_dis.png'}
             ]
         });
         this._toolbar
@@ -326,13 +381,13 @@ define([
 
     AuDropboxDir.prototype._loadDir = function _loadDir(force) {
         var self = this;
-        this._win.progressOn();
-        this._win.setText(this._currentDir);
+        this._progressOn();
+        this._setTitle(this._currentDir);
         if (!force && self._preparedCache[this._currentDir]) {
             self._view.clearAll();
             var items = self._preparedCache[this._currentDir];
             self._view.parse(items, 'json');
-            self._win.progressOff();
+            self._progressOff();
         } else {
             this._client.filesListFolder({
                 path: this._currentDir,
@@ -346,10 +401,10 @@ define([
                 self._view.clearAll();
                 self._updateCache(self._currentDir, prepared);
                 self._view.parse(prepared, 'json');
-                self._win.progressOff();
+                self._progressOff();
             }).catch(function (error) {
-                self._win.progressOff();
-                Toast.error(error);
+                self._progressOff();
+                Dialog.error(error);
             });
         }
     };
@@ -367,7 +422,7 @@ define([
                 })
                 .catch(function (error) {
                     cell.progressOff();
-                    Toast.error(error);
+                    Dialog.error(error);
                 });
         }
     };
@@ -396,8 +451,8 @@ define([
                     })
                     .catch(function (error) {
                         cell.progressOff();
-                        Toast.error(error);
-                    })
+                        Dialog.error(error);
+                    });
             }
         }
     };
@@ -421,7 +476,7 @@ define([
                     })
                     .catch(function (error) {
                         cell.progressOff();
-                        Toast.error(error);
+                        Dialog.error(error);
                     })
             }
         }
@@ -441,13 +496,18 @@ define([
     };
 
     AuDropboxDir.prototype._addToProduct = function _addToProduct() {
-        var selectedIds = this._view.getSelected(true);
+        var self = this;
+        var selectedIds = self._view.getSelected(true);
         var files = [];
-        while(selectedIds.length) {
+        while (selectedIds.length) {
             var id = selectedIds.pop();
-            var itemData = this._view.get(id);
+            var itemData = self._view.get(id);
             if (itemData.tag === 'file' && /\.(jpg|jpeg)$/ig.test(itemData.name)) {
-                files.push(itemData);
+                var data = {info: itemData};
+                if (self._previewCache[itemData.path]) {
+                    data.preview = self._previewCache[itemData.path];
+                }
+                files.push(data);
             }
         }
         if (files.length) {
@@ -563,7 +623,6 @@ define([
         var responses = 0;
 
         function apply(response) {
-            var entries = response.entries;
             var successThumbnails = self._filterSuccessThumbnails(response.entries);
             if (successThumbnails && successThumbnails.length) {
                 self._updateThumbnails(pathDir, successThumbnails);
@@ -580,7 +639,7 @@ define([
             self._client.filesGetThumbnailBatch({entries: entries})
                 .then(apply)
                 .catch(function (error) {
-                    Toast.error(error);
+                    Dialog.error(error);
                     self._thumbnailsProgressOff();
                 });
         } else {
@@ -593,7 +652,7 @@ define([
                 )
                     .then(apply)
                     .catch(function (error) {
-                        Toast.error(error);
+                        Dialog.error(error);
                         self._thumbnailsProgressOff();
                     });
                 num--;
@@ -662,7 +721,7 @@ define([
             })
             .catch(function (error) {
                 cell.progressOff();
-                Toast.error(error);
+                Dialog.error(error);
             });
     };
 
@@ -725,7 +784,7 @@ define([
                 })
                 .catch(function (error) {
                     cell.progressOff();
-                    Toast.error(error);
+                    Dialog.error(error);
                 });
         }
     };
@@ -793,6 +852,23 @@ define([
                 self._uploadsManager.releaseUpload(rowId);
             }
         });
+    };
+
+    AuDropboxDir.prototype._progressOn = function _progressOn() {
+        (this._win || this._layout).progressOn();
+    };
+
+    AuDropboxDir.prototype._progressOff = function _progressOff() {
+        (this._win || this._layout).progressOff();
+    };
+
+    AuDropboxDir.prototype._setTitle = function _setTitle(title) {
+        var self = this;
+        if (self._win) {
+            self._win.setText(title);
+        } else {
+            document.title = 'Облако - консоль augustova.by - ' + title;
+        }
     };
 
     return AuDropboxDir;

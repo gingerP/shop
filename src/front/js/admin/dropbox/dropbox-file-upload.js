@@ -1,6 +1,6 @@
 define([
-    'common/toast'
-], function(Toast) {
+    'common/dialog'
+], function(Dialog) {
     'use strict';
 
     function AuDropboxFileUpload(client, id, inputFile, path) {
@@ -87,7 +87,7 @@ define([
                 });
             })
             .catch(function(error) {
-                Toast.error(error);
+                Dialog.error(error);
                 self._uploadFailedTime = Date.now();
                 self._statusDescription = error;
                 self._status = self._statuses.failed;
