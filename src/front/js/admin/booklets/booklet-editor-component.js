@@ -3,11 +3,18 @@ define([
 ], function (Components) {
     'use strict';
 
+    function formatBookletImage(src) {
+        if (src && src.length > 0 && src.indexOf('data:image') !== 0) {
+            src = '/booklet_images/' + src;
+        }
+        return src;
+    }
+
     function BookletEditorComponent(parent) {
         this.parent = null;
         this.imageLoaderId = 'file_upload';
         this.imageLoader = '<div id="' + this.imageLoaderId + '"><input class="' + this.imageLoaderId + '" type="file"></div>';
-        this.imagePreviewTemplate = "<div id='booklet_item_image_preview'>\
+        this.imagePreviewTemplate = "<div id='booklet-item-image-preview'>\
         <image id='booklet_item_image' class='booklet_item_image'/>\
         <div class='text_fields_container'>\
             <div class='text_fields_sub_container top_right'>\
@@ -15,15 +22,20 @@ define([
                 <div class='text_field_line'></div>\
                 <textarea id='top_right_1' class='top_right_1 booklet_item_image_label' rows='1'></textarea>\
             </div>\
+            <div class='text_fields_sub_container top_left'>\
+                <textarea id='top_left_0' class='top_left_0 booklet_item_image_label' rows='1'></textarea>\
+                <div class='text_field_line'></div>\
+                <textarea id='top_left_1' class='top_left_1 booklet_item_image_label' rows='1'></textarea>\
+            </div>\
             <div class='text_fields_sub_container bottom_right'>\
                 <textarea id='bottom_right_0' class='bottom_right_0 booklet_item_image_label' rows='1'></textarea>\
                 <div class='text_field_line'></div>\
                 <textarea id='bottom_right_1' class='bottom_right_1 booklet_item_image_label' rows='1'></textarea>\
             </div>\
-            <div class='text_fields_sub_container bottom_center'>\
-                <textarea id='bottom_center_0' class='bottom_center_0 booklet_item_image_label' rows='1'></textarea>\
+            <div class='text_fields_sub_container bottom_left'>\
+                <textarea id='bottom_left_0' class='bottom_left_0 booklet_item_image_label' rows='1'></textarea>\
                 <div class='text_field_line'></div>\
-                <textarea id='bottom_center_1' class='bottom_center_1 booklet_item_image_label' rows='1'></textarea>\
+                <textarea id='bottom_left_1' class='bottom_left_1 booklet_item_image_label' rows='1'></textarea>\
             </div>\
         </div>\
     </div>";
@@ -32,7 +44,7 @@ define([
     BookletEditorComponent.prototype.init = function (controller) {
         this.controller = controller;
         this.labelTemplates = undefined;
-        this.window = undefined;
+        this._win = undefined;
         return this;
     };
 
@@ -41,85 +53,55 @@ define([
         this.parent = parent;
     };
 
-    BookletEditorComponent.prototype.initEvents = function () {
-        var instance = this;
-        this.window.attachEvent('onClose', function () {
-            instance.clear();
+    BookletEditorComponent.prototype._initWinEvents = function _initWinEvents() {
+        var self = this;
+        this._win.attachEvent('onClose', function () {
+            self.clear();
             this.hide();
-        })
+        });
     };
 
     BookletEditorComponent.prototype.show = function () {
-        if (typeof this.window == 'undefined') {
+        if (!this._win) {
             var myWins = new dhtmlXWindows('dhx_blue');
-            this.window = myWins.createWindow('item_editor', 500, 450, 660, 565);
-            this.initEvents();
-            this.form = this._initForm(this.window);
-            this.labelTemplates = this._initTemplates(this.form);
+            this._win = myWins.createWindow('item_editor', 500, 450, 660, 610);
+            this._initWinEvents();
+            this._createForm();
+            this._createToolbar();
+            this.labelTemplates = this._initTemplates(this._form);
+            this._win.setText('Редактирование');
         }
         var position = U.getPageCenter();
-        var size = this.window.getDimension();
+        var size = this._win.getDimension();
         var x = position.x - size[0] / 2;
         var y = position.y - size[1] / 2;
-        this.window.setPosition(
+        this._win.setPosition(
             x >= 0 ? x : 0,
             y >= 0 ? y : 0
         );
-        this.window.show();
+        this._win.show();
     };
 
     BookletEditorComponent.prototype._resetImageLoader = function () {
-        var instance = this;
-        $('#' + this.imageLoaderId).replaceWith(this.imageLoader);
-        $('#' + this.imageLoaderId).on('change', '.' + this.imageLoaderId, function () {
-            var file = this.files[0];
-            var reader = new FileReader();
-            reader.onload = function () {
-                instance.form.setItemValue('_image', reader.result);
-                $('.booklet_item_image').attr('src', reader.result).data('isbase64', true);
-                instance._resetImageLoader();
-            }
-            reader.readAsDataURL(file);
-        })
+        var self = this;
+        $('#' + this.imageLoaderId)
+            .replaceWith(this.imageLoader)
+            .on('change', '.' + this.imageLoaderId,
+                function () {
+                    var file = this.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        self._form.setItemValue('_image', reader.result);
+                        $('.booklet_item_image').attr('src', reader.result).data('isbase64', true);
+                        self._resetImageLoader();
+                    };
+                    reader.readAsDataURL(file);
+                });
     };
 
-    BookletEditorComponent.prototype._initForm = function () {
-        var instance = this;
-
-        function initEvents(form) {
-            form.attachEvent('onButtonClick', function (name) {
-                switch (name) {
-                    case 'image_load':
-                        $('#' + instance.imageLoaderId + ' .' + instance.imageLoaderId).trigger('click');
-                        break;
-                    case 'ok':
-                        var entity = instance.getData();
-                        instance.close();
-                        instance.parent.controller.updateEntity(entity);
-                        instance.parent.render();
-                        break;
-                }
-            })
-            form.attachEvent('onButtonClick', function (name) {
-                if (name == 'image_inputs_templates') {
-                    if (!instance.popup.isVisible()) {
-                        instance.popup.show('image_inputs_templates');
-                        instance.labelTemplates.refresh();
-                    } else {
-                        instance.popup.hide();
-                    }
-                }
-            })
-
-            $('.text_fields_container textarea').focus(function () {
-                $('.text_fields_sub_container').css('z-index', 100);
-                $(this).parents('.text_fields_sub_container').css('z-index', 101);
-            })
-            instance._resetImageLoader();
-        }
-
+    BookletEditorComponent.prototype._createForm = function _createForm() {
         var config = [
-            {type: 'settings', labelWidth: 50, labelAlign: 'right', inputWidth: 250},
+            {type: 'settings', labelWidth: 50, labelAlign: 'right', inputWidth: 250, position: 'label-left'},
             {
                 type: 'template',
                 name: '_image_preview',
@@ -131,20 +113,69 @@ define([
             {type: 'newcolumn'},
             {type: 'input', name: 'id', label: 'ID', readonly: true},
             {type: 'input', name: 'number', label: 'Номер'},
+            {type: 'button', name: 'image_load_locally', value: 'Загрузить фото c компьютера'},
+            {type: 'button', name: 'image_load_cloud', value: 'Загрузить фото из облака'},
             {type: 'template', name: '_file_loader', value: this.imageLoader, hidden: true},
-            {type: 'container', name: 'labelsTemplates', inputWidth: 200, inputHeight: 300},
-            {
-                type: 'block', width: 300, blockOffset: 0, offsetTop: 80, list: [
-                {type: 'button', name: 'image_load', value: '', className: 'image_loader'},
-                {type: 'newcolumn'},
-                {type: 'button', name: 'ok', value: 'Ok', offsetTop: 30, offsetLeft: 180}
+            {type: 'container', name: 'labelsTemplates', inputWidth: 200, inputHeight: 300}
+        ];
+        this._form = this._win.attachForm(config);
+        this._form.templates = {};
+        this._initFormEvents();
+    };
+
+    BookletEditorComponent.prototype._createToolbar = function _createToolbar() {
+        var self = this;
+        self._toolbar = self._win.attachToolbar({
+            icons_path: '/images/icons/',
+            items: [
+                {
+                    id: 'save',
+                    type: 'button',
+                    text: 'Применить',
+                    img: 'save.png',
+                    img_disabled: 'save_dis.png'
+                }
             ]
+        });
+        self._toolbar.attachEvent('onClick', function (buttonId) {
+            switch (buttonId) {
+                case 'save':
+                    var entity = self.getData();
+                    self.close();
+                    self.parent.controller.updateEntity(entity);
+                    self.parent.render();
+                    break;
             }
-        ]
-        var form = this.window.attachForm(config);
-        initEvents(form);
-        form.templates = {};
-        return form;
+        });
+    };
+
+    BookletEditorComponent.prototype._initFormEvents = function _initFormEvents() {
+        var self = this;
+        self._form.attachEvent('onButtonClick', function (name) {
+            switch (name) {
+                case 'image_load_locally':
+                    $('#' + self.imageLoaderId + ' .' + self.imageLoaderId).trigger('click');
+                    break;
+                case 'image_load_cloud':
+                    break;
+            }
+        });
+        self._form.attachEvent('onButtonClick', function (name) {
+            if (name === 'image_inputs_templates') {
+                if (!self.popup.isVisible()) {
+                    self.popup.show('image_inputs_templates');
+                    self.labelTemplates.refresh();
+                } else {
+                    self.popup.hide();
+                }
+            }
+        });
+
+        $('.text_fields_container textarea').focus(function () {
+            $('.text_fields_sub_container').css('z-index', 100);
+            $(this).parents('.text_fields_sub_container').css('z-index', 101);
+        });
+        self._resetImageLoader();
     };
 
     BookletEditorComponent.prototype.populateData = function (entity) {
@@ -153,7 +184,7 @@ define([
     };
 
     BookletEditorComponent.prototype.getData = function () {
-        var instance = this;
+        var self = this;
         var customUpdater = {
             image: function (form, entity) {
                 var $image = $('#booklet_item_image');
@@ -163,7 +194,7 @@ define([
                 }
             },
             listLabels: function (form, entity) {
-                var notExcistingTypes = Object.keys(instance.parent.controller.labelTypes);
+                var notExcistingTypes = Object.keys(self.parent.controller.labelTypes);
                 for (var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
                     var label = entity.listLabels[labelIndex];
                     notExcistingTypes.splice(notExcistingTypes.indexOf(label.type), 1);
@@ -171,31 +202,31 @@ define([
                 }
                 if (notExcistingTypes.length) {
                     for (var labelIndex = 0; labelIndex < notExcistingTypes.length; labelIndex++) {
-                        var label = instance.parent.controller.bookletItemLabel.createNewEntity();
+                        var label = self.parent.controller.bookletItemLabelManager.createNewEntity();
                         label.type = notExcistingTypes[labelIndex];
                         label.text = $('#' + notExcistingTypes[labelIndex]).val();
                         entity.listLabels.push(label);
                     }
                 }
             }
-        }
+        };
         var entity = this.controller.getEntity();
-        Components.updateEntity(this.form, entity, customUpdater);
+        Components.updateEntity(this._form, entity, customUpdater);
         return entity;
     };
 
     BookletEditorComponent.prototype.close = function () {
-        this.window.close();
+        this._win.close();
         this.clear();
     };
 
     BookletEditorComponent.prototype._populateEntity = function (entity) {
-        var instance = this;
+        var self = this;
         var customUpdater = {
             image: function (form, entity) {
                 if (entity.image && entity.image.length > 0) {
                     var $image = $('#booklet_item_image');
-                    if (entity.image.indexOf('data:image') != 0) {
+                    if (entity.image.indexOf('data:image') !== 0) {
                         $image.attr('src', formatBookletImage(entity.image));
                     } else {
                         $image.data('isbase64', true);
@@ -210,32 +241,32 @@ define([
                         if (U.hasContent(label.type) && U.hasContent(label.text)) {
                             var matches = /(.*){1}_\d{1}$/.exec(label.type);
                             if (matches && matches.length > 1) {
-                                instance.labelTemplates._select_mark(matches[1], true);
+                                self.labelTemplates._select_mark(matches[1], true);
                                 $('#' + label.type).val(label.text);
                             }
                         }
                     }
                 }
             }
-        }
-        Components.updateFormData(this.form, entity, customUpdater);
+        };
+        Components.updateFormData(this._form, entity, customUpdater);
     };
 
     BookletEditorComponent.prototype._updateImageTextareas = function (ids) {
         ids = Array.isArray(ids) ? ids : [ids];
         $('.text_fields_sub_container').hide();
         for (var idIndex = 0; idIndex < ids.length; idIndex++) {
-            if (ids[idIndex] != '') {
+            if (ids[idIndex] !== '') {
                 $('.text_fields_sub_container.' + ids[idIndex]).show();
             }
         }
     };
 
     BookletEditorComponent.prototype._initTemplates = function (form) {
-        var instance = this;
+        var self = this;
         var formKey = 'image_inputs_templates';
         var editorFormDataView = new dhtmlXDataView({
-            container: this.form.getContainer('labelsTemplates'),
+            container: this._form.getContainer('labelsTemplates'),
             select: 'multiselect',
             type: {
                 template: "<div><img src='#img#'/></div>",
@@ -245,17 +276,18 @@ define([
         });
         $(editorFormDataView.$view).addClass('booklet_item_data_view');
         var templates = [
-            {id: 'top_right', img: ''},
-            {id: 'bottom_right', img: ''},
-            {id: 'bottom_center', img: ''}
+            {id: 'top_right', img: '/images/icons/booklet-item-text-template-top-right.png'},
+            {id: 'top_left', img: '/images/icons/booklet-item-text-template-top-left.png'},
+            {id: 'bottom_right', img: '/images/icons/booklet-item-text-template-bottom-right.png'},
+            {id: 'bottom_left', img: '/images/icons/booklet-item-text-template-bottom-left.png'}
         ];
 
         for (var templateIndex = 0; templateIndex < templates.length; templateIndex++) {
             editorFormDataView.add(templates[templateIndex], 0);
         }
         editorFormDataView.attachEvent('onSelectChange', function (ids) {
-            instance._updateImageTextareas(this.getSelected());
-        })
+            self._updateImageTextareas(this.getSelected());
+        });
         /*    editorFormDataView.attachEvent('onBeforeSelect', function(id) {
          if (!editorFormDataView.isSelected(id)) {
          editorFormDataView.select(id);
@@ -263,31 +295,31 @@ define([
          editorFormDataView.unselect(id);
          }
          })*/
-        instance._updateImageTextareas([]);
+        self._updateImageTextareas([]);
         return editorFormDataView;
     };
 
     BookletEditorComponent.prototype._getFormData = function (form) {
         var formData = form.getFormData();
-        $('#booklet_item_image_preview .booklet_item_image_label').each(
+        $('#booklet-item-image-preview .booklet_item_image_label').each(
             function () {
                 var thizz = $(this);
                 formData[thizz.attr('id')] = thizz.val();
             }
-        )
+        );
         return {};
     };
 
     BookletEditorComponent.prototype.clear = function () {
-        var instance = this;
-        if (this.form) {
-            this.form.forEachItem(function (name) {
-                var type = instance.form.getItemType(name);
+        var self = this;
+        if (this._form) {
+            this._form.forEachItem(function (name) {
+                var type = self._form.getItemType(name);
                 if (['input'].indexOf(type) >= 0 && name.indexOf('_') != 0) {
-                    instance.form.setItemValue(name);
+                    self._form.setItemValue(name);
                 }
             });
-            $('#booklet_item_image_preview .booklet_item_image_label').val('');
+            $('#booklet-item-image-preview .booklet_item_image_label').val('');
             $('#booklet_item_image').attr('src', '').removeData('isbase64');
             this._resetImageLoader();
             this.labelTemplates.unselectAll();

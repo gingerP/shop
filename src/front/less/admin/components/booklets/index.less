@@ -1,0 +1,115 @@
+@import "./borders";
+@import "./background";
+@import "./preview";
+@import "./full-preview";
+@import "./item-editor";
+
+@editBtnBackgroundColor: #17c57c;
+@editBtnBorderColor: darken(@editBtnBackgroundColor, 5%);
+@clearBtnBackgroundColor: #3DB5D8;
+@clearBtnBorderColor: darken(@clearBtnBackgroundColor, 10%);
+@deleteBtnBackgroundColor: #f47b57;
+@deleteBtnBorderColor: darken(@deleteBtnBackgroundColor, 8%);
+
+.viewport_sub {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  display: table;
+  height: 720px;
+  width: 1000px;
+}
+
+.item:hover .edit_item,
+.item:hover .clear_item,
+.item:hover .delete_item {
+  z-index: 1;
+}
+
+.edit_item,
+.clear_item,
+.delete_item {
+  position: relative;
+}
+
+.edit_item {
+  background-color: @editBtnBackgroundColor;
+  border: 1px solid @editBtnBorderColor;
+}
+
+.clear_item {
+  background: @clearBtnBackgroundColor;
+  border: 1px solid @clearBtnBorderColor;
+}
+
+.delete_item {
+  background: @deleteBtnBackgroundColor;
+  border: 1px solid @deleteBtnBorderColor;
+}
+
+.booklet_item_data_view {
+  min-width: 300px;
+  min-height: 125px;
+  overflow-y: auto !important;
+  .dhx_dataview_item {
+    box-shadow: 0 0 5px #96c3fc;
+  }
+}
+
+.image_loader {
+  .dhxform_btn_txt {
+    background-image: url(/images/icons/jpeg.png);
+    height: 50px !important;
+    width: 50px;
+    background-repeat: no-repeat;
+    padding: 0;
+    margin: 0 !important;
+    background-color: transparent !important;
+    border: none;
+    background-position: 50%;
+  }
+}
+
+/************************************************************/
+.dhxwins_vp_dhx_skyblue div.dhxwin_active {
+  box-shadow: 0 0 30px #cecece;
+}
+
+.dhxwins_vp_dhx_skyblue div.dhxwin_hdr {
+  background: linear-gradient(#F2F8FF, #FFFFFF);
+}
+
+.dhxwins_vp_dhx_skyblue div.dhxwin_brd {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+/*******************************/
+.ui-resizable-se {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 16px 16px;
+  border-color: transparent transparent #AAA transparent;
+  background: 0;
+  bottom: 1px;
+  right: 1px;
+}
+
+.booklet_select_preview {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.dhx_dataview {
+  overflow: auto !important;
+}
+
+.dhx_dataview_item {
+  border: 1px solid #ffffff !important;
+}

@@ -5,7 +5,7 @@ define([
 ], function (BookletEditorController, BookletEditorComponent, BookletItem) {
     'use strict';
 
-     function BookletComponent(domParentContainer, controller) {
+    function BookletComponent(domParentContainer, controller) {
         this.$domParentContainer = $(domParentContainer);
         this.$bookletDOM = null;
         this.$bookletItemsDOM = null;
@@ -32,7 +32,7 @@ define([
     BookletComponent.prototype.render = function () {
         var entity = this.controller.getEntity();
         if (!this.$bookletDOM) {
-            this.$bookletDOM = U.compilePrefillHandlebar("previewContainer", entity);
+            this.$bookletDOM = U.compilePrefillHandlebar('previewContainer', entity);
             this.$domParentContainer.append(this.$bookletDOM);
             this.$bookletDOM = $(this.$bookletDOM);
             this.gridRules[this.template].preRender();
@@ -48,7 +48,7 @@ define([
                 var bookletItem = new BookletItem(bookletInstance, bookletInstance.$bookletItemsDOM, bookletInstance.editorWindow).init(bookletItemEntity);
                 bookletInstance.bookletItems.push(bookletItem);
                 bookletItem.render();
-            })
+            });
         }
     };
 
@@ -75,7 +75,7 @@ define([
 
     BookletComponent.prototype.prepareItem = function (item, data) {
         var result = item;
-        if (typeof data != 'undefined' && Object.keys(data).length) {
+        if (typeof data !== 'undefined' && Object.keys(data).length) {
             for (var key in data) {
                 result = result.replace(new RegExp('({{' + key + '}})+'), U.hasContent(data[key]) ? data[key] : '');
             }
@@ -84,14 +84,14 @@ define([
     };
 
     BookletComponent.prototype.clearTemplate = function (template) {
-        if (typeof template == 'string') {
+        if (typeof template === 'string') {
             return template.replace(/({{[^}]*}})+/g, '');
         }
         return '';
     };
 
     BookletComponent.prototype.enable = function (state) {
-        state = typeof state == 'undefined' ? true : state;
+        state = typeof state === 'undefined' ? true : state;
         this.$bookletDOM.removeClass(state ? 'disable' : 'enable').addClass(state ? 'enable' : 'disable');
         return this;
     };
@@ -107,14 +107,14 @@ define([
     };
 
     BookletComponent.prototype.clear = function () {
-        this.$domParentContainer.html("");
+        this.$domParentContainer.html('');
         this.$bookletDOM = null;
         this.$bookletItemsDOM = null;
         this.controller.clear();
         if (this.bookletItems && this.bookletItems.length) {
-            this.bookletItems.forEach(function (value, index) {
+            this.bookletItems.forEach(function (value) {
                 value.unload();
-            })
+            });
         }
         this.bookletItems = [];
         return this;
@@ -283,7 +283,7 @@ define([
                     yBottom: [240, 470, 700]
                 }
             }
-        }
+        };
     };
 
     BookletComponent.prototype.initSizeRules = function () {
@@ -291,12 +291,14 @@ define([
             '135x225': {
                 width: function (width) {
                     return Math.min(
-                        Math.round(width / this._additional.basicWidth) * this._additional.basicWidth || this._additional.basicWidth,
+                        Math.round(width / this._additional.basicWidth) * this._additional.basicWidth
+                        || this._additional.basicWidth,
                         this._additional.maxWidth);
                 },
                 height: function (height) {
                     return Math.min(
-                        Math.round(height / this._additional.basicHeight) * this._additional.basicHeight || this._additional.basicHeight,
+                        Math.round(height / this._additional.basicHeight) * this._additional.basicHeight
+                        || this._additional.basicHeight,
                         this._additional.maxHeight);
                 },
                 _additional: {
@@ -306,14 +308,14 @@ define([
                     maxHeight: 225 * 3
                 }
             }
-        }
+        };
     };
 
     BookletComponent.prototype.getTemplateTypes = function () {
         return {
             '3c2c': '3c2c',
             '2c3c': '2c3c'
-        }
+        };
     };
 
     BookletComponent.prototype.setTemplate = function (template) {
@@ -326,13 +328,11 @@ define([
     };
 
     BookletComponent.prototype.checkPosToSnapX = function (x, width) {
-        var xSnap = this.gridRules[this.template].x(x, width);
-        return xSnap;
+        return this.gridRules[this.template].x(x, width);
     };
 
     BookletComponent.prototype.checkPosToSnapY = function (y, height) {
-        var ySnap = this.gridRules[this.template].y(y, height);
-        return ySnap;
+        return this.gridRules[this.template].y(y, height);
     };
 
     BookletComponent.prototype.highLightX = function (xLeft, xRight) {
@@ -357,22 +357,22 @@ define([
             var bookletInstance = this;
             var parameter = arguments[0];
             // it's mean id
-            if (typeof parameter == 'number') {
+            if (typeof parameter === 'number') {
                 this.bookletItems.forEach(function (item, index) {
-                    if (item.id == parameter) {
+                    if (item.id === parameter) {
                         this.splice(index, 1);
                         return false;
                     }
-                })
+                });
             }
             // it's mean item instance
             else if (U.isObject(arguments)) {
                 this.bookletItems.forEach(function (item, index) {
-                    if (item == parameter) {
+                    if (item === parameter) {
                         bookletInstance.bookletItems.splice(index, 1);
                         return false;
                     }
-                })
+                });
             }
         }
     };
@@ -407,12 +407,20 @@ define([
         function findPalls(rowInd, colInd, count, way) {
             var result = [];
             if (U.hasContent(matrix[rowInd]) && U.hasContent(matrix[rowInd][colInd])) {
-                if (way == 'vertical') {
-                    for (var stepIndex = 0; stepIndex < count && U.hasContent(matrix[rowInd + stepIndex][colInd]); stepIndex++) {
+                if (way === 'vertical') {
+                    for (
+                        var stepIndex = 0;
+                        stepIndex < count && U.hasContent(matrix[rowInd + stepIndex][colInd]);
+                        stepIndex++
+                    ) {
                         result.push(matrix[rowInd + stepIndex][colInd]);
                     }
-                } else if (way == 'horizontal') {
-                    for (var stepIndex = 0; stepIndex < count && U.hasContent(matrix[rowInd][colInd + stepIndex]); stepIndex++) {
+                } else if (way === 'horizontal') {
+                    for (
+                        var stepIndex = 0;
+                        stepIndex < count && U.hasContent(matrix[rowInd][colInd + stepIndex]);
+                        stepIndex++
+                    ) {
                         result.push(matrix[rowInd][colInd + stepIndex]);
                     }
                 }

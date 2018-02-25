@@ -15,9 +15,18 @@ define([], function () {
         <div id="{{id}}" class="item x{{sizeHandler size}}">\
             <div class="content">{{> bookletItemContent}}</div>\
             <div class="editors">\
-                <div class="edit_item btn">Edit</div>\
-                <div class="clear_item btn">Clear</div>\
-                <div class="delete_item btn">Del</div>\
+                <div class="edit-item btn">\
+                    <img src="/images/icons/edit.png">\
+                    <span class="edit-item-label">Изменить</span>\
+                </div>\
+                <div class="clear-item btn">\
+                    <img src="/images/icons/clear.png">\
+                    <span class="edit-item-label">Очистить</span>\
+                </div>\
+                <div class="delete-item btn">\
+                    <img src="/images/icons/delete.png">\
+                    <span class="edit-item-label">Удалить</span>\
+                </div>\
             </div>\
             <div class="connectors"></div>\
         </div>');
@@ -54,7 +63,7 @@ define([], function () {
         return '';
     });
     Handlebars.registerHelper('renderItemImage', function (image) {
-        return image ? (image.indexOf('data:image') == 0 ? image : '/' + app.bookletImageRoot + '/' + image ) : "";
+        return image ? (image.indexOf('data:image') == 0 ? image : '/booklet_images/' + image ) : "";
     });
     Handlebars.registerHelper('renderItemNumberVisible', function (number) {
         return !number ? "display: none;" : "";

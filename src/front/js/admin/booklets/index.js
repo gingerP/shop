@@ -1,11 +1,13 @@
 require([
+    'dropbox/dropbox',
     'common/services',
     'common/components',
     'booklets/booklet-component',
     'booklets/booklet-controller',
+    'booklets/booklet-background-component',
     'common/toast',
     'booklets/handlebars-helpers'
-], function (Services, Components, BookletComponent, BookletController, Toast) {
+], function (Dropbox, Services, Components, BookletComponent, BookletController, BookletBackground, Toast) {
 
     function initFullPreviewPage(id) {
         var sizeRatio = 4;
@@ -44,22 +46,22 @@ require([
                             updateItemPosition(itemDOM, item.position);
                             updateItemSize(itemDOM, item.size);
                         } else {
-                            console.warn('DOM object for id=' + item.id + ' was not rendered!')
+                            console.warn('DOM object for id=' + item.id + ' was not rendered!');
                         }
-                    })
+                    });
                 }
             })
-            .catch(Toast.error)
+            .catch(Toast.error);
     }
 
     function initLayout() {
         var layout = new dhtmlXLayoutObject({
             skin: Components.skin,
             parent: document.body,
-            pattern: "2U",
+            pattern: '2U',
             cells: [
-                {id: "a", text: "Буклеты", width: 400},
-                {id: "b", text: "Предпросмотр"}
+                {id: 'a', text: 'Буклеты', width: 400},
+                {id: 'b', text: 'Предпросмотр'}
             ]
         });
         layout.setOffsets({
@@ -78,44 +80,31 @@ require([
 
     function initPage() {
         U.dhtmlxDOMPreInit(document.documentElement, document.body);
-        unSelectionStateDetails = {
-            items: {
-                add: {
-                    enableState: false
-                },
-                loadBackground: {
-                    enableState: false
-                },
-                preview: {
-                    enableState: false
+        var app = {
+            unSelectionStateDetails: {
+                items: {
+                    add: {enableState: false},
+                    setBackground: {enableState: false},
+                    preview: {enableState: false},
+                    templates: {enableState: false}
                 }
-            }
-        };
-        selectionState = {
-            items: {
-                save: {
-                    enableState: true
-                },
-                delete: {
-                    enableState: true
+            },
+            selectionState: {
+                items: {
+                    save: {enableState: true},
+                    delete: {enableState: true}
                 }
-            }
-        };
-        selectionStateDetails = {
-            items: {
-                add: {
-                    enableState: true
-                },
-                loadBackground: {
-                    enableState: true
+            },
+            selectionStateDetails: {
+                items: {
+                    add: {enableState: true},
+                    setBackground: {enableState: true},
+                    preview: {enableState: true},
+                    templates: {enableState: true}
                 }
-            }
+            },
+            unSelectionState: {hasSelection: false}
         };
-
-        unSelectionState = {
-            hasSelection: false
-        };
-        var app = {};
         app.layout = initLayout();
         app.menu = initMenu(app, app.layout);
         app.booklet = initBookletPreview(app, app.layout);
@@ -130,28 +119,21 @@ require([
         grid.setImagePath('/images/icons');
         grid.setHeader(['ID', 'Название']);
         grid.setInitWidths('60, 320');
-        grid.setColAlign("left,left");
-        grid.setColTypes("ro,ro");
-        grid.setColSorting("int,str");
+        grid.setColAlign('left,left');
+        grid.setColTypes('ro,ro');
+        grid.setColSorting('int,str');
         grid.init();
 
-        grid.attachEvent("onSelectStateChanged", function (id) {
-            var entity = this.getUserData(id, 'entity');
+        grid.attachEvent('onSelectStateChanged', function (id) {
             var gridState = {
                 hasSelection: true
             };
             app.bookletsToolbar.onStateChange(gridState);
-            app.bookletDetailsToolbar.onStateChange(gridState);
+            app.bookletDetailsToolbar.onStateChange(app.selectionStateDetails);
             if (!app.booklet.isEmpty() && app.booklet.isNew()) {
                 return;
             }
             app.booklet.controller.load(id);
-            /*serviceWrapper.getBooklet(id, {}, function(data) {
-             app.booklet.clear();
-             if (U.hasContent(data)) {
-             app.booklet.populate(data);
-             }
-             })*/
         });
 
 
@@ -160,9 +142,9 @@ require([
                 .then(function (booklets) {
                     Components.reloadGrid(grid, booklets, ['id', 'name']);
                     app.bookletsToolbar.onStateChange({hasSelection: false});
-                    app.bookletDetailsToolbar.onStateChange(unSelectionStateDetails);
+                    app.bookletDetailsToolbar.onStateChange(app.unSelectionStateDetails);
                 })
-                .catch(Toast.error)
+                .catch(Toast.error);
         };
 
         grid.addNewBooklet = function () {
@@ -184,28 +166,28 @@ require([
             add: function () {
                 if (app.booklet.canCreateNew()) {
                     app.bookletsList.addNewBooklet();
-                    app.bookletsToolbar.onStateChange(selectionState);
-                    app.bookletDetailsToolbar.onStateChange(selectionStateDetails);
+                    app.bookletsToolbar.onStateChange(app.selectionState);
+                    app.bookletDetailsToolbar.onStateChange(app.selectionStateDetails);
                 }
             },
             save: function () {
                 app.booklet.save(function (oldId, newId) {
-                    app.bookletsToolbar.onStateChange(selectionState);
-                    app.bookletDetailsToolbar.onStateChange(selectionStateDetails);
+                    app.bookletsToolbar.onStateChange(app.selectionState);
+                    app.bookletDetailsToolbar.onStateChange(app.selectionStateDetails);
                     Services.getBooklet(newId, {id: 'booklet_id', name: 'name'})
                         .then(function (data) {
                             Components.updateGridRow(app.bookletsList, oldId, data, ['id', 'name'], newId);
                             app.bookletsList.clearSelection();
                             app.bookletsList.selectRowById(newId);
                         })
-                        .catch(Toast.error)
+                        .catch(Toast.error);
                 });
             },
             delete: function () {
                 app.booklet.delete(function () {
                     app.bookletsList.deleteSelectedRows();
-                    app.bookletsToolbar.onStateChange(unSelectionState);
-                    app.bookletDetailsToolbar.onStateChange(unSelectionStateDetails);
+                    app.bookletsToolbar.onStateChange(app.unSelectionState);
+                    app.bookletDetailsToolbar.onStateChange(app.unSelectionStateDetails);
                 });
             }
         };
@@ -219,104 +201,57 @@ require([
             add: function () {
                 app.booklet.addNewItem();
             },
-            loadBackground: function () {
-                //BookletBackground.show();
-            },
             preview: function () {
                 var entity = app.booklet.controller.getEntity();
                 if (!entity._isNew) {
                     window.open(window.location + '?id=' + entity.id);
                 }
+            },
+            setBackground: function () {
+                BookletBackground.show();
             }
         };
 
-        /*BookletBackground.addSelectCallback(function (imageObject) {
-         if (imageObject) {
-         app.booklet.updateBackground(imageObject.image);
-         }
-         });*/
+        BookletBackground.addSelectCallback(function (imageObject) {
+            if (imageObject) {
+                app.booklet.updateBackground(imageObject.image);
+            }
+        });
         var toolbar = Components.createToolbar(layout, handlers, [
             'add',
             'preview',
             {
-                type: 'buttonSelect', id: 'templates', text: 'Разметка',
+                type: 'buttonSelect', id: 'templates', text: 'Разметка', openAll: true,
                 options: [
                     {type: 'button', id: '2-col', text: '2 колонки'},
                     {type: 'button', id: '3-col', text: '3 колонки'}
                 ]
             },
             {
-                type: 'button', id: 'loadBackgroundLocal', text: 'Загрузить фон с компьютера', img: 'computer.png',
-                img_disabled: 'computer_dis.png'
-            },
-            {
-                type: 'button', id: 'loadBackgroundDropbox', text: 'Загрузить фон из облака', img: 'storage.png',
-                img_disabled: 'storage_dis.png'
+                type: 'button', id: 'setBackground', text: 'Установить фон', img: 'background.png',
+                img_disabled: 'background.png'
             }
         ]);
-        toolbar.onStateChange(unSelectionStateDetails);
+        toolbar.onStateChange(app.unSelectionStateDetails);
+        toolbar.attachEvent('onClick', function (id) {
+            switch (id) {
+                case '2-col':
+                    app.booklet.setTemplate('2c3c');
+                    break;
+                case '3-col':
+                    app.booklet.setTemplate('3c2c');
+                    break;
+            }
+        });
+
         return toolbar;
     }
 
-    function initTemplatesList(toolbar) {
-        var cfg = [
-            get2ColumnConfig(),
-            get3ColumnConfig()
-        ];
-        var index = 0;
-        var item;
-        while (index <= cfg.length - 1) {
-            item = cfg[index];
-            toolbar.addListOption(
-                'templates',
-                item.id,
-                index,
-                item.type,
-                item.text
-            );
-            toolbar.attachEvent('onClick', item.handler);
-            index++;
-        }
-    }
-
-    function get2ColumnConfig() {
-        return {
-            id: '2-col',
-            type: 'button',
-            text: '2 колонки',
-            handler: function handler2Column(id) {
-                if (id === '2-col') {
-                    app.booklet.setTemplate('2c3c');
-                }
-            }
-        }
-    }
-
-    function get3ColumnConfig() {
-        return {
-            id: '3-col',
-            type: 'button',
-            text: '3 колонки',
-            handler: function handler3Column(id) {
-                if (id === '3-col') {
-                    app.booklet.setTemplate('3c2c');
-                }
-            }
-        }
-    }
-
     function initBookletPreview(app, layout) {
-        layout.cells('b').attachHTMLString("<div id='booklets'></div>");
+        layout.cells('b').attachHTMLString('<div id=\'booklets\'></div>');
         var booklet = new BookletComponent(document.getElementById('booklets'), new BookletController().init()).init();
         //booklet.enable();
         return booklet;
-    }
-
-    function formatBookletImage(src) {
-        if (src && src.length > 0 && src.indexOf('data:image') != 0) {
-            src = "/" + app.bookletImageRoot + "/" + src;
-        }
-        return src;
     }
 
     function evaluateSizeMultiplayer(size) {

@@ -13,7 +13,7 @@ define([
         return {
             width: w * ratio,
             height: h * ratio
-        }
+        };
     }
 
     function AuDropboxDir(rootDir) {
@@ -216,7 +216,7 @@ define([
                 {id: 'reload', type: 'button', text: 'Обновить', img: 'reload.png', img_disabled: 'reload_dis.png'},
                 {id: 'create-dir', type: 'button', text: 'Создать папку', img: 'create_dir.png', img_disabled: 'create_dir_dis.png'},
                 {id: 'delete', type: 'button', text: 'Удалить', img: 'delete.png', img_disabled: 'delete_dis.png'},
-                {id: 'rename', type: 'button', text: 'Переименовать', img: 'rename.png', img_disabled: 'rename_dis.png'},
+                {id: 'rename', type: 'button', text: 'Переименовать', img: 'edit.png', img_disabled: 'edit_dis.png'},
                 {id: 'upload', type: 'button', text: 'Загрузить файлы', img: 'upload.png', img_disabled: 'upload_dis.png'},
                 {id: 'sep1', type: 'separator'},
                 {id: 'add-to-product', type: 'button', text: 'Добавить к товару', img: 'add.png', img_disabled: 'add_dis.png'}
@@ -334,7 +334,7 @@ define([
             self._view.parse(items, 'json');
             self._win.progressOff();
         } else {
-            return this._client.filesListFolder({
+            this._client.filesListFolder({
                 path: this._currentDir,
                 limit: this._pageSize
             }).then(function (response) {
@@ -368,7 +368,7 @@ define([
                 .catch(function (error) {
                     cell.progressOff();
                     Toast.error(error);
-                })
+                });
         }
     };
 
@@ -553,7 +553,8 @@ define([
 
     AuDropboxDir.prototype._canGoBack = function _canGoBack() {
         var self = this;
-        return self._currentDir.indexOf(self._rootDir) === 0 && self._currentDir.trim().length > self._rootDir.trim().length;
+        return self._currentDir.indexOf(self._rootDir) === 0
+            && self._currentDir.trim().length > self._rootDir.trim().length;
     };
 
     AuDropboxDir.prototype._loadThumbnails = function _loadThumbnails(pathDir, filesPathes) {
@@ -606,7 +607,7 @@ define([
                 path: path,
                 format: 'jpeg',
                 size: 'w128h128'
-            }
+            };
         });
     };
 
@@ -626,7 +627,6 @@ define([
                 }
             }
         }
-
     };
 
     AuDropboxDir.prototype._thumbnailsProgressOn = function _thumbnailsProgressOn() {

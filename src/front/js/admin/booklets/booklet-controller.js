@@ -1,8 +1,9 @@
 define([
+    'common/components',
     'common/services',
     'common/service-entities',
     'common/toast'
-], function (Services, ServiceEntities, Toast) {
+], function (Components, Services, ServiceEntities, Toast) {
     'use strict';
 
     function generateId(id) {
@@ -61,7 +62,7 @@ define([
         if (this.owner.bookletItems && this.owner.bookletItems.length) {
             this.owner.bookletItems.forEach(function (bookletItem) {
                 instance.entity.listItems.push(bookletItem.controller.getEntity());
-            })
+            });
         }
         return this.entity;
     };
@@ -80,7 +81,7 @@ define([
                 if (data.bordersTemplate) {
                     instance.owner.setTemplate(data.bordersTemplate);
                 }
-                if (typeof callback == 'function') {
+                if (typeof callback === 'function') {
                     callback(data);
                 }
             })

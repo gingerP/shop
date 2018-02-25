@@ -19,7 +19,6 @@ class AdminPageBooklets extends AdminPagesCreator {
             <script type='text/javascript' src='/src/front/js/ext/require.js'></script>
             <script type='text/javascript' src='/src/front/js/utils.js'></script>
             <link rel='stylesheet' type='text/css' href='/src/front/dhtmlx/dhtmlx.css'>
-            <link rel='stylesheet' type='text/css' href='/src/front/style/booklet.css'>
             <script type='text/javascript' src='/src/front/js/admin/require.config.js'></script>
             <script type='text/javascript' src='/src/front/js/admin/booklets/index.js'></script>"
         ];

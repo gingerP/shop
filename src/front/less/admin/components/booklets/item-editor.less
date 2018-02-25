@@ -1,0 +1,119 @@
+#booklet-item-image-preview {
+  position: relative;
+  width: 300px;
+  height: 500px;
+  margin: 7px 0 0 4px;
+  border: 2px solid #909090;
+
+  .booklet_item_image {
+    width: 100%;
+  }
+  .text_fields_container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+  }
+
+  .text_fields_sub_container {
+    display: table;
+    position: absolute;
+    textarea {
+      max-width: 175px;
+      max-height: 50px;
+    }
+  }
+
+  .booklet_item_image_label:not(:focus) {
+    border-style: dashed;
+    background: transparent;
+  }
+
+  .top_right_0,
+  .top_right_1,
+  .top_left_0,
+  .top_left_1,
+  .top_center_0,
+  .top_center_1,
+  .bottom_right_0,
+  .bottom_right_1,
+  .bottom_left_0,
+  .bottom_left_1,
+  .bottom_center_0,
+  .bottom_center_1 {
+    position: relative;
+    margin: 3px 0 0 0;
+    font-weight: bold;
+  }
+
+  .top_right_0,
+  .top_right_1,
+  .bottom_right_0,
+  .bottom_right_1 {
+    text-align: right;
+  }
+
+  .top_left_0,
+  .top_left_1,
+  .bottom_left_0,
+  .bottom_left_1 {
+    text-align: left;
+  }
+
+  .top_center_0,
+  .top_center_1,
+  .bottom_center_0,
+  .bottom_center_1 {
+    text-align: center;
+  }
+  .top_right_0 {
+  }
+  .top_right_1 {
+  }
+  .bottom_right_0 {
+  }
+  .bottom_right_1 {
+  }
+  .bottom_center_0 {
+  }
+
+  .text_field_line {
+    border-bottom: 2px solid black;
+    position: relative;
+    padding: 0;
+    margin: 0;
+  }
+
+  .text_fields_sub_container {
+    &.top_right {
+      top: 5px;
+      right: 5px;
+    }
+
+    &.top_center {
+      top: 5px;
+      margin: 0 20%;
+    }
+
+    &.top_left {
+      top: 5px;
+      left: 5px;
+    }
+
+    &.bottom_right {
+      bottom: 5px;
+      right: 5px;
+    }
+
+    &.bottom_center {
+      bottom: 5px;
+      //bad idea, must be auto
+      margin: 0 20%;
+    }
+
+    &.bottom_left {
+      bottom: 5px;
+      left: 5px;
+    }
+  }
+}

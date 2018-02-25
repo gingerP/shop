@@ -3,7 +3,7 @@ define([
 ], function (ServiceEntities) {
     'use strict';
 
-    function generateId(id) {
+    function generateId() {
         return U.getRandomString();
     }
 
@@ -47,19 +47,16 @@ define([
         this.bookletItemManager.generateId = generateId;
         this.bookletItemLabelManager.generateId = generateId;
         this.labelTypes = {
-            top_right: 'top_right',
-            bottom_right: 'bottom_right',
-            bottom_center: 'bottom_center'
-        };
-        this.labelTypes = {
             top_right_0: 'top_right_0',
             top_right_1: 'top_right_1',
+            top_left_0: 'top_left_0',
+            top_left_1: 'top_left_1',
             bottom_right_0: 'bottom_right_0',
             bottom_right_1: 'bottom_right_1',
-            bottom_center_0: 'bottom_center_0',
-            bottom_center_1: 'bottom_center_1'
+            bottom_left_0: 'bottom_left_0',
+            bottom_left_1: 'bottom_left_1'
         };
-    };
+    }
 
     BookletItemController.prototype.createNew = function () {
         this.entity = this.bookletItemManager.createNewEntity();

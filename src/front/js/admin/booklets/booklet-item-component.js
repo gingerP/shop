@@ -11,13 +11,11 @@ define([
         this.editor = editor;
     }
 
-//constructor
     BookletItem.prototype.init = function (entity) {
         this.controller.setEntity(entity);
         return this;
     };
 
-//constructor
     BookletItem.prototype.createNew = function () {
         var entity = this.controller.createNew();
         return this;
@@ -45,21 +43,18 @@ define([
 
     BookletItem.prototype.initEvents = function () {
         var itemInstance = this;
-        //EDIT
-        this.$itemDOM.on('click', '.edit_item', function () {
+        this.$itemDOM.on('click', '.edit-item', function () {
             itemInstance.editor.updateRelations(itemInstance);
             itemInstance.editor.show();
             itemInstance.editor.populateData(itemInstance.controller.getEntity());
-        })
-        //CLEAR
-        this.$itemDOM.on('click', '.clear_item', function () {
+        });
+        this.$itemDOM.on('click', '.clear-item', function () {
             itemInstance.clear();
-        })
-        //DELETE
-        this.$itemDOM.on('click', '.delete_item', function () {
+        });
+        this.$itemDOM.on('click', '.delete-item', function () {
             itemInstance.booklet.deleteItem(itemInstance);
             itemInstance.unload();
-        })
+        });
 
         this.draggable = undefined;
         if (U.hasContent(this.getId())) {
@@ -73,7 +68,7 @@ define([
                 }
             }).on('mouseup', function () {
                 itemInstance.booklet.clearHightLight();
-            })
+            });
 
             $('.ui-resizable-handle', this.resizable).attr('data-clickable', true);
             this.draggable = Draggable.create(selector, {
@@ -110,7 +105,7 @@ define([
                 onDragEnd: function () {
                     itemInstance.booklet.clearHightLight();
                 }
-            })
+            });
         }
     };
 

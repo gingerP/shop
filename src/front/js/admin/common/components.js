@@ -226,21 +226,22 @@ define([], function () {
             return toolbar;
         },
 
-        initDhtmlxWindow: function (vars, closeCallback) {
+        initDhtmlxWindow: function (options, closeCallback) {
             var myWins = new dhtmlXWindows({
                 image_path: '/src/front/dhtmlx/imgs/',
                 skin: 'dhx_blue'
             });
-            var _vars = {
+            var _options = {
                 id: U.getRandomString(),
                 left: 20,
                 top: 30,
                 width: 300,
                 height: 200,
-                center: true
+                center: true,
+                caption: 'Title'
             };
-            $.extend(true, _vars, vars || {});
-            var win = myWins.createWindow(_vars);
+            $.extend(true, _options, options || {});
+            var win = myWins.createWindow(_options);
             win.attachEvent('onClose', function () {
                 if (typeof closeCallback === 'function') {
                     closeCallback();
