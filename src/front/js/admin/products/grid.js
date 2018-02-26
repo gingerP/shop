@@ -3,16 +3,16 @@ define([
 ], function(_) {
 
     function initGrid(layout) {
-        var grid = layout.cells("a").attachGrid();
+        var grid = layout.cells('a').attachGrid();
         grid.setImagePath(app.dhtmlxImgsPath);
-        grid.setHeader("#, Код, Название");
-        grid.setInitWidths("40,100,290");
-        grid.setColAlign("left,left,left");
-        grid.setColTypes("ro,ro,ro");
-        grid.setColSorting("int,str,str");
+        grid.setHeader('#, Код, Название');
+        grid.setInitWidths('40,100,290');
+        grid.setColAlign('left,left,left');
+        grid.setColTypes('ro,ro,ro');
+        grid.setColSorting('int,str,str');
         grid.init();
 
-        grid.attachEvent("onSelectStateChanged", function (id, oldId) {
+        grid.attachEvent('onSelectStateChanged', function (id, oldId) {
             var entity = this.getUserData(id, 'entity');
             app.form.unlock();
             var gridState = {
@@ -24,9 +24,10 @@ define([
                 app.images.loadImages(entity);
             } else {
                 app.images.clearImages();
+                app.images.lock(false);
             }
         });
-        grid.attachEvent("onBeforeSelect", function(id, oldId){
+        grid.attachEvent('onBeforeSelect', function(id, oldId){
             var oldEntity = this.getUserData(oldId, 'entity');
             if (_.isObject(oldEntity) && oldEntity._isNew === true) {
                 return false;
