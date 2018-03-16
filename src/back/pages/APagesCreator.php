@@ -6,7 +6,7 @@ include_once("src/back/import/tag");
 
 abstract class APagesCreator
 {
-    private $pagePrefix = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">' . "\n";
+    private $pagePrefix = "<!doctype html> <!-- HTML5 -->";
     private $isTreeVisible = false;
     private $treeKey = "";
     private $isPathLinkVisible = true;
@@ -34,10 +34,12 @@ abstract class APagesCreator
 
     public function getHtml()
     {
-        $html = new Html();
+        $html = new Html('ru');
         $head = $this->createHead();
         $head->addChild(
-            '<meta name="google-site-verification" content="bOWvr4uXCth1WKxvHScBwFR_bb3Q_4WeWSXeYyARLGk">
+            '
+                <meta name="theme-color" content="#17A086"/>
+                <meta name="google-site-verification" content="bOWvr4uXCth1WKxvHScBwFR_bb3Q_4WeWSXeYyARLGk">
                 <meta name="yandex-verification" content="63479cc9e5a115aa">'
         );
         $body = $this->createBody();
@@ -75,13 +77,16 @@ abstract class APagesCreator
         $head = new Head();
         $head->addChild('
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
             <meta name="robots" content="index, follow">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">' . "\n");
         $head->addChild($this->getTitleTag());
         $head->addChild('
             <link rel="stylesheet" type="text/css" href="/dist/style.css" title="main"/>
-            <link rel="shortcut icon" href="images/system/favicon.ico" type="image/x-icon"/>');
+            <link rel="apple-touch-icon" href="images/system/favicon-200.png">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-mobile-web-app-status-bar-style" content="black">
+            <link rel="shortcut icon" href="images/system/favicon.png" type="image/x-icon"/>');
         if ($this->isJsUglify) {
             $head->addChild('
             <script type="text/javascript" src="/dist/vendor1.js"></script>

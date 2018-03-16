@@ -107,7 +107,7 @@ class MainPage extends APagesCreator
         $head->addStyleClasses(["slogan_container_horizontal", "z-10"]);
         $slogan = new Div();
         $slogan->addStyleClass("slogan");
-        $slogan->addChild("Наша спецодежда позаботится о Вас.");
+        $slogan->addChild("Собственное производство.");
         $head->addChildren($slogan);
 
         $head2 = new Div();

@@ -35,6 +35,7 @@ class Item {
             $imgView = new Img();
             $imgView->addAttributes(
                 [
+                    "rel" => "preload",
                     "itemprop" => "image",
                     TagLabels::ON_CLICK => "openSimpleImg(arguments[0])",
                     "src" => "/".addslashes($images[$imgIndex]),

@@ -92,7 +92,9 @@ try {
             $page = getContent(ContactsPage::class);
             break;
         default:
-            if (Utils::isHomeNaked($_SERVER['REQUEST_URI'])) {
+            if ($_SERVER['REQUEST_URI'] == '/google82bab8cc8d403ffc.html') {
+                $page = "google-site-verification: google82bab8cc8d403ffc.html";
+            } else if (Utils::isHomeNaked($_SERVER['REQUEST_URI'])) {
                 $page = getContent(MainPage::class);
             }  else {
                 redirectMain();
