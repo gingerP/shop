@@ -70,7 +70,7 @@ class SearchService
                 $imagesSmall = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::SMALL_IMAGE, $catalogPath);
                 array_push($normalized, [
                     'name' => $product[DB::TABLE_GOODS__NAME],
-                    'url' => URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM], null, null, []),
+                    'url' => URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM]),
                     'icon' => $imagesSmall[0]
                 ]);
             }

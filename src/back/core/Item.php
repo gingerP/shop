@@ -92,11 +92,7 @@ class Item {
         if ($type == 'HARD') {
             $link = TagUtils::createNote(
                 $trimName,
-                URLBuilder::getCatalogLinkForSingleItem($itemId, $pageNumber, $num, array(
-                    UrlParameters::KEY => $key,
-                    UrlParameters::SEARCH_VALUE => $valueToSearch
-                    )
-                )
+                URLBuilder::getCatalogLinkForSingleItem($itemId)
             );
             $blackOut->addChild($link);
         } elseif ($type == 'SIMPLE') {
@@ -128,11 +124,7 @@ class Item {
         ));
         $imgView->addStyleClass("simple_item_image");
         if ($type == 'HARD') {
-            $url = URLBuilder::getCatalogLinkForSingleItem($itemId, $pageNumber, $num, array(
-                    UrlParameters::KEY => $key,
-                    UrlParameters::SEARCH_VALUE => $valueToSearch
-                )
-            );
+            $url = URLBuilder::getCatalogLinkForSingleItem($itemId);
             $mainDiv->addStyleClass("cursor_pointer");
             $link = TagUtils::createNote($trimName, "");
             $blackOut->addChild($link);
@@ -175,11 +167,7 @@ class Item {
             $index++;
         }
 
-        $url = URLBuilder::getCatalogLinkForSingleItem($itemId, $pageNumber, $num, array(
-                UrlParameters::KEY => $key,
-                UrlParameters::SEARCH_VALUE => $valueToSearch
-            )
-        );
+        $url = URLBuilder::getCatalogLinkForSingleItem($itemId);
         $mainDiv->addStyleClass("cursor_pointer");
         $link = TagUtils::createNote($trimName, "");
         $blackOut->addChild($link);

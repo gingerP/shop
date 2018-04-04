@@ -1,6 +1,7 @@
 {
 
   "globals": {
+    "google": true,
     "req": true,
     "define": true,
     "$": true,

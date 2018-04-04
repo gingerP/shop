@@ -1,0 +1,83 @@
+<div id="contacts-list">
+    {{# contacts }}
+        <div class="contact-item f-15 {{color}}" data-lat="{{map.0}}" data-lng="{{map.1}}" data-info="{{toString}}">
+            <h3 class="contact-title-marker">
+                <span class="contact-title-address">{{address}}</span>
+            </h3>
+            <div class="contact-address">
+                <!--<h4 class="contact-address-item contact-address-address">{{address}}</h4>-->
+                {{#email}}
+                    <div class="contact-address-item contact-email">
+                        <div class="contact-address-label">почта</div>
+                        <div class="contact-address-value">
+                            <a href="mailto:{{email}}?subject=Сообщение с сайта для ЧТУП&quot;Августово-Компани&quot;">{{email}}</a>
+                        </div>
+                    </div>
+                {{/email}}
+                {{#workingHours.0}}
+                    <div class="contact-address-item contact-working-hours">
+                        <div class="contact-address-label">время работы</div>
+                        <div class="contact-address-value">c {{workingHours.0}} до {{workingHours.1}}</div>
+                    </div>
+                {{/workingHours.0}}
+                {{#weekend.0}}
+                    <div class="contact-address-item contact-weekend">
+                        <div class="contact-address-label">выходные</div>
+                        <div class="contact-address-value">{{weekend | array.join}}</div>
+                    </div>
+                {{/weekend.0}}
+            </div>
+            {{#prices.0}}
+                <div class="contact-delimiter"></div>
+                <div class="contact_prices">
+                    <ul>
+                        {{#prices}}
+                            <li>{{.}}</li>
+                        {{/prices}}
+                    </ul>
+                </div>
+            {{/prices.0}}
+            {{#images.0}}
+                <div class="contact-delimiter"></div>
+                <div class="contact-images">
+                    <div class="contact-image">
+                        <img src="{{.}}">
+                    </div>
+                </div>
+            {{/images.0}}
+            {{#mobileNumbers.0}}
+                <div class="contact-delimiter"></div>
+                {{#mobileNumbers}}
+                    <div class="contact_numbers">
+                        <a class="contact-number" href="tel:{{number}}">
+                            <div class="contact-number-call">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#414141" height="24" viewBox="0 0 24 24"
+                                     width="24">
+                                    <path d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path>
+                                </svg>
+                            </div>
+                            <span class="contact-number-provider">{{title}}</span>
+                            <span class="contact-number-label">{{number}}</span>
+                        </a>
+                    </div>
+                {{/mobileNumbers}}
+            {{/mobileNumbers.0}}
+            <div class="button view_in_map_button input_hover f-15">
+                <div class="contact-map-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#414141" height="24" viewBox="0 0 24 24" width="24">
+                        <g>
+                            <path d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M16.49 15.5v-1.75L14 16.25l2.49 2.5V17H22v-1.5z"></path>
+                            <path d="M19.51 19.75H14v1.5h5.51V23L22 20.5 19.51 18z"></path>
+                            <g>
+                                <path d="M9.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5.75 8.9L3 23h2.1l1.75-8L9 17v6h2v-7.55L8.95 13.4l.6-3C10.85 12 12.8 13 15 13v-2c-1.85 0-3.45-1-4.35-2.45l-.95-1.6C9.35 6.35 8.7 6 8 6c-.25 0-.5.05-.75.15L2 8.3V13h2V9.65l1.75-.75"></path>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="contact-map-label">на карте</div>
+            </div>
+        </div>
+    {{/contacts}}
+</div>

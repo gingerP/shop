@@ -8,7 +8,7 @@ class DeliveryPage extends APagesCreator
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(UrlParameters::PAGE__DELIVERY);
         $this->setPageCode("delivery");
         $this->setIsTreeVisible(false);
         $this->setIsStatusBarVisible(true);

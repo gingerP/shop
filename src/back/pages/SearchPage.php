@@ -6,7 +6,7 @@ class SearchPage extends APagesCreator {
     private $search_value = "";
 
     public function __construct() {
-        parent::__construct();
+        parent::__construct(UrlParameters::PAGE__SEARCH);
         $this->setPageCode("search_page");
         $this->setIsStatusBarVisible(true);
         $this->setIsViewModeBlockVisible(true);

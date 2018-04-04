@@ -1,20 +1,29 @@
 <?php
 include_once("src/back/import/db");
 include_once("src/back/import/page");
+use Katzgrau\KLogger\Logger as Logger;
 
-
-class CatalogLoader {
+class CatalogLoader
+{
 
     public $dataTotalCount;
     public $dataCount;
     public $data;
+    private $logger;
 
-    private function isAdminOrderEnabled() {
+    public function __construct()
+    {
+        $this->logger = new Logger(AU_CONFIG['log.file'], AU_CONFIG['log.level']);
+    }
+
+    private function isAdminOrderEnabled()
+    {
         $preference = new DBPreferencesType();
         return $preference->getPreference(Constants::USE_ADMIN_ORDER)[DB::TABLE_PREFERENCES__VALUE] == 'true';
     }
 
-    public function getItemsMainData($pageNumber, $num) {
+    public function getItemsMainData($pageNumber, $num)
+    {
         $Products = new DBGoodsType();
         $limitBegin = ($pageNumber - 1) * $num;
         $limitEnd = $num;
@@ -26,10 +35,11 @@ class CatalogLoader {
         $this->data = $Products->extractDataFromResponse($Products->getResponse());
         $this->dataCount = $Products->getResponseSize();
         $Products->executeTotalCount();
-        $this->dataTotalCount = $Products->getTotalCount();
+        $this->dataTotalCount = intval($Products->getTotalCount());
     }
 
-    public function getItemsMenuData($pageNumber, $num, $key) {
+    public function getItemsForCategory($pageNumber, $num, $key)
+    {
         $Products = new DBGoodsType();
         $navKeys = new DBNavKeyType();
         $treeUtils = new TreeUtils();
@@ -44,18 +54,19 @@ class CatalogLoader {
             $Products->getUserSortedForMenu($keys, $limitBegin, $limitEnd);
         } else {
             $str = implode('|', $keys);
-            $Products->executeRequestRegExpWithLimit(DB::TABLE_GOODS__CATEGORY, "^(".$str."){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
+            $Products->executeRequestRegExpWithLimit(DB::TABLE_GOODS__CATEGORY, "^(" . $str . "){1}", DB::TABLE_GOODS___ORDER, DB::ASC, $limitBegin, $limitEnd);
         }
         $this->data = $Products->extractDataFromResponse($Products->getResponse());
         $this->dataCount = count($this->data);
     }
 
-    public function getItemSearchData($pageNumber, $num, $valueToSearch) {
+    public function getItemSearchData($pageNumber, $num, $valueToSearch)
+    {
         $Products = new DBGoodsType();
         $searchResult = $Products->searchByNameDescription($valueToSearch, $pageNumber * $num, $num);
         $this->data = $searchResult['list'];
         $this->dataCount = count($searchResult['list']);
-        $this->dataTotalCount = $searchResult['totalCount'];
+        $this->dataTotalCount = intval($searchResult['totalCount']);
     }
 
 }

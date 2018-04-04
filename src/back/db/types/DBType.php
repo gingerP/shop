@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 include_once("src/back/import/import");
+use Katzgrau\KLogger\Logger as Logger;
 
 abstract class DBType {
 
@@ -15,8 +16,10 @@ abstract class DBType {
     protected $request = "";
     protected $response = null;
     protected $responseSize = 0;
+    protected $logger;
 
     protected function __construct() {
+        $this->logger = new Logger(AU_CONFIG['db.log.file'], AU_CONFIG['db.log.level']);
     }
 
     public function executeRequestWithLimit($whereParamKey, $whereParamValue, $order, $orderRule, $limitBegin, $limitEnd) {
@@ -25,7 +28,7 @@ abstract class DBType {
         if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->execute($this->request);
-        Log::db("DBConnection.executeRequestWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestWithLimit REQUEST: ".$this->request);
         return $this->response;
     }
 
@@ -57,7 +60,7 @@ abstract class DBType {
         if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitNum;
         $this->execute($this->request);
-        Log::db("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
         return $this->response;
     }
 
@@ -76,7 +79,7 @@ abstract class DBType {
         if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitNum;
         $this->execute($this->request);
-        Log::db("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
         return $this->response;
     }
 
@@ -84,7 +87,7 @@ abstract class DBType {
         $countRequest = "SELECT COUNT(t.".DB::TABLE_ID.") FROM ".$this->getTable()." AS t";
         $row = mysqli_fetch_row($this->execute($countRequest));
         $this->totalCount = $row[0];
-        Log::db("DBConnection.getTotalCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getTotalCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
         return $this->response;
     }
 
@@ -98,14 +101,14 @@ abstract class DBType {
         if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->execute($this->request);
-        Log::db("DBConnection.executeRequestRegExpWithLimit REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        $this->logger->debug("DBConnection.executeRequestRegExpWithLimit REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         return $this->response;
     }
 
     public function get($id) {
         $this->request = "SELECT * FROM ".$this->getTable()." AS t WHERE t.".$this->getIndexColumn()."=".$id;
         $this->execute($this->request);
-        Log::db("DBConnection.get REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        $this->logger->debug("DBConnection.get REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         if ($this->response) {
             return mysqli_fetch_array($this->response);
         }
@@ -119,7 +122,7 @@ abstract class DBType {
         }
         $this->request = "SELECT ".$fields." FROM ".$this->getTable()." t;";
         $this->execute($this->request);
-        Log::db("DBConnection.getList REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        $this->logger->debug("DBConnection.getList REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         return $this->response;
     }
 
@@ -133,7 +136,7 @@ abstract class DBType {
         $criteria = implode(',', array_map('prepareCriteria', $criteriaList));
         $this->request = "SELECT * FROM ".$this->getTable()." WHERE $columnName IN ($criteria);";
         $this->execute($this->request);
-        Log::db("DBConnection.getListIn REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        $this->logger->debug("DBConnection.getListIn REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         return $this->response;
     }
 
@@ -142,11 +145,11 @@ abstract class DBType {
         if ($mapping != null && count($mapping) > 0) {
             $fields = implode(",", array_values($mapping));
         }
-        $this->request = "SELECT ".$fields." FROM ".$this->getTable()." WHERE ".DB::TABLE_ACTIVE."=true ORDER BY ".$this->getOrder();
+        $this->request = "SELECT ".$fields." FROM ".$this->getTable()." WHERE ".DB::TABLE_ACTIVE."=true ORDER BY `".$this->getOrder()."` ASC;";
 
         try {
             $this->execute($this->request);
-            Log::db("DBConnection.getList REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+            $this->logger->debug("DBConnection.getList REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -164,7 +167,7 @@ abstract class DBType {
             }
             $this->request .= join($requestParams, ",")." WHERE ".$this->getIndexColumn()."='".$id."';";
             $this->execute($this->request);
-            Log::db("DBConnection.update REQUEST: ".$this->request);
+            $this->logger->debug("DBConnection.update REQUEST: ".$this->request);
             return $id;
         } else {
             $this->initConnection();
@@ -178,7 +181,7 @@ abstract class DBType {
             $this->request = "INSERT INTO ".$this->getTableName()."(".join($columns, ",").") VALUES ('".join($values, "','")."');";
             $this->execute($this->request);
             $id_ = $this->connection->insertId;
-            Log::db("DBConnection.update REQUEST: ".$this->request." RESPONSE: ".$id_);
+            $this->logger->debug("DBConnection.update REQUEST: ".$this->request." RESPONSE: ".$id_);
             return $id_;
         }
         return -1;
@@ -189,7 +192,7 @@ abstract class DBType {
         if (!is_null($id) && $id != '') {
             $this->request = "DELETE FROM ".$this->getTableName()." WHERE ".$this->getIndexColumn()."=".$id.';';
             $this->execute($this->request);
-            Log::db("DBConnection.delete REQUEST: ".$this->request);
+            $this->logger->debug("DBConnection.delete REQUEST: ".$this->request);
             $rowsCount = $this->connection->affectedRows;
         }
         return $rowsCount;
@@ -198,7 +201,7 @@ abstract class DBType {
     public function clear() {
         $this->request = "TRUNCATE TABLE ".$this->getTableName();
         $this->execute($this->request);
-        Log::db("DBConnection.update REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.update REQUEST: ".$this->request);
         return true;
     }
 
@@ -217,6 +220,7 @@ abstract class DBType {
         if (is_bool($this->response)) {
             $this->responseSize = 0;
             if ($this->response == false) {
+                $this->logger->error('Error while executing: '.$sqlCommand);
                 throw new DataBaseError(mysqli_error($this->getConnection()->getLink()));
             }
         } else {
@@ -245,7 +249,7 @@ abstract class DBType {
         $this->request = "DELETE * FROM ".$this->getTableName();
         $this->execute($this->request);
         $rowsCount = $this->connection->affectedRows;
-        Log::db("DBConnection.removeAll ".$this->getTableName()." REQUEST: ".$this->request." RESPONSE: ".$rowsCount);
+        $this->logger->debug("DBConnection.removeAll ".$this->getTableName()." REQUEST: ".$this->request." RESPONSE: ".$rowsCount);
         return $rowsCount;
     }
 

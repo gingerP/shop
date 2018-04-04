@@ -51,7 +51,7 @@ class EmailService
             if (!is_null($product)) {
                 $productUrl = FileUtils::buildPath(
                     $publicUrl,
-                    URLBuilder::getCatalogLinkForSingleItem($product["key_item"], null, null, [])
+                    URLBuilder::getCatalogLinkForSingleItem($product["key_item"])
                 );
                 $productName = $product[DB::TABLE_GOODS__NAME];
                 $html .= "<hr><br>

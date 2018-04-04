@@ -40,7 +40,7 @@ class DBGoodsType extends DBType{
         }
         $row = mysqli_fetch_row($this->execute($countRequest));
         $this->totalCount = $row[0];
-        Log::db("DBConnection.getGoodsSearchCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getGoodsSearchCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
     }
 
     public function getGoodsKeyCount($keys) {
@@ -48,7 +48,7 @@ class DBGoodsType extends DBType{
         $countRequest = "SELECT COUNT(t.".DB::TABLE_ID.") FROM ".$this->getTable()." AS t WHERE t.".DB::TABLE_GOODS__KEY_ITEM." REGEXP '".$pattern."'";
         $row = mysqli_fetch_row($this->execute($countRequest));
         $this->totalCount = $row[0];
-        Log::db("DBConnection.getGoodsKeyCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getGoodsKeyCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
     }
 
     protected function getTable() {
@@ -69,7 +69,7 @@ class DBGoodsType extends DBType{
                                 ." WHERE ".DB::TABLE_GOODS__KEY_ITEM." REGEXP ".$regexp." ORDER BY RAND() LIMIT ".$randomItemsCount;
         $this->execute($this->request);
         $this->totalCount = mysqli_num_rows($this->response);
-        Log::db("DBConnection.getRandomRowByKeys: ".$this->request." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getRandomRowByKeys: ".$this->request." TOTALCOUNT: ".$this->totalCount);
         return $this->getResponse();
     }
 
@@ -89,7 +89,7 @@ class DBGoodsType extends DBType{
             $this->request = "SELECT COUNT(*) FROM $tableGoods_NAME WHERE $tableGoods_keyItem REGEXP '^($keyItemParent){1}[0-9]{1,3}$' AND $sort_column <= (SELECT $sort_column FROM $tableGoods_NAME WHERE $tableGoods_keyItem='$itemId')";
             $row = mysqli_fetch_row($this->execute($this->request));
             $this->totalCount = $row[0];
-            Log::db("goods DBConnection.getCatalogItemPosition: $this->request | totalcount: $this->totalCount");
+            $this->logger->debug("goods DBConnection.getCatalogItemPosition: $this->request | totalcount: $this->totalCount");
         }
         return $this->totalCount;
     }
@@ -100,7 +100,7 @@ class DBGoodsType extends DBType{
         $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->execute($this->request);
-        Log::db("DBConnection.getUserSortedForCommon REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.getUserSortedForCommon REQUEST: ".$this->request);
         return $this->response;
     }
 
@@ -112,7 +112,7 @@ class DBGoodsType extends DBType{
         $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->execute($this->request);
-        Log::db("DBConnection.getUserSortedForMenu REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        $this->logger->debug("DBConnection.getUserSortedForMenu REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
         return $this->response;
     }
 
@@ -132,7 +132,7 @@ class DBGoodsType extends DBType{
         $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
         $this->responseSize = mysqli_num_rows($this->execute($this->request));
-        Log::db("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
         return $this->response;
     }
 
@@ -185,7 +185,7 @@ class DBGoodsType extends DBType{
         if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
         $this->request = $this->request." LIMIT ".$limitBegin.",".$limitNum;
         $this->execute($this->request);
-        Log::db("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
         return $this->response;
     }
 

@@ -16,12 +16,12 @@ class Labels {
     public static $TOP_NAVIGATION_KEYS = array('main', 'catalog', 'contacts', 'delivery', 'search');
     public static $BOTTOM_NAVIGATION_KEYS = array('catalog', 'contacts');
     public static $TOP_NAVIGATION_LINKS = array(
-        "main" => "?page_name=main",
-        "catalog" => "?page_name=catalog",
-        "search" => "?page_name=search",
-        "delivery" => "?page_name=delivery",
+        "main" => "/",
+        "catalog" => "/catalog",
+        "search" => "/catalog",
+        "delivery" => "/delivery",
         "download" => "",
-        "contacts" => "?page_name=contacts",
+        "contacts" => "/contacts",
     );
     public static $TOP_NAVIGATION_TITLE = array(
         "main" => "Главная",

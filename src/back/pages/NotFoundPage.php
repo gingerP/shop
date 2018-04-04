@@ -8,7 +8,7 @@ class NotFoundPage extends APagesCreator
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(UrlParameters::PAGE__MAIN);
         $this->setPageCode("search_page");
         $this->setIsStatusBarVisible(true);
         $this->setIsViewModeBlockVisible(true);

@@ -9,7 +9,7 @@ class SingleItemPage extends APagesCreator
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(UrlParameters::PAGE__SINGLE_ITEM);
         $this->setPageCode("single_item_page");
         $this->setIsStatusBarVisible(true);
         $this->setIsTreeVisible(true);

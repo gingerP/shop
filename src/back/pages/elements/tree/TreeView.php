@@ -100,7 +100,11 @@ class TreeView
             $nodeIcon->addStyleClass("tree_empty");
         }
         $link = new A();
-        $link->addAttribute("href", URLBuilder::getCatalogLinkForTree($tree->key));
+        if ($tree->key == 'GN') {
+            $link->addAttribute("href", URLBuilder::getCatalogLink());
+        } else {
+            $link->addAttribute("href", URLBuilder::getCatalogLinkForTree($tree->key));
+        }
         $link->addChild($tree->value);
         $link->addStyleClass("input_hover");
         $nodeSelected = new Div();

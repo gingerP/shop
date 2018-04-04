@@ -5,7 +5,7 @@ include_once("src/back/import/page");
 
 class Items {
 
-    public function getItemsTable($pageNumber, $num, $products, $key, $valueToSearch) {
+    public function getItemsTable($products) {
         $mainTag = new Div();
         $tdNum = 3;
         $indOnPage = 0;
@@ -14,7 +14,7 @@ class Items {
         $rowIndex = 1;
 
         if (count($products) > 0) {
-            $mainTag->addStyleClass("items_table");
+            $mainTag->addStyleClass('items_table');
             $rowView = new Div();
             $mainTag->addChild($rowView);
             $Preferences = new DBPreferencesType();
@@ -30,10 +30,10 @@ class Items {
                 } elseif (Utils::isEven($td)) {
                     $td++;
                 }
-                $rowView->addStyleClass("metro");
+                $rowView->addStyleClass('metro');
                 $cellView = new A();
                 $rowView->addChild($cellView);
-                $code = $product["key_item"];
+                $code = $product['key_item'];
                 $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
                 $images = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
                 if (count($images) == 0) {
@@ -42,16 +42,16 @@ class Items {
                 }
                 $item = null;
                 $info = Item::getMetroItemView(
-                    $product["name"],
+                    $product['name'],
                     $images,
                     $product[DB::TABLE_GOODS__VERSION],
-                    Utils::formatClotheTitle($product["name"])
+                    Utils::formatClotheTitle($product['name'])
                 );
                 $item = $info[0];
                 $itemInfo = $info[1];
 
                 $cellView->addChild($item);
-                $cellView->addStyleClass("catalog_good_item");
+                $cellView->addStyleClass('catalog_good_item');
 
                 if (array_key_exists('previews_cols_num', $itemInfo)) {
                     if ($itemInfo['previews_cols_num'] == 0) {
@@ -62,11 +62,7 @@ class Items {
                         $cellView->addStyleClass('previews-double-col');
                     }
                 }
-                $url = URLBuilder::getCatalogLinkForSingleItem($product["key_item"], $pageNumber, $num, array(
-                        UrlParameters::KEY => $key,
-                        UrlParameters::SEARCH_VALUE => $valueToSearch
-                    )
-                );
+                $url = URLBuilder::getCatalogLinkForSingleItem($product['key_item']);
                 $cellView->addAttribute('href', $url);
             }
 

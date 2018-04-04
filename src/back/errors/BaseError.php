@@ -4,7 +4,7 @@ class BaseError extends Exception
 {
     public $message = '';
     public $status;
-    private $stack = '';
+    public $stack = '';
 
     public function __construct($message, $httpStatus) {
         $this->message = $message;

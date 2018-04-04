@@ -9,8 +9,10 @@ class MainPage extends APagesCreator
 
     public function __construct()
     {
-        parent::__construct();
-        Log::info('------------------------------------------');
+        parent::__construct(UrlParameters::PAGE__MAIN);
+    }
+
+    public function build() {
         $this->setPageCode("main_page");
         $this->setIsStatusBarVisible(false);
         $this->setIsViewModeBlockVisible(false);
@@ -22,6 +24,11 @@ class MainPage extends APagesCreator
         ]);
         $this->addMetaTags($metaDesc);
         $this->content = $this->getHtml();
+        return $this;
+    }
+
+    public function validate($request) {
+        return $this;
     }
 
     protected function createGeneralContent()

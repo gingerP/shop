@@ -14,17 +14,18 @@ class UrlParameters {
     const KEY = 'key';
     const PAGE_ID = 'page_id';
     const PAGE = 'page';
-    const PAGE_NUM = 'page_num'; //page number
+    const PAGE_NUM = 'page'; //page number
     const NUM = 'num';
     const SEARCH_VALUE = 'search_value';
     const HIGH_LIGHT_ELEMENT = 'high_light_element';
     const VIEW_MODE = 'view_mode';
-    const ITEMS_COUNT = 'items_count'; //items count on page in catalog, search
+    const ITEMS_COUNT = 'num'; //items count on page in catalog, search
 
     /******************** url static values **************************/
     const PAGE__ADMIN = 'admin';
     const PAGE__SINGLE_ITEM = 'singleItem';
     const PAGE__CATALOG = 'catalog';
+    const PAGE__PRODUCTS = 'products';
     const PAGE__MAIN = 'main';
     const PAGE__SEARCH = 'search';
     const PAGE__CONTACTS = 'contacts';

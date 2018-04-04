@@ -5,9 +5,8 @@ include_once("src/back/import/page");
 class TopNavigationLinks
 {
 
-    public function getDOM()
+    public function getDOM($pageName)
     {
-        $pageName = Utils::getFromGET('page_name');
         $mainDiv = new Div();
         $mainDiv->addStyleClass("top_bottom_main_menu");
         $mainDiv->addChild(self::createLeftEarBar());

@@ -1,0 +1,9 @@
+{
+  "require": {
+    "rize/uri-template": "~0.3",
+    "bartosz-maciaszek/validation": "dev-master",
+    "katzgrau/klogger": "dev-master",
+    "klein/klein": "^2.1",
+    "mustache/mustache": "^2.12"
+  }
+}

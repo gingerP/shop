@@ -3,6 +3,7 @@
 include_once("src/back/import/import");
 include_once("src/back/import/page");
 include_once("src/back/import/tag");
+use Katzgrau\KLogger\Logger as Logger;
 
 abstract class APagesCreator
 {
@@ -26,10 +27,22 @@ abstract class APagesCreator
     protected $isCssUglify = true;
     protected $isJsUglify = true;
 
-    protected function __construct()
+    protected function __construct($pageName)
     {
+        $this->pageName = $pageName;
         $this->isCssUglify = AU_CONFIG['ui.css.uglify'];
         $this->isJsUglify = AU_CONFIG['ui.js.uglify'];
+        $this->logger = new Logger(AU_CONFIG['log.file'], AU_CONFIG['log.level']);
+    }
+
+    public function validate($request)
+    {
+        return $this;
+    }
+
+    public function build()
+    {
+        return $this;
     }
 
     public function getHtml()
@@ -66,7 +79,8 @@ abstract class APagesCreator
                     !$this->isBottomNavigationLinksFillingWidth ? $bottomNavigationLinks : null
                 ]),
                 $this->getPreBottom(),
-                $this->isBottomNavigationLinksFillingWidth ? $bottomNavigationLinks : null
+                $this->isBottomNavigationLinksFillingWidth ? $bottomNavigationLinks : null,
+                $this->getSourceScripts()
             ])
         ]);
         return $this->pagePrefix . ($html->getHtml());
@@ -87,16 +101,6 @@ abstract class APagesCreator
             <meta name="apple-mobile-web-app-capable" content="yes">
             <meta name="apple-mobile-web-app-status-bar-style" content="black">
             <link rel="shortcut icon" href="images/system/favicon.png" type="image/x-icon"/>');
-        if ($this->isJsUglify) {
-            $head->addChild('
-            <script type="text/javascript" src="/dist/vendor1.js"></script>
-            <script type="text/javascript" src="/dist/vendor2.js"></script>
-            <script type="text/javascript" src="/dist/bundle1.js"></script>
-            <script type="text/javascript" src="/dist/bundle2.js"></script>
-            ');
-        } else {
-            $this->addSourceScriptsToHead($head);
-        }
         $head->addChild(SearchEngines::getGoogleAnalyticScript());
         $head->addChild(SearchEngines::getYandexMetricScript());
         return $head;
@@ -159,7 +163,7 @@ abstract class APagesCreator
         $div1111 = new Div();
         $div1111->addStyleClass("top_bar_relative");
         $mainDiv->addChildList([$div11->addChild($div111->addChild($div1111))]);
-        $div1111->addChild($topNavigationLinks->getDOM());
+        $div1111->addChild($topNavigationLinks->getDOM($this->pageName));
 
         return $mainDiv;
     }
@@ -392,8 +396,16 @@ abstract class APagesCreator
         }
     }
 
-    private function addSourceScriptsToHead($head) {
-        $head->addChild('
+    protected function getSourceScripts()
+    {
+        if ($this->isJsUglify) {
+            return
+                '<script type="text/javascript" src="/dist/vendor1.js"></script>
+            <script type="text/javascript" src="/dist/vendor2.js"></script>
+            <script type="text/javascript" src="/dist/bundle1.js"></script>
+            <script type="text/javascript" src="/dist/bundle2.js"></script>';
+        }
+        return '
             <script type="text/javascript" src="/src/front/js/ext/jquery-2.1.4.min.js"></script>
             <script type="text/javascript" src="/src/front/js/ext/jquery.actual.min.js"></script>
             <script type="text/javascript" src="/src/front/js/ext/jquery.imageloader.js"></script>
@@ -414,8 +426,6 @@ abstract class APagesCreator
             <script type="text/javascript" src="/src/front/js/components/vCore-imageGallery.js"></script>
             <script type="text/javascript" src="/src/front/js/components/vCore-popup.js"></script>
             <script type="text/javascript" src="/src/front/js/components/vCore-imageZoom.js"></script>
-        ');
-        return $head;
+        ';
     }
-
 }

@@ -55,6 +55,7 @@ grunt.initConfig({
                 ],
                 'dist/bundle1.js': [
                     'src/front/js/components/search-input/search-input.js',
+                    'src/front/js/components/contacts/contacts.component.js',
                     'src/front/js/components/common.factory.js',
                     'src/front/js/components/components.module.js',
                     'src/front/js/components/email-form/email-form.component.js',

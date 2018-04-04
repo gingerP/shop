@@ -21,7 +21,7 @@ class DBUserOrderType extends DBType{
             $orderData = $this->correctOrderData($orderData);
             $this->request = $this->createOrderRequest($orderData);
             $this->execute($this->request);
-            Log::db("DBConnection.update REQUEST: ".$this->request);
+            $this->logger->debug("DBConnection.update REQUEST: ".$this->request);
             return true;
         }
         return false;

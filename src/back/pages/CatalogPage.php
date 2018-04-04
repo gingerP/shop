@@ -3,12 +3,29 @@ include_once("src/back/import/import");
 include_once("src/back/import/page");
 include_once("src/back/import/db");
 
-class CatalogPage extends APagesCreator{
+class CatalogPage extends APagesCreator
+{
 
     private $key = "";
+    private $categoryCode;
+    private $urlParams;
+    private $pageNumber;
+    private $itemsCount;
+    private $searchValue;
+    private $category;
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct(&$request)
+    {
+        parent::__construct(UrlParameters::PAGE__CATALOG);
+        $this->category = $request->param('category', '');
+        $this->pageNumber = intval($request->param(UrlParameters::PAGE_NUM, 1));
+        $this->itemsCount = intval($request->param(UrlParameters::ITEMS_COUNT, Labels::VIEW_MODE_NUMERIC_DEF));
+        $this->searchValue = $request->param(UrlParameters::SEARCH_VALUE, '');
+    }
+
+    public function build()
+    {
+        $this->categoryCode = $this->urlParams['identifier'];
         $this->updateTitleTagChildren(["Каталог - "]);
         $this->setPageCode("catalog_page");
         $this->setIsTreeVisible(true);
@@ -38,50 +55,66 @@ class CatalogPage extends APagesCreator{
         ]);
 
         $this->addMetaTags($metaDesc, $metaKeyWords);
-
         $this->content = $this->getHtml();
+        return $this;
     }
 
-    protected function createGeneralContent() {
+    protected function createGeneralContent()
+    {
         $mainTag = new Div();
         $items = new Items();
         $catalogLinks = new CatalogLinks();
-        if (array_key_exists(UrlParameters::PAGE_NAME, $_GET)) {
-            $pageNumber = Constants::DEFAULT_PAGE_NUMBER;
-            $itemsCount = Labels::VIEW_MODE_NUMERIC_DEF;
-            if (array_key_exists(UrlParameters::PAGE_NUM, $_GET)) {
-                $pageNumber = Utils::getFromGET(UrlParameters::PAGE_NUM);
+
+        if ($this->searchValue !== '') {
+            $loader = new CatalogLoader();
+            $loader->getItemSearchData($this->pageNumber, $this->itemsCount, $this->searchValue);
+            if ($loader->dataTotalCount == 0) {
+                return "";
             }
-            if (array_key_exists(UrlParameters::ITEMS_COUNT, $_GET)) {
-                $itemsCount = Utils::getFromGET(UrlParameters::ITEMS_COUNT);
-            }
-            if (array_key_exists(UrlParameters::SEARCH_VALUE, $_GET)) {
-                $itemsType = new CatalogLoader();
-                $searchValue = Utils::getFromGET(UrlParameters::SEARCH_VALUE);
-                $itemsType->getItemSearchData($pageNumber - 1, $itemsCount, $searchValue);
-                if($itemsType->dataTotalCount == 0) return "";
-                $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'top'));
-                $mainTag->addChild($items->getItemsTable($pageNumber, $itemsCount, $itemsType->data, '', $searchValue));
-                $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'bottom'));
-            } else if (array_key_exists(UrlParameters::KEY, $_GET)) {
-                $itemsType = new CatalogLoader();
-                $keyValue = Utils::getFromGET(UrlParameters::KEY);
-                $itemsType->getItemsMenuData($pageNumber, $itemsCount, $keyValue);
-                $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'top'));
-                $mainTag->addChild($items->getItemsTable($pageNumber, $itemsCount, $itemsType->data, $keyValue, ''));
-                $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'bottom'));
-            } else {
-                $itemsType = new CatalogLoader();
-                $itemsType->getItemsMainData($pageNumber, $itemsCount);
-                $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'top'));
-                $mainTag->addChild($items->getItemsTable($pageNumber, $itemsCount, $itemsType->data, '', ''));
-                $mainTag->addChild($catalogLinks->getPaginationLinks($pageNumber, $itemsCount, $itemsType->dataTotalCount, 'bottom'));
-            }
+            $paginationParams = [
+                'pageNum' => $this->pageNumber,
+                'itemsCount' => $this->itemsCount,
+                'totalCount' => $loader->dataTotalCount,
+                'searchValue' => $this->searchValue,
+                'position' => 'top'
+            ];
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+            $mainTag->addChild($items->getItemsTable($loader->data));
+            $paginationParams['position'] = 'bottom';
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+        } else if ($this->category !== '') {
+            $loader = new CatalogLoader();
+            $loader->getItemsForCategory($this->pageNumber, $this->itemsCount, $this->category);
+            $paginationParams = [
+                'pageNum' => $this->pageNumber,
+                'itemsCount' => $this->itemsCount,
+                'totalCount' => $loader->dataTotalCount,
+                'category' => $this->category,
+                'position' => 'top'
+            ];
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+            $mainTag->addChild($items->getItemsTable($loader->data));
+            $paginationParams['position'] = 'bottom';
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+        } else {
+            $loader = new CatalogLoader();
+            $loader->getItemsMainData($this->pageNumber, $this->itemsCount);
+            $paginationParams = [
+                'pageNum' => $this->pageNumber,
+                'itemsCount' => $this->itemsCount,
+                'totalCount' => $loader->dataTotalCount,
+                'position' => 'top'
+            ];
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+            $mainTag->addChild($items->getItemsTable($loader->data));
+            $paginationParams['position'] = 'bottom';
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
         }
         return $mainTag;
     }
 
-    public static function getCatalogDOM() {
+    public static function getCatalogDOM()
+    {
         return self::createGeneralContent();
     }
 }

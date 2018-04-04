@@ -1,154 +1,243 @@
 <?php
 include_once("src/back/import/import");
+use Rize\UriTemplate;
 
-class URLBuilder {
+class URLBuilder
+{
     //window.location='/?page_name=search&check_fiz=&check_ur=&search_value=%D1%81&page=2&num=48'
     //window.location='/?page_name=catalog&key=EE&page=2&num=48&high_light_element=EE163&check_fiz=&check_ur='
     private static $catalogLinkRule = array(
         Labels::MAIN_PARAMS =>
             array(UrlParameters::PAGE_NAME
-                , UrlParameters::PAGE_NUM
-                , UrlParameters::ITEMS_COUNT
-                , UrlParameters::VIEW_MODE)
-      , Labels::ADDITIONAL_PARAMS =>
+            , UrlParameters::PAGE_NUM
+            , UrlParameters::ITEMS_COUNT
+            , UrlParameters::VIEW_MODE)
+    , Labels::ADDITIONAL_PARAMS =>
             array(array(UrlParameters::KEY)
-                , array(UrlParameters::SEARCH_VALUE))
+            , array(UrlParameters::SEARCH_VALUE))
     );
 
     private static $pathLinkRule = array(
         Labels::MAIN_PARAMS =>
             array(UrlParameters::PAGE_NAME
-                , UrlParameters::KEY
-                , UrlParameters::PAGE_NUM
-                , UrlParameters::ITEMS_COUNT)
+            , UrlParameters::KEY
+            , UrlParameters::PAGE_NUM
+            , UrlParameters::ITEMS_COUNT)
     );
 
-    public static function getCatalogLink() {
-        return '/?'.Utils::buildUrl([UrlParameters::PAGE_NAME => UrlParameters::PAGE__CATALOG]);
-    }
-
-    public static function getCatalogLinkForTree($key) {
-        //" onclick=\"window.location='?page_name=catalog&key=".$tree->key.Utils::getStoreModeForUrl()."'\"";
-        $urlArray = array(
-            UrlParameters::PAGE_NAME => UrlParameters::PAGE__CATALOG,
-            UrlParameters::KEY => $key
+    public static function getCatalogLinkForTree($category)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{category}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                'category' => $category
+            ]
         );
-        if (array_key_exists(UrlParameters::VIEW_MODE, $_GET) && array_key_exists(Utils::getFromGET(UrlParameters::VIEW_MODE), Labels::$VIEW_MODE_COMPACT)) {
-            $urlArray[UrlParameters::VIEW_MODE] = Utils::getFromGET(UrlParameters::VIEW_MODE);
-        }
-        if (array_key_exists(UrlParameters::ITEMS_COUNT, $_GET) && in_array(Utils::getFromGET(UrlParameters::ITEMS_COUNT), Labels::$VIEW_MODE_NUMERIC)) {
-            $urlArray[UrlParameters::ITEMS_COUNT] = Utils::getFromGET(UrlParameters::ITEMS_COUNT);
-        }
-        $url = '?'.Utils::buildUrl($urlArray);
-        $url = Utils::getUrlWithStoreMode($url);
-        return $url;
     }
 
-    public static function getCatalogLinkForSingleItem($pageId, $pageNumber = null, $num = null, $additionalData = []) {
-        $urlArray = array(
-            UrlParameters::PAGE_NAME => UrlParameters::PAGE__SINGLE_ITEM,
-            UrlParameters::PAGE_ID => $pageId
+    public static function getCatalogLinkForSingleItem($productCode)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{code}',
+            [
+                'pageName' => UrlParameters::PAGE__PRODUCTS,
+                'code' => $productCode
+            ]
         );
 
-        if ($num != null) {
-            $urlArray[UrlParameters::ITEMS_COUNT] = $num;
-        }
-        if ($pageNumber != null) {
-            $urlArray[UrlParameters::PAGE_NUM] = $pageNumber;
-        }
-        if (array_key_exists(UrlParameters::KEY, $additionalData) && $additionalData[UrlParameters::KEY] != "") {
-            $urlArray[UrlParameters::KEY] = $additionalData[UrlParameters::KEY];
-        }
-        if (array_key_exists(UrlParameters::SEARCH_VALUE, $additionalData) && $additionalData[UrlParameters::SEARCH_VALUE] != "") {
-            $urlArray[UrlParameters::SEARCH_VALUE] = $additionalData[UrlParameters::SEARCH_VALUE];
-        }
-        $url = '?'.Utils::buildUrl($urlArray);
-        $url = Utils::getUrlWithStoreMode($url);
-        return $url;
     }
 
-    public static function getCatalogLinkPrev($pageNumber, $itemsCount) {
-        $urlArray = Utils::createUrlArrayFromCurrentUrl(URLBuilder::$catalogLinkRule);
-        $urlArray[UrlParameters::PAGE_NUM] = $pageNumber - 1;
-        $urlArray[UrlParameters::ITEMS_COUNT] = $itemsCount;
-        $url = '?'.Utils::buildUrl($urlArray);
-        $url = Utils::getUrlWithStoreMode($url);
-        return $url;
+    public static function getCatalogLinkPrevForSearch($searchValue, $pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{?' . UrlParameters::SEARCH_VALUE . ',' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                UrlParameters::SEARCH_VALUE => $searchValue,
+                UrlParameters::PAGE_NUM => $pageNumber - 1,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
     }
 
-    public static function getCatalogLinkNext($pageNumber, $itemsCount) {
-        $urlArray = Utils::createUrlArrayFromCurrentUrl(URLBuilder::$catalogLinkRule);
-        $urlArray[UrlParameters::PAGE_NUM] = $pageNumber + 1;
-        $urlArray[UrlParameters::ITEMS_COUNT] = $itemsCount;
-        $url = '?'.Utils::buildUrl($urlArray);
-        $url = Utils::getUrlWithStoreMode($url);
-        return $url;
+    public static function getCatalogLinkNextForSearch($searchValue, $pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{?' . UrlParameters::SEARCH_VALUE . ',' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                UrlParameters::SEARCH_VALUE => $searchValue,
+                UrlParameters::PAGE_NUM => $pageNumber + 1,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
     }
 
-    public static function getCatalogLinkNumeric($pageNumber, $itemsCount) {
-        $urlArray = Utils::createUrlArrayFromCurrentUrl(URLBuilder::$catalogLinkRule);
-        $urlArray[UrlParameters::PAGE_NUM] = $pageNumber;
-        $urlArray[UrlParameters::ITEMS_COUNT] = $itemsCount;
-        $url = '?'.Utils::buildUrl($urlArray);
-        $url = Utils::getUrlWithStoreMode($url);
-        return $url;
+    public static function getCatalogLinkPrevForCategory($category, $pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{category}{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                'category' => $category,
+                UrlParameters::PAGE_NUM => $pageNumber - 1,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
     }
 
-    public static function getSingleItemLinkBack($pageNumber, $itemsCount) {
+    public static function getCatalogLinkNextForCategory($category, $pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{category}{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                'category' => $category,
+                UrlParameters::PAGE_NUM => $pageNumber + 1,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
+    }
+
+    public static function getCatalogLinkPrev($pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                UrlParameters::PAGE_NUM => $pageNumber - 1,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
+    }
+
+    public static function getCatalogLinkNext($pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                UrlParameters::PAGE_NUM => $pageNumber + 1,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
+    }
+
+    public static function getCatalogLinkForCategory($category, $pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{category}{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                'category' => $category,
+                UrlParameters::PAGE_NUM => $pageNumber,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
+    }
+
+    public static function getCatalogLink($pageNumber = 0, $itemsCount = 0)
+    {
+        if ($pageNumber === 0) {
+            return '/' . UrlParameters::PAGE__CATALOG;
+        }
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                UrlParameters::PAGE_NUM => $pageNumber,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
+    }
+
+    public static function getCatalogLinkForSearch($searchValue, $pageNumber, $itemsCount)
+    {
+        $uri = new UriTemplate();
+        return $uri->expand(
+            '/{pageName}/{?' . UrlParameters::PAGE_NUM . ',' . UrlParameters::ITEMS_COUNT . '}',
+            [
+                'pageName' => UrlParameters::PAGE__CATALOG,
+                UrlParameters::SEARCH_VALUE => $searchValue,
+                UrlParameters::PAGE_NUM => $pageNumber,
+                UrlParameters::ITEMS_COUNT => $itemsCount
+            ]
+        );
+    }
+
+    public static function getSingleItemLinkBack($pageNumber, $itemsCount)
+    {
         $urlArray = Utils::createUrlArrayFromCurrentUrl(URLBuilder::$catalogLinkRule);
         $urlArray[UrlParameters::PAGE_NAME] = UrlParameters::PAGE__CATALOG;
         $urlArray[UrlParameters::PAGE_NUM] = $pageNumber;
         $urlArray[UrlParameters::ITEMS_COUNT] = $itemsCount;
-        $url = '?'.Utils::buildUrl($urlArray);
+        $url = '?' . Utils::buildUrl($urlArray);
         $url = Utils::getUrlWithStoreMode($url);
         return $url;
     }
 
-    public static function getItemLinkForComplexType($backLinkType, $itemId, $pageNum, $itemsPerPage) {
+    public static function getItemLinkForComplexType($backLinkType, $itemId, $pageNum, $itemsPerPage)
+    {
         $url = '';
         if (preg_match('/^([\w]{2}){1}([\d]{0,3}){1}$/', $itemId, $itemInfo, PREG_OFFSET_CAPTURE) == 1) {
             $keyValuePairs = array(UrlParameters::PAGE_NAME => UrlParameters::PAGE__SINGLE_ITEM
-                                    , UrlParameters::KEY => $itemInfo[1][0]
-                                    , UrlParameters::PAGE_ID => $itemId
-                                    , UrlParameters::PAGE_NUM => $pageNum
-                                    , UrlParameters::ITEMS_COUNT =>$itemsPerPage);
-            $url = '?'.Utils::getUrlWithStoreMode(Utils::buildUrl($keyValuePairs));
+            , UrlParameters::KEY => $itemInfo[1][0]
+            , UrlParameters::PAGE_ID => $itemId
+            , UrlParameters::PAGE_NUM => $pageNum
+            , UrlParameters::ITEMS_COUNT => $itemsPerPage);
+            $url = '?' . Utils::getUrlWithStoreMode(Utils::buildUrl($keyValuePairs));
         }
         return $url;
     }
 
-    public static function getCatalogLinkForViewMode($num, $mode) {
+    public static function getCatalogLinkForViewMode($num, $mode)
+    {
 
     }
 
-    public static function getItemLinkForSimpleType($itemId) {
+    public static function getItemLinkForSimpleType($itemId)
+    {
         $url = '';
         if (preg_match('/^([\w]{2}){1}([\d]{0,3}){1}$/', $itemId, $itemInfo, PREG_OFFSET_CAPTURE) == 1) {
             $goods = new DBGoodsType();
             $itemPosition = $goods->getCatalogItemPosition($itemId, DB::TABLE_GOODS___ORDER);
             $page = ceil($itemPosition / Utils::getFromGETWithDefault(UrlParameters::NUM, Constants::DEFAULT_ITEM_COUNT_PER_PAGE));
             $keyValuePairs = array(UrlParameters::PAGE_NAME => UrlParameters::PAGE__CATALOG
-                                    , UrlParameters::KEY => $itemInfo[1][0]
-                                    , UrlParameters::PAGE_NUM => $page
-                                    , UrlParameters::ITEMS_COUNT => Utils::getFromGETWithDefault(UrlParameters::NUM, Constants::DEFAULT_ITEM_COUNT_PER_PAGE)
-                                    , UrlParameters::HIGH_LIGHT_ELEMENT => $itemId);
-            $url = '?'.Utils::getUrlWithStoreMode(Utils::buildUrl($keyValuePairs));
+            , UrlParameters::KEY => $itemInfo[1][0]
+            , UrlParameters::PAGE_NUM => $page
+            , UrlParameters::ITEMS_COUNT => Utils::getFromGETWithDefault(UrlParameters::NUM, Constants::DEFAULT_ITEM_COUNT_PER_PAGE)
+            , UrlParameters::HIGH_LIGHT_ELEMENT => $itemId);
+            $url = '?' . Utils::getUrlWithStoreMode(Utils::buildUrl($keyValuePairs));
         }
         return $url;
     }
 
-    public static function getPathLinkSingleItem() {
-        return '?'.Utils::getUrlWithStoreMode(Utils::buildUrl(Utils::createUrlArrayFromCurrentUrl(URLBuilder::$pathLinkRule)));
+    public static function getPathLinkSingleItem()
+    {
+        return '?' . Utils::getUrlWithStoreMode(Utils::buildUrl(Utils::createUrlArrayFromCurrentUrl(URLBuilder::$pathLinkRule)));
     }
 
-    public static function storeModeFiz($yesNoType) {
+    public static function storeModeFiz($yesNoType)
+    {
         if ($yesNoType == YesNoType::NO) {
             return Utils::removeParameterFromURL(Labels::CHECK_FIZ, Utils::getCurrentURL());
         }
         return Utils::replaceOrAddParameterValueInURL(Labels::CHECK_FIZ, '', Utils::getCurrentURL());
     }
 
-    public static function storeModeUr($yesNoType) {
+    public static function storeModeUr($yesNoType)
+    {
         if ($yesNoType == YesNoType::NO) {
             return Utils::removeParameterFromURL(Labels::CHECK_UR, Utils::getCurrentURL());
         }

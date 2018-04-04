@@ -1,17 +1,10 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
 
-$controller = $_GET['controller'];
-switch($controller) {
-    case 'site':
-        include_once('src/back/controllers/controller.php');
-        break;
-    case 'api':
-        include_once('src/back/controllers/controller-api.php');
-        break;
-    case 'admin':
-        include_once('src/back/controllers/controller-admin.php');
-        break;
-    default:
-        include_once('src/back/controllers/controller.php');
-        break;
-}
+$config = parse_ini_file('config/config.ini');
+$localization = parse_ini_file('config/messages.ini');
+$GLOBALS['config'] = $config;
+define('AU_CONFIG', $config);
+define('Localization', $localization);
+
+include_once 'src/back/routes/index.php';

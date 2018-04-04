@@ -48,11 +48,15 @@ class DB {
     const TABLE_ADDRESS__MAP = 'map';
     const TABLE_ADDRESS__MOBILE_NUMBERS = 'mobile_numbers';
     const TABLE_ADDRESS__TITLE = 'title';
+    const TABLE_ADDRESS__COLOR = 'color';
     const TABLE_ADDRESS__ADDRESS = 'address';
+    const TABLE_ADDRESS__TITLE_ADDRESS = 'title_address';
     const TABLE_ADDRESS__WEEKEND = 'weekend';
     const TABLE_ADDRESS__WORKING_HOURS = 'working_hours';
+    const TABLE_ADDRESS__IMAGES = 'images';
+    const TABLE_ADDRESS__ORDER = 'order';
     const TABLE_ADDRESS__EMAIL = 'email';
-    const TABLE_ADDRESS___ORDER = self::TABLE_ADDRESS__ID;
+    const TABLE_ADDRESS___ORDER = self::TABLE_ADDRESS__ORDER;
 
     const TABLE_PAGES_CACHE___NAME = 'pages_cache';
     const TABLE_PAGES_CACHE__ID = 'pages_cache_id';

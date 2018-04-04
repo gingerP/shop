@@ -7,7 +7,23 @@ class CatalogLink {
     public function getLink($pageNumber, $num) {
         $mainTag = new A();
         $mainTag->addStyleClasses(["link_style", "cursor_pointer", "text_non_select", "f-15", "input_hover", "pagination-item"]);
-        $mainTag->addAttribute("href", URLBuilder::getCatalogLinkNumeric($pageNumber, $num));
+        $mainTag->addAttribute("href", URLBuilder::getCatalogLink($pageNumber, $num));
+        $mainTag->addChild($pageNumber);
+        return $mainTag;
+    }
+
+    public function getLinkForCategory($category, $pageNumber, $num) {
+        $mainTag = new A();
+        $mainTag->addStyleClasses(["link_style", "cursor_pointer", "text_non_select", "f-15", "input_hover", "pagination-item"]);
+        $mainTag->addAttribute("href", URLBuilder::getCatalogLinkForCategory($category, $pageNumber, $num));
+        $mainTag->addChild($pageNumber);
+        return $mainTag;
+    }
+
+    public function getLinkForSearch($searchValue, $pageNumber, $num) {
+        $mainTag = new A();
+        $mainTag->addStyleClasses(["link_style", "cursor_pointer", "text_non_select", "f-15", "input_hover", "pagination-item"]);
+        $mainTag->addAttribute("href", URLBuilder::getCatalogLinkForSearch($searchValue, $pageNumber, $num));
         $mainTag->addChild($pageNumber);
         return $mainTag;
     }

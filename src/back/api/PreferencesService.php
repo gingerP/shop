@@ -4,7 +4,8 @@ class PreferencesService {
 
     public static function getPublicPreferences() {
         return [
-            'contacts_groups' => DBPreferencesType::getPreferenceValue(Constants::CONTACTS_GROUPS)
+            'contacts_groups' => DBPreferencesType::getPreferenceValue(Constants::CONTACTS_GROUPS),
+            'google_maps_api_key' => DBPreferencesType::getPreferenceValue(Constants::GOOGLE_MAPS_API_KEY)
         ];
     }
 

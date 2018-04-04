@@ -1,9 +1,18 @@
 <?php
 
-class ContactsPage extends APagesCreator{
+include_once 'src/back/pages/elements/contacts/ContactsComponent.php';
 
-    public function __construct() {
-        parent::__construct();
+class ContactsPage extends APagesCreator
+{
+
+    public function __construct()
+    {
+        parent::__construct(UrlParameters::PAGE__CONTACTS);
+
+    }
+
+    public function build()
+    {
         $this->setPageCode("contacts_page");
         $this->setIsTreeVisible(false);
         $this->setIsStatusBarVisible(true);
@@ -20,22 +29,27 @@ class ContactsPage extends APagesCreator{
         $this->addMetaTags($metaDesc);
 
         $this->content = $this->getHtml();
+        return $this;
     }
 
-    protected function createGeneralContent() {
+    protected function createGeneralContent()
+    {
         $mainTag = new Div();
         $mainTag->addStyleClasses(["map_page", "float_left"]);
         $mainTag->addChildList([$this->getInfoBlock()]);
+        $mainTag->addChild((new ContactsComponent())->build());
         return $mainTag;
     }
 
-    private function getInfoBlock() {
+    private function getInfoBlock()
+    {
         $mainTag = new Div();
-        $mainTag->updateId("contact_list");
+        $mainTag->addChild("<contacts/>");
         return $mainTag;
     }
 
-    private function getMap() {
+    private function getMap()
+    {
         $mainTag = new Div();
         $mainTag->addStyleClass("map_viewport");
         $map = new Div();
@@ -44,8 +58,25 @@ class ContactsPage extends APagesCreator{
     }
 
 
-    public function getPreBottom() {
+    public function getPreBottom()
+    {
         return $this->getMap();
+    }
+
+    protected function getSourceScripts()
+    {
+        $preferences = PreferencesService::getPublicPreferences();
+        $scripts = strtr("<script type='text/javascript'>
+            window.AugustovaApp = {googleApiKey: 'googleApiKeyValue'};
+        </script>", [
+            'googleApiKeyValue' => $preferences['google_maps_api_key']
+        ]);
+        $scripts .= parent::getSourceScripts();
+        if (!$this->isJsUglify) {
+            $scripts .=
+                '<script type="text/javascript" src="/src/front/js/components/contacts/contacts.component.js"></script>';
+        }
+        return $scripts;
     }
 
 } 

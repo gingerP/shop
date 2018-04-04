@@ -10,7 +10,8 @@ define('AU_CONFIG', $config);
 include_once('src/back/import/import');
 include_once('src/back/import/page');
 include_once('src/back/labels/HttpStatuses.php');
-
+use Rize\UriTemplate;
+use Katzgrau\KLogger\Logger as Logger;
 
 function sendNotFoundPage() {
     header('Content-Type: text/html; charset=utf-8');
@@ -18,15 +19,18 @@ function sendNotFoundPage() {
     $page = new NotFoundPage();
     echo $page->getContent();
 }
+
 function redirectMain() {
     header('Location: http://' . $_SERVER['HTTP_HOST']);
     exit;
 }
+
 function catchInternalError($error) {
     header('Content-Type: application/json');
     $errorModel = new DBErrorType();
     $errorModel->createException($error);
-    error_log($error->getMessage());
+    $logger = new Logger(AU_CONFIG['log.file'], Psr\Log\LogLevel::WARNING);
+    $logger->error($error);
     if ($error instanceof ProductNotFoundError) {
         sendNotFoundPage();
         return;
@@ -39,6 +43,25 @@ function catchInternalError($error) {
     $internalError = new InternalError($error);
     echo json_encode($internalError->toJson());
 }
+
+function getContent($Page)
+{
+    if (AU_CONFIG['pages_cache']) {
+        $cache = new DBPagesCacheType();
+        $existsCache = $cache->getCache($_SERVER["REQUEST_URI"]);
+        if ($existsCache != "") {
+            $page = $existsCache;
+        } else {
+            $pageConstructor = new $Page();
+            $page = $pageConstructor->getContent();
+            $cache->setCache($_SERVER["REQUEST_URI"], $page);
+        }
+    } else {
+        $pageConstructor = new $Page();
+        $page = $pageConstructor->getContent();
+    }
+    return $page;
+}
 try {
 
     if (isset($_SERVER['HTTPS'])) {
@@ -46,61 +69,43 @@ try {
         exit;
     }
 
-    $pageName = Utils::getFromGET(UrlParameters::PAGE_NAME);
-    $page = '';
-
-    function getContent($Page)
-    {
-        $page = '';
-        if (AU_CONFIG['pages_cache']) {
-            $cache = new DBPagesCacheType();
-            $existsCache = $cache->getCache($_SERVER["REQUEST_URI"]);
-            if ($existsCache != "") {
-                $page = $existsCache;
-            } else {
-                $pageConstructor = new $Page();
-                $page = $pageConstructor->getContent();
-                $cache->setCache($_SERVER["REQUEST_URI"], $page);
-            }
-        } else {
-            $pageConstructor = new $Page();
-            $page = $pageConstructor->getContent();
-        }
-        return $page;
-    }
+    $uri = new UriTemplate();
+    $params = $uri->extract('/{page}/{identifier}', $_SERVER['QUERY_STRING']);
+    $pageName = $params['page'];
+    $htmlContent = '';
 
     switch ($pageName) {
         case UrlParameters::PAGE__ADMIN:
-            $page = getContent(AdminPage::class);
+            $htmlContent = getContent(AdminPage::class);
             break;
         case UrlParameters::PAGE__MAIN:
-            $page = getContent(MainPage::class);
+            $htmlContent = getContent(MainPage::class);
             break;
         case UrlParameters::PAGE__DELIVERY:
-            $page = getContent(DeliveryPage::class);
+            $htmlContent = getContent(DeliveryPage::class);
             break;
         case UrlParameters::PAGE__CATALOG:
-            $page = getContent(CatalogPage::class);
+            $htmlContent = (new CatalogPage())->validate()->build()->getContent();
             break;
         case UrlParameters::PAGE__SINGLE_ITEM:
-            $page = getContent(SingleItemPage::class);
+            $htmlContent = getContent(SingleItemPage::class);
             break;
         case UrlParameters::PAGE__SEARCH:
-            $page = getContent(SearchPage::class);
+            $htmlContent = getContent(SearchPage::class);
             break;
         case UrlParameters::PAGE__CONTACTS:
-            $page = getContent(ContactsPage::class);
+            $htmlContent = getContent(ContactsPage::class);
             break;
         default:
             if ($_SERVER['REQUEST_URI'] == '/google82bab8cc8d403ffc.html') {
-                $page = "google-site-verification: google82bab8cc8d403ffc.html";
+                $htmlContent = "google-site-verification: google82bab8cc8d403ffc.html";
             } else if (Utils::isHomeNaked($_SERVER['REQUEST_URI'])) {
-                $page = getContent(MainPage::class);
+                $htmlContent = getContent(MainPage::class);
             }  else {
                 redirectMain();
             }
     }
-    echo $page;
+    echo $htmlContent;
 } catch (Exception $e) {
     catchInternalError($e);
 } catch (Error $e) {
