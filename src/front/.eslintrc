@@ -1,6 +1,11 @@
 {
 
   "globals": {
+    "AuUtils": true,
+    "keyBoard": true,
+    "SearchInput": true,
+    "ImagesGallery": true,
+    "ImageZoom": true,
     "google": true,
     "req": true,
     "define": true,
