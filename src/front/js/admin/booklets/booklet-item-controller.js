@@ -4,7 +4,7 @@ define([
     'use strict';
 
     function generateId() {
-        return U.getRandomString();
+        return AuUtils.getRandomString();
     }
 
     function BookletItemController() {

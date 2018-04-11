@@ -1,7 +1,7 @@
 <?php
-include_once 'src/back/import/import';
-include_once 'src/back/import/db';
-include_once 'src/back/import/models';
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/import/models.php';
 
 class DBAddressType extends DBType
 {
@@ -40,7 +40,6 @@ class DBAddressType extends DBType
         $contacts = $this->extractDataFromResponse($this->getListActive());
         $contactImagesRoot = DBPreferencesType::getPreferenceValue(Constants::CONTACTS_IMAGES);
         $contactStyles = DBPreferencesType::getPreferenceValue(Constants::CONTACTS_STYLES);
-        $this->logger->error($contactStyles);
         while (count($contacts)) {
             $contact = array_shift($contacts);
             $address = [];

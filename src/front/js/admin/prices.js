@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    U.dhtmlxDOMPreInit(document.documentElement, document.body);
+    AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
     app = {};
     createPage();
 });
@@ -189,7 +189,7 @@ function initGrid() {
     });
     grid.attachEvent("onEditCell", function(stage,rId,cInd,nValue,oValue){
         if (stage === 2 && nValue != oValue && app.entities[rId] && app.entities[rId].name != nValue) {
-            if (U.hasContent(app.entities[rId].file)) {
+            if (AuUtils.hasContent(app.entities[rId].file)) {
                 app.entities[rId].name = nValue;
             } else {
                 app.entities[rId].new_name = nValue;
@@ -213,7 +213,7 @@ var loader = {
         serviceWrapper.getPrices(function(prices) {
             if (prices.length) {
                 for (var priceIndex = 0; priceIndex < prices.length; priceIndex++) {
-                    var id = U.getRandomString();
+                    var id = AuUtils.getRandomString();
                     var creatingDate = new Date(prices[priceIndex].modification_time);
                     prices[priceIndex].modification_time = moment(creatingDate).format('YYYY-MM-DD hh:mm:ss');
                     var entity = components.prepareEntityToGrid(prices[priceIndex], ["name", "size", "modification_time"]);

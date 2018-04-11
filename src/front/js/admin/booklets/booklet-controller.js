@@ -7,7 +7,7 @@ define([
     'use strict';
 
     function generateId(id) {
-        return U.getRandomString();
+        return AuUtils.getRandomString();
     }
 
     function BookletController() {
@@ -130,14 +130,14 @@ define([
     };
 
     BookletController.prototype._clearItem = function (entity) {
-        if (U.hasContent(entity)) {
+        if (AuUtils.hasContent(entity)) {
             for (var key in entity) {
                 if (['id', 'itemType', '_isNew', 'type'].indexOf(key) > -1) {
-                } else if (U.isArray(entity[key])) {
+                } else if (AuUtils.isArray(entity[key])) {
                     for (var arrElemIndex = 0; arrElemIndex < entity[key].length; arrElemIndex++) {
                         entity[key][arrElemIndex] = this._clearItem(entity[key][arrElemIndex]);
                     }
-                } else if (U.isObject(entity[key])) {
+                } else if (AuUtils.isObject(entity[key])) {
                     entity[key] = this._clearItem(entity[key]);
                 } else {
                     entity[key] = null;

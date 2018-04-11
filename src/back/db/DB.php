@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vinni
- * Date: 10.08.13
- * Time: 1:22
- * To change this template use File | Settings | File Templates.
- */
 
 class DB {
 

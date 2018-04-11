@@ -33,7 +33,7 @@ define([
     BookletComponent.prototype.render = function () {
         var entity = this.controller.getEntity();
         if (!this.$bookletDOM) {
-            this.$bookletDOM = U.compilePrefillHandlebar('previewContainer', entity);
+            this.$bookletDOM = AuUtils.compilePrefillHandlebar('previewContainer', entity);
             this.$domParentContainer.append(this.$bookletDOM);
             this.$bookletDOM = $(this.$bookletDOM);
             this.gridRules[this.template].preRender();
@@ -80,7 +80,7 @@ define([
         var result = item;
         if (typeof data !== 'undefined' && Object.keys(data).length) {
             for (var key in data) {
-                result = result.replace(new RegExp('({{' + key + '}})+'), U.hasContent(data[key]) ? data[key] : '');
+                result = result.replace(new RegExp('({{' + key + '}})+'), AuUtils.hasContent(data[key]) ? data[key] : '');
             }
         }
         return result;
@@ -355,7 +355,7 @@ define([
     };
 
     BookletComponent.prototype.deleteItem = function () {
-        if (arguments.length && U.hasContent(arguments[0])) {
+        if (arguments.length && AuUtils.hasContent(arguments[0])) {
             var bookletInstance = this;
             var parameter = arguments[0];
             // it's mean id
@@ -368,7 +368,7 @@ define([
                 });
             }
             // it's mean item instance
-            else if (U.isObject(arguments)) {
+            else if (AuUtils.isObject(arguments)) {
                 this.bookletItems.forEach(function (item, index) {
                     if (item === parameter) {
                         bookletInstance.bookletItems.splice(index, 1);
@@ -384,7 +384,7 @@ define([
     };
 
     BookletComponent.prototype.isEmpty = function () {
-        return !U.hasContent(this.controller.entity);
+        return !AuUtils.hasContent(this.controller.entity);
     };
 
     BookletComponent.prototype.getItemSize = function (id) {
@@ -408,11 +408,11 @@ define([
 
         function findPalls(rowInd, colInd, count, way) {
             var result = [];
-            if (U.hasContent(matrix[rowInd]) && U.hasContent(matrix[rowInd][colInd])) {
+            if (AuUtils.hasContent(matrix[rowInd]) && AuUtils.hasContent(matrix[rowInd][colInd])) {
                 if (way === 'vertical') {
                     for (
                         var stepIndex = 0;
-                        stepIndex < count && U.hasContent(matrix[rowInd + stepIndex][colInd]);
+                        stepIndex < count && AuUtils.hasContent(matrix[rowInd + stepIndex][colInd]);
                         stepIndex++
                     ) {
                         result.push(matrix[rowInd + stepIndex][colInd]);
@@ -420,7 +420,7 @@ define([
                 } else if (way === 'horizontal') {
                     for (
                         var stepIndex = 0;
-                        stepIndex < count && U.hasContent(matrix[rowInd][colInd + stepIndex]);
+                        stepIndex < count && AuUtils.hasContent(matrix[rowInd][colInd + stepIndex]);
                         stepIndex++
                     ) {
                         result.push(matrix[rowInd][colInd + stepIndex]);
@@ -442,13 +442,13 @@ define([
 
         function isPositionsEmpty(positions) {
             var result = true;
-            if (positions.length && !U.isArray(positions[0])) {
+            if (positions.length && !AuUtils.isArray(positions[0])) {
                 positions = [positions];
             }
             for (var posIndex = 0; posIndex < positions.length; posIndex++) {
                 var rowInd = positions[posIndex][0];
                 var colInd = positions[posIndex][1];
-                if (!U.hasContent(matrix[rowInd]) || !U.hasContent(matrix[rowInd][colInd]) || U.hasContent(matrix[rowInd][colInd].isEmpty === false)) {
+                if (!AuUtils.hasContent(matrix[rowInd]) || !AuUtils.hasContent(matrix[rowInd][colInd]) || AuUtils.hasContent(matrix[rowInd][colInd].isEmpty === false)) {
                     result = false;
                     break;
                 }

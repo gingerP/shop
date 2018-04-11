@@ -1,13 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 5/4/14
- * Time: 1:13 PM
- */
 
-include_once("src/back/import/import");
-include_once("src/back/import/tag");
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/tags.php';
 
 class TagUtils
 {
@@ -63,7 +57,6 @@ class TagUtils
                 return $tag;
             }
         } catch (Exception $e) {
-            log::info("Caught exception: ',  $e->getMessage()");
         }
         return $html;
     }

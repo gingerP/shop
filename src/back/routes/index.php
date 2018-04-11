@@ -1,19 +1,24 @@
 <?php
-include_once 'src/back/import/import';
-include_once 'src/back/import/page';
-include_once 'src/back/labels/HttpStatuses.php';
-require 'src/back/routes/ApiRoutes.php';
-require 'src/back/routes/SiteRoutes.php';
-require 'src/back/routes/AdminRoutes.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/pages.php';
+include_once AuWebRoot . '/src/back/labels/HttpStatuses.php';
+require AuWebRoot . '/src/back/routes/ApiRoutes.php';
+require AuWebRoot . '/src/back/routes/SiteRoutes.php';
+require AuWebRoot . '/src/back/routes/AdminRoutes.php';
 
 use Katzgrau\KLogger\Logger as Logger;
+
 $klein = new \Klein\Klein();
 $logger = new Logger(AU_CONFIG['log.file'], Psr\Log\LogLevel::DEBUG);
 
+new SiteRoutes($klein);
+new ApiRoutes($klein);
+new AdminRoutes($klein);
+
 $klein->respond(function ($request, $response, $service, $app) use ($klein, $logger) {
     // Handle exceptions => flash the message and redirect to the referrer
+    $logger->debug($request->method() . ' ' . $request->uri() . ' ' . $response->code() .' ' . $request->userAgent());
     $klein->onError(function ($klein, $error) use ($response, $logger) {
-        echo 'ssssssssssss2';
         if ($error instanceof ProductNotFoundError) {
             //sendNotFoundPage();
             return;
@@ -29,9 +34,5 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein, $log
         $logger->error($internalError);
     });
 });
-
-new SiteRoutes($klein);
-new ApiRoutes($klein);
-new AdminRoutes($klein);
 
 $klein->dispatch();

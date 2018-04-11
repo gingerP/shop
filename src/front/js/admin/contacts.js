@@ -1,6 +1,6 @@
 $(document).ready(function() {
     app = {};
-    U.dhtmlxDOMPreInit(document.documentElement, document.body);
+    AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
     createPage();
 })
 

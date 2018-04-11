@@ -7,9 +7,9 @@ define('AU_ROOT', __DIR__.'/../../../');
 $config = parse_ini_file('config/config.ini');
 $GLOBALS['config'] = $config;
 define('AU_CONFIG', $config);
-include_once('src/back/import/import');
-include_once('src/back/import/page');
-include_once('src/back/labels/HttpStatuses.php');
+include_once __DIR__.'/../import/import.php';
+include_once __DIR__.'/../import/pages.php';
+include_once __DIR__.'/../labels/HttpStatuses.php';
 use Rize\UriTemplate;
 use Katzgrau\KLogger\Logger as Logger;
 
@@ -88,7 +88,7 @@ try {
             $htmlContent = (new CatalogPage())->validate()->build()->getContent();
             break;
         case UrlParameters::PAGE__SINGLE_ITEM:
-            $htmlContent = getContent(SingleItemPage::class);
+            $htmlContent = getContent(ProductPage::class);
             break;
         case UrlParameters::PAGE__SEARCH:
             $htmlContent = getContent(SearchPage::class);

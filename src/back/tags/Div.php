@@ -1,5 +1,4 @@
 <?php
-include_once("src/back/import/tag");
 
 class Div extends Tag{
     const TAG_NAME = "div";

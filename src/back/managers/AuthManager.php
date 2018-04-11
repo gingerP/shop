@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 3/7/15
- * Time: 1:40 AM
- */
 
-include_once("src/back/import/import");
-include_once("src/back/import/db");
-include_once("src/back/import/service");
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/import/services.php';
 
 class AuthManager {
 

@@ -29,7 +29,7 @@ define([], function () {
             grid.forEachCell(rowId, function (cellObj, colIndx) {
                 cellObj.setValue(rowData[colIndx]);
             });
-            if (U.hasContent(newRowId)) {
+            if (AuUtils.hasContent(newRowId)) {
                 grid.changeRowId(rowId, newRowId);
             }
         },
@@ -147,7 +147,7 @@ define([], function () {
                 {type: 'separator'},
                 {type: 'button', id: 'delete', text: 'Удалить', img: 'delete.png', img_disabled: 'delete_dis.png'}
             ];
-            if (U.hasContent(buttons)) {
+            if (AuUtils.hasContent(buttons)) {
                 config = [];
                 var _buttons = {
                     reload: {
@@ -233,7 +233,7 @@ define([], function () {
                 skin: 'dhx_blue'
             });
             var _options = {
-                id: U.getRandomString(),
+                id: AuUtils.getRandomString(),
                 left: 20,
                 top: 30,
                 width: 300,

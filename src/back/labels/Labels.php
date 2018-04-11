@@ -6,7 +6,7 @@
  * Time: 20:42
  * To change this template use File | Settings | File Templates.
  */
-include_once("src/back/import/import");
+include_once AuWebRoot.'/src/back/import/import.php';
 class Labels {
     const SEARCH = "search";
     const DOWNLOAD = "download";

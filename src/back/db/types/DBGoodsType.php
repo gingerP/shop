@@ -1,13 +1,7 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vinni
- * Date: 11.09.13
- * Time: 3:15
- * To change this template use File | Settings | File Templates.
- */
-include_once("src/back/import/import");
-include_once("src/back/import/db");
+
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/db.php';
 
 class DBGoodsType extends DBType{
 
@@ -141,7 +135,7 @@ class DBGoodsType extends DBType{
         return $row[DB::TABLE_GOODS__KEY_ITEM];
     }
 
-    public function getByCode($keyItem) {
+    public function findByCode($keyItem) {
         $response = $this->executeRequest(DB::TABLE_GOODS__KEY_ITEM, $keyItem, DB::TABLE_GOODS___ORDER, DB::ASC);
         $row = mysqli_fetch_array($response);
         if ($row) {

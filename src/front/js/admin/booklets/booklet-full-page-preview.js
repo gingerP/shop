@@ -29,7 +29,7 @@ define([
                 var container = document.createElement('DIV');
                 container.id = 'fullpreview';
                 document.body.appendChild(container);
-                var dom = U.compilePrefillHandlebar('fullpreviewContainer', booklet);
+                var dom = AuUtils.compilePrefillHandlebar('fullpreviewContainer', booklet);
                 container.appendChild(dom);
                 var viewport = document.getElementsByClassName('viewport')[0];
                 viewport.style.width = (initialViewportSize.width * sizeRatio) + 'px';

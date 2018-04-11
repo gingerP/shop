@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 10/31/14
- * Time: 12:19 AM
- */
-
 function extractProductId($product) {
     return $product[DB::TABLE_GOODS__ID];
 }

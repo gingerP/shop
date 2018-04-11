@@ -1,7 +1,7 @@
 <?php
 
-include_once('src/back/labels/HttpStatuses.php');
-include_once('src/back/errors/BaseError.php');
+include_once AuWebRoot.'/src/back/labels/HttpStatuses.php';
+include_once AuWebRoot.'/src/back/errors/BaseError.php';
 
 class DataBaseError extends BaseError
 {

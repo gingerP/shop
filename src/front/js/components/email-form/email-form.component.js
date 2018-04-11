@@ -44,7 +44,7 @@ Feedback.prototype.initializeFormValidation = function initFormValidation() {
     $('.message', vm.$component).on('change paste focus textInput input', function () {
         if (vm.isFormSubmit) {
             var value = $(this).val();
-            if (U.hasContent(value) && (value.length > 1000 || value.length == 0)) {
+            if (AuUtils.hasContent(value) && (value.length > 1000 || value.length == 0)) {
                 $('.message', vm.$component).addClass('validation_error');
                 $('.message_validation', vm.$component).addClass('validation_message').val('Сообщение слишком большое.');
             } else {
@@ -56,7 +56,7 @@ Feedback.prototype.initializeFormValidation = function initFormValidation() {
     $('.name', vm.$component).on('change paste focus textInput input', function () {
         if (vm.isFormSubmit) {
             var value = $(this).val();
-            if (U.hasContent(value) && value.length > 50) {
+            if (AuUtils.hasContent(value) && value.length > 50) {
                 $('.name', vm.$component).addClass('validation_error');
                 $('.name_validation', vm.$component).addClass('validation_message').val('Имя слишком большое.');
             } else {

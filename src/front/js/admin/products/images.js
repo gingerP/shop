@@ -157,7 +157,7 @@ define([
             var file = e.files[0];
             var reader = new FileReader();
             reader.onload = function (e) {
-                var id = 'new_' + U.getRandomString();
+                var id = 'new_' + AuUtils.getRandomString();
                 instance.setCustomUserData(id, {image: reader.result});
                 dataView._auNewImagesEverAdded++;
                 instance.add({
@@ -207,7 +207,7 @@ define([
                 for (var imageIndex = 0; imageIndex < images.length; imageIndex++) {
                     var imageCode = images[imageIndex];
                     var imagePath = 'images/catalog/' + entity.key_item + '/s_' + imageCode + '.jpg';
-                    var id = U.getRandomString();
+                    var id = AuUtils.getRandomString();
                     instance.add({
                         id: id,
                         titleClass: '',

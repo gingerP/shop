@@ -1,11 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 10/31/14
- * Time: 1:05 AM
- */
-include_once("src/back/import/import");
+
+include_once AuWebRoot.'/src/back/import/import.php';
 
 class DBUserOrderType extends DBType{
 
@@ -43,14 +38,11 @@ class DBUserOrderType extends DBType{
     }
 
     private function correctOrderData($orderData) {
-        Log::info("correctOrderData BEGIN");
         for($i = count($orderData) - 1; $i >= 0; $i--) {
             if (!is_numeric($orderData[$i][DB::TABLE_USER_ORDER__GOOD_ID]) || !is_numeric($orderData[$i][DB::TABLE_USER_ORDER__GOOD_INDEX])) {
                 array_splice($orderData, $i, 1);
-                Log::info("correctOrderData DATA ".$orderData[$i][DB::TABLE_USER_ORDER__GOOD_ID]);
             }
         }
-        Log::info("correctOrderData FINISH");
         return $orderData;
     }
 

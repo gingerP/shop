@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 8/26/14
- * Time: 11:35 PM
- */
 
 class Img extends Tag{
 

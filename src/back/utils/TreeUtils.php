@@ -1,7 +1,7 @@
 <?php
-include_once("src/back/import/import");
-include_once("src/back/import/db");
-include_once("src/back/import/page");
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/import/pages.php';
 
 class TreeUtils {
     private $DEFAULT_TREE_LEVEL_TO_SHOW = 2;
@@ -106,7 +106,6 @@ class TreeUtils {
             }
         } else {
             array_push($this->leaves, $tree->key);
-            /*Log::temp("findLeavesR: ".$tree->key);*/
         }
     }
 
@@ -196,13 +195,9 @@ class TreeUtils {
 
     public function printTree(&$tree, $index) {
         $step = "";
-        if ($index == 0) {
-            Log::temp("BEGIN##############################################");
-        }
         for($i = 0; $i < $index; $i++) {
             $step.=".";
         }
-        Log::temp($step.$tree->key);
         if (count($tree->childrens) > 0) {
             foreach($tree->childrens as $children) {
                 $index++;

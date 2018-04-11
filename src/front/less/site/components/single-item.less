@@ -1,4 +1,141 @@
+@viberColor: #9069ae;
+@emailColor: #f0c170;
+@vkColor: #4a76a8;
+
 .single_item {
+
+  .contact-us{
+    &-email,
+    &-vk,
+    &-viber {
+      border-radius: 3px;
+      cursor: pointer;
+      float: left;
+      margin: 5px 20px 5px 5px;
+      display: block;
+      box-sizing: border-box;
+      font-size: 20px;
+      text-decoration: none;
+      height: 40px;
+      box-shadow: 0 1px 1px grey;
+      &-icon {
+        float: left;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      &-label {
+        color: #ffffff;
+        float: left;
+        line-height: 40px;
+        font-family: Helvetica;
+        margin: 0 10px 0 5px;
+      }
+      svg {
+        width: 30px;
+        height: 30px;
+      }
+      &:hover {
+        .contact-us-vk-label,
+        .contact-us-email-label,
+        .contact-us-viber-label {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &-viber {
+      background-color: #7b519d;
+      &-icon {
+        float: left;
+        width: 25px;
+        height: 25px;
+        margin: 8px;
+        svg {
+          fill: #ffffff;
+          width: 25px;
+          height: 25px;
+        }
+      }
+    }
+
+    &-email {
+      background-color: #f0c170;
+      &-icon {
+        margin: 6px 9px;
+        svg {
+          fill: #414141;
+          width: 30px;
+          height: 30px;
+        }
+      }
+      &-label {
+        color: #414141;
+      }
+    }
+    &-vk {
+      background-color: #4a76a8;
+      &-icon {
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        svg {
+          fill: #ffffff;
+          width: 30px;
+          height: 30px;
+        }
+      }
+    }
+  }
+
+  .product {
+    &-top {
+      &-item {
+        &-icon {
+          float: left;
+        }
+        &-label {
+          float: left;
+          margin: 10px;
+          &-key {
+            float: left;
+            color: #A9A9A9;
+            font-family: Helvetica;
+            margin-right: 10px;
+          }
+          &-value {
+            float: left;
+            font-family: Helvetica;
+            color: #414141;
+          }
+        }
+        &-links {
+          float: left;
+        }
+      }
+      &-container {
+        ul {
+          list-style: none;
+          padding: 0;
+          li {
+            overflow: hidden;
+          }
+        }
+      }
+      &-block {
+        display: table;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      &-message {
+        font-family: Helvetica;
+        font-size: 15px;
+        padding: 15px 0;
+        float: left;
+      }
+    }
+  }
 
   .image-gallery-position-label {
     position: absolute;
@@ -17,11 +154,10 @@
     margin: 10px;
     background-color: #fff;
     border-radius: 2px;
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    /*box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);*/
   }
   .left_block {
     width: 420px;
-    margin-right: 10px;
     z-index: 1;
     overflow: hidden;
     float: left;
@@ -230,6 +366,18 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .product-top-item-label {
+    width: ~'calc(100% - 40px - 20px)';
+  }
+  .contact-us-viber,
+  .contact-us-vk,
+  .contact-us-email {
+    margin: auto;
+    clear: left;
+  }
+}
+
 @media (max-width: 900px) {
   #zoom_switcher {
     display: none;
@@ -262,9 +410,8 @@
   margin: 3px;
   .title {
     text-align: center;
-    line-height: 45px;
-    height: 40px;
-    margin: 1px 0 4px;
+    min-height: 40px;
+    margin: 30px 20px 0px;
     display: block;
     font-family: @font_family_1;
   }
@@ -273,6 +420,7 @@
     padding-left: 25px !important;
     margin: 3px 0 !important;
   }
+
   .s_images {
     width: 100%;
     height: 100%;

@@ -1,6 +1,6 @@
 <?php
-include_once('src/back/import/db');
-include_once('src/back/import/service');
+include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/import/services.php';
 class ApiRoutes {
     function __construct(&$klein)
     {

@@ -16,6 +16,7 @@
 @import "./components/page-not-found";
 @import "./components/ie8";
 @import "./components/dresses-size";
+@import "./components/top-panel";
 
 @font-face {
   font-family: Lobster;
@@ -393,42 +394,6 @@ ul.tree {
   width: 100%;
   left: -2px;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1a000000', endColorstr='#00797979', GradientType=0);
-}
-.drop-left {
-  background-color: @background_color_2;
-  cursor: pointer;
-  .horizontal-items {
-    float: left;
-    position: absolute;
-    >div {
-      >div {
-        background-color: @background_color_12;
-        float: left;
-        padding: 0 8px;
-        font-family: @font_family_2;
-        font-size: 14px;
-        color: @color_2;
-        height: 21px;
-        margin: 2px 0;
-        line-height: 22px;
-        &:hover {
-          color: @color_4;
-        }
-      }
-    }
-  }
-  .selected {
-    float: left;
-    position: absolute;
-    div {
-      background-color: @background_color_2;
-      float: left;
-    }
-  }
-  .drop-left-item {
-    padding: 0 8px;
-    background-color: @background_color_13;
-  }
 }
 .popup_relative {
   position: absolute;

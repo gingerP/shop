@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 11/6/14
- * Time: 1:08 AM
- */
 
-include_once("src/back/import/db");
+include_once AuWebRoot.'/src/back/import/db.php';
 
 class DBUsersType extends DBType {
     protected $tableName = DB::TABLE_USERS___NAME;

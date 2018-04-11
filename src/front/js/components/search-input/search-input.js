@@ -1,4 +1,5 @@
 (function () {
+    return;
     function debounce(cb, time) {
         var timeout;
         return function() {
@@ -7,8 +8,9 @@
             timeout = setTimeout(function() {
                 cb.call(null, args);
             }, time);
-        }
+        };
     }
+
     Handlebars.registerPartial('productsPartial',
         '<div class="search-result-products">\
             <div class="search-result-title">Товары (найдено {{items.length}})</div>\
@@ -54,7 +56,9 @@
 
     SearchInput = function SearchInput() {};
 
-    SearchInput.prototype.initialize = function initialize(inputSelector, resultPlaceholderSelector, selectorMobButtonSelector, parentSelector,  closeBtnSelector) {
+    SearchInput.prototype.initialize = function initialize(inputSelector, resultPlaceholderSelector,
+                                                           selectorMobButtonSelector, parentSelector,
+                                                           closeBtnSelector) {
         var self = this;
         self._selector = inputSelector;
         self._placeholderSelector = resultPlaceholderSelector;

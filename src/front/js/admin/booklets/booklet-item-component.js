@@ -23,11 +23,11 @@ define([
     };
 
     BookletItem.prototype.render = function () {
-        if (U.hasContent(this.$itemDOM)) {
+        if (AuUtils.hasContent(this.$itemDOM)) {
             var htmlDOM = Handlebars.compile($('#bookletItemContent').html())(this.controller.getEntity());
             $('.content', this.$itemDOM).html(htmlDOM);
         } else {
-            this.$itemDOM = U.compilePrefillHandlebar('bookletItem', this.controller.getEntity());
+            this.$itemDOM = AuUtils.compilePrefillHandlebar('bookletItem', this.controller.getEntity());
             this.$parentContainer.append(this.$itemDOM);
             this.$itemDOM = $(this.$itemDOM);
             this.initEvents();
@@ -64,7 +64,7 @@ define([
         });
 
         self.draggable = null;
-        if (U.hasContent(self.getId())) {
+        if (AuUtils.hasContent(self.getId())) {
             var selector = "#" + self.getId();
             self.resizable = $(selector).resizable({
                 delay: 0,
@@ -98,14 +98,14 @@ define([
                     x: function (end) {
                         var poss = self.booklet.checkPosToSnapX(end, self.controller.getSize().width);
                         self.booklet.highLightX(poss[0], poss[1]);
-                        var res = U.hasContent(poss[0]) ? poss[0] : end;
+                        var res = AuUtils.hasContent(poss[0]) ? poss[0] : end;
                         self.controller.updateEntity({position: {x: res}});
                         return res;
                     },
                     y: function (end) {
                         var poss = self.booklet.checkPosToSnapY(end, self.controller.getSize().height);
                         self.booklet.highLightY(poss[0], poss[1]);
-                        var res = U.hasContent(poss[0]) ? poss[0] : end;
+                        var res = AuUtils.hasContent(poss[0]) ? poss[0] : end;
                         self.controller.updateEntity({position: {y: res}});
                         return res;
                     }

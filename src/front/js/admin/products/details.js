@@ -51,7 +51,7 @@ define([
                 }
             };
             Components.updateFormData(this, data, updater);
-            if (!data._isNew && U.hasContent(data.key_item)) {
+            if (!data._isNew && AuUtils.hasContent(data.key_item)) {
                 var radioId = data.key_item.substring(0, 2);
                 form.checkItem('categories_items', radioId);
             }
@@ -70,7 +70,7 @@ define([
                 };
                 var newColumn = true;
                 for (var key in data) {
-                    if (U.hasContent(data[key])) {
+                    if (AuUtils.hasContent(data[key])) {
                         var item = {
                             type: 'input',
                             name: key,

@@ -1,6 +1,6 @@
 <?php
-include_once('src/back/import/db');
-include_once('src/back/import/import');
+include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/import/import.php';
 
 class EmailService
 {
@@ -12,7 +12,6 @@ class EmailService
         $systemMail = DBPreferencesType::getPreferenceValue(Constants::SYSTEM_MAIL);
 
         if (count($sendToEmails) == 0 || $sendToEmails[0] == '') {
-            Log::info("Empty system email: $senderEmail, $senderName");
             throw new Exception('Empty system email.');
         }
 
@@ -28,7 +27,6 @@ class EmailService
             $error = error_get_last();
             throw new Exception('Email sending failed: '.$error['message']);
         }
-        Log::info("Email sended: $senderEmail, $senderName - to " . implode(', ', $sendToEmails));
         return $res;
     }
 
@@ -47,7 +45,7 @@ class EmailService
                             $escapedMessageBody";
         if ($fromProductCode !== '') {
             $Products = new DBGoodsType();
-            $product = $Products->getByCode($fromProductCode);
+            $product = $Products->findByCode($fromProductCode);
             if (!is_null($product)) {
                 $productUrl = FileUtils::buildPath(
                     $publicUrl,

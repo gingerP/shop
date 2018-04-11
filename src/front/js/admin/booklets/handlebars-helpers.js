@@ -11,7 +11,7 @@ define([], function () {
     Handlebars.registerHelper('sizeHandler', function (size) {
         return Math.ceil(size.width / 135) * Math.ceil(size.height / 225);
     });
-    U.addHandlebarScript('bookletItem', '\
+    AuUtils.addHandlebarScript('bookletItem', '\
         <div id="{{id}}" class="item x{{sizeHandler size}}">\
             <div class="content">{{> bookletItemContent}}</div>\
             <div class="editors">\
@@ -31,11 +31,11 @@ define([], function () {
             <div class="connectors"></div>\
         </div>');
     Handlebars.registerPartial('bookletItem', $("#bookletItem").html());
-    U.addHandlebarScript('bookletItemContent', '\
+    AuUtils.addHandlebarScript('bookletItemContent', '\
         <img class="item_image" src="{{renderItemImage image}}"/>\
         <div class="number" style="{{renderItemNumberVisible number}}">{{number}}</div>\
         {{itemLabelGroup listLabels}}');
-    U.addHandlebarScript('itemLabelGroup', '\
+    AuUtils.addHandlebarScript('itemLabelGroup', '\
         {{#each groups}}\
             <div class="label_group {{@key}}_group">\
             {{#each this}}\
@@ -44,19 +44,19 @@ define([], function () {
             {{/each}}\
             </div>\
         {{/each}}');
-    U.addHandlebarScript('itemLabel', '<div id="{{id}}" class="label {{type}}"><pre>{{text}}</pre></div>');
+    AuUtils.addHandlebarScript('itemLabel', '<div id="{{id}}" class="label {{type}}"><pre>{{text}}</pre></div>');
     Handlebars.registerHelper('itemLabelGroup', function (labels) {
         var groups = {};
         if (labels.length) {
             for (var labelIndex = 0; labelIndex < labels.length; labelIndex++) {
                 var label = labels[labelIndex];
                 var labelType = /^(.*)_\d{1}$/.exec(label.type);
-                if (labelType.length > 1 && U.hasContent(label.text)) {
+                if (labelType.length > 1 && AuUtils.hasContent(label.text)) {
                     groups[labelType[1]] = groups[labelType[1]] || [];
                     groups[labelType[1]].push(label);
                 }
             }
-            if (U.hasContent(groups)) {
+            if (AuUtils.hasContent(groups)) {
                 return new Handlebars.SafeString(Handlebars.compile($('#itemLabelGroup').html())({groups: groups}));
             }
         }
@@ -80,7 +80,7 @@ define([], function () {
     Handlebars.registerPartial("itemLabel", $("#itemLabel").html());
     Handlebars.registerPartial("bookletItemContent", $("#bookletItemContent").html());
 
-    U.addHandlebarScript('previewContainer', '\
+    AuUtils.addHandlebarScript('previewContainer', '\
         <div id="preview_container" class="preview">\
             <div class="viewport_container">\
                 <div class="viewport_sub">\
@@ -91,7 +91,7 @@ define([], function () {
                     <div id="zoom_slider"></div>\
             </div>\
         </div>');
-    U.addHandlebarScript('fullpreviewContainer', '\
+    AuUtils.addHandlebarScript('fullpreviewContainer', '\
         <div id="preview_container" class="full_preview">\
             <div class="viewport_container">\
                 <div class="viewport_sub">\
@@ -100,8 +100,8 @@ define([], function () {
                     <div class="viewport">{{#each listItems}}{{> bookletItem}}{{/each}}</div>\
             </div>\
         </div>');
-    U.addHandlebarScript('booklet', '<div id="{{id}}" class="booklet"></div>');
-    U.addHandlebarScript('borders-default', '\
+    AuUtils.addHandlebarScript('booklet', '<div id="{{id}}" class="booklet"></div>');
+    AuUtils.addHandlebarScript('borders-default', '\
         <div class="vertical-border-1 item-border horizontal highlight" style="display: none"></div>\
         <div class="vertical-border-2 item-border horizontal highlight" style="display: none"></div>\
         <div class="horizontal-border-1 item-border vertical highlight" style="display: none"></div>\

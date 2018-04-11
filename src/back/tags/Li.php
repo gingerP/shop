@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 5/18/14
- * Time: 11:31 PM
- */
 
 class Li extends Tag {
 

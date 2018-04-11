@@ -31,7 +31,7 @@ Popup.prototype.init = function(containerSelector, showCallback, hideCallback, i
 
 Popup.prototype.createDOM = function() {
     var mainDiv = document.createElement('DIV');
-    this.domID = U.getRandomString();
+    this.domID = AuUtils.getRandomString();
     mainDiv.setAttribute('id', this.domID);
     mainDiv.setAttribute('class', this.isFixed? 'popup_fixed': 'popup_relative');
     var divPopupArrow = document.createElement('DIV');
@@ -88,7 +88,7 @@ Popup.prototype.getPopupPosition = function() {
     };
     var windowWidth = $(window).width();
     if (this.isFixed) {
-        if (!U.isNumber(this.absolutePositions.right)) {
+        if (!AuUtils.isNumber(this.absolutePositions.right)) {
             if (this.$popupBlock[0].getBoundingClientRect().right >= windowWidth) {
                 pos.popup.x = windowWidth - rect.right;
             } else {
@@ -111,7 +111,7 @@ Popup.prototype.getPopupPosition = function() {
 
         var containerPosRelativelyParent = this.$container.position();
 
-        if (!U.isNumber(this.absolutePositions.right)) {
+        if (!AuUtils.isNumber(this.absolutePositions.right)) {
             if (containerPosRelativelyParent.left >= windowWidth) {
                 pos.popup.x = windowWidth - rect.right;
             } else {
@@ -137,11 +137,11 @@ Popup.prototype.withPositions = function(options) {
 Popup.prototype.show = function() {
     var pos = this.getPopupPosition();
     if (this.isVisible === false) {
-        if (U.isNumber(pos.popup.x) && U.isNumber(pos.popup.y)) {
+        if (AuUtils.isNumber(pos.popup.x) && AuUtils.isNumber(pos.popup.y)) {
             this.$dom.css('left', pos.popup.x + 'px');
             this.$dom.css('top', pos.popup.y + 'px');
         }
-        if (U.isNumber(pos.arrow.x) && U.isNumber(pos.arrow.y)) {
+        if (AuUtils.isNumber(pos.arrow.x) && AuUtils.isNumber(pos.arrow.y)) {
             $('.popup_arrow', this.$dom).css('left', pos.arrow.x + 'px');
         }
         if (typeof(this.showCallback) == 'function') {
@@ -183,7 +183,7 @@ Popup.prototype.setData = function(dataDOM, callback) {
         this.dataContainer.innerHTML = '';
         if (typeof(dataDOM) == 'string') {
             this.dataContainer.innerHTML = dataDOM;
-        } else if (U.hasContent(dataDOM) && typeof(dataDOM) == 'object') {
+        } else if (AuUtils.hasContent(dataDOM) && typeof(dataDOM) == 'object') {
             this.dataContainer.appendChild(dataDOM);
         }
 

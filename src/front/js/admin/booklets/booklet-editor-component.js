@@ -72,7 +72,7 @@ define([
             this.labelTemplates = this._initTemplates(this._form);
             this._win.setText('Редактирование');
         }
-        var position = U.getPageCenter();
+        var position = AuUtils.getPageCenter();
         var size = this._win.getDimension();
         var x = position.x - size[0] / 2;
         var y = position.y - size[1] / 2;
@@ -247,7 +247,7 @@ define([
                 if (entity.listLabels) {
                     for (var labelIndex = 0; labelIndex < entity.listLabels.length; labelIndex++) {
                         var label = entity.listLabels[labelIndex];
-                        if (U.hasContent(label.type) && U.hasContent(label.text)) {
+                        if (AuUtils.hasContent(label.type) && AuUtils.hasContent(label.text)) {
                             var matches = /(.*){1}_\d{1}$/.exec(label.type);
                             if (matches && matches.length > 1) {
                                 self.labelTemplates._select_mark(matches[1], true);

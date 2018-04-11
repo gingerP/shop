@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 11/6/14
- * Time: 1:08 AM
- */
 
 class DBPreferencesType extends DBType {
     protected $tableName = DB::TABLE_PREFERENCES___NAME;

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 10/31/14
- * Time: 1:05 AM
- */
 
 class DBPagesCacheType extends DBType
 {

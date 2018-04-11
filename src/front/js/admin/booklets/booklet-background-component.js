@@ -33,7 +33,7 @@ define([
         form.attachEvent('onButtonClick', function (name) {
             if (name === 'ok') {
                 var selectedId = dataView.getSelected();
-                if (U.hasContent(selectedId)) {
+                if (AuUtils.hasContent(selectedId)) {
                     selected = dataView.get(selectedId);
                 }
 
@@ -61,7 +61,7 @@ define([
             .then(function (backgrounds) {
                 if (backgrounds && backgrounds.length) {
                     backgrounds.forEach(function (image) {
-                        view.add({id: U.getRandomString(), image: "/" + image});
+                        view.add({id: AuUtils.getRandomString(), image: "/" + image});
                     });
                 }
                 //console.info(backgrounds);

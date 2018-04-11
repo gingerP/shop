@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vinni
- * Date: 11.09.13
- * Time: 3:15
- * To change this template use File | Settings | File Templates.
- */
-include_once("src/back/import/db");
+
+include_once AuWebRoot.'/src/back/import/db.php';
 
 class DBNavKeyType extends DBType {
 

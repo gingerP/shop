@@ -34,7 +34,7 @@ require([
     }
 
     function initPage() {
-        U.dhtmlxDOMPreInit(document.documentElement, document.body);
+        AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
         var app = {
             unSelectionStateDetails: {
                 items: {
@@ -230,7 +230,7 @@ require([
         return booklet;
     }
 
-    if (U.hasContent(URL_PARAMS.id)) {
+    if (AuUtils.hasContent(URL_PARAMS.id)) {
         FullPagePreview.render(URL_PARAMS.id);
     } else {
         initPage();

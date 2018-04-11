@@ -1,7 +1,7 @@
 <?php
-include_once('src/back/import/db');
-include_once('src/back/import/import');
-include_once('src/back/import/errors');
+include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/errors.php';
 
 class ProductsService
 {
@@ -283,7 +283,6 @@ class ProductsService
         self::clearCache();
 
         $dbUserOrder = new DBUserOrderType();
-        Log::db("saveGoodsOrder " . count($order));
         return $dbUserOrder->saveOrder($order);
     }
 
@@ -293,7 +292,6 @@ class ProductsService
         $data = $dbGoods->getAdminSortedForCommon(0, PHP_INT_MAX);
         $dbPref = new DBPreferencesType();
         $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
-        Log::db("getGoodsOrder ");
         $mappings = [
             DB::TABLE_GOODS__ID => DB::TABLE_GOODS__ID,
             DB::TABLE_GOODS__KEY_ITEM => DB::TABLE_GOODS__KEY_ITEM,

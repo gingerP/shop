@@ -1,5 +1,5 @@
 <?php
-include_once("src/back/import/import");
+include_once AuWebRoot.'/src/back/import/import.php';
 
 class Item {
 

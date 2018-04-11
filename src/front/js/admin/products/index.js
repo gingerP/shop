@@ -92,7 +92,7 @@ require([
     }
 
     (function init() {
-        U.dhtmlxDOMPreInit(document.documentElement, document.body);
+        AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
         app.loader = getLoader();
         app.layout = initLayout();
         app.tabbar = initTabbar(app.layout);

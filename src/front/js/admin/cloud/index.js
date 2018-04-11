@@ -5,7 +5,7 @@ require([
 ], function (Dropbox, Components) {
     'use strict';
 
-    U.dhtmlxDOMPreInit(document.documentElement, document.body);
+    AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
     var app = {};
     /**@type AuDropboxDir*/
     var dropbox = new Dropbox();

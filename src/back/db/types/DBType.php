@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vinni
- * Date: 11.09.13
- * Time: 3:30
- * To change this template use File | Settings | File Templates.
- */
-include_once("src/back/import/import");
+
+include_once AuWebRoot.'/src/back/import/import.php';
 use Katzgrau\KLogger\Logger as Logger;
 
 abstract class DBType {

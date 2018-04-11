@@ -37,7 +37,7 @@ require([
     }
 
     (function init() {
-        U.dhtmlxDOMPreInit(document.documentElement, document.body);
+        AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
         app.layout = createLayout();
         app.tabbar = createTabbar(app.layout);
         app.menu = Components.createMenu(app.layout);

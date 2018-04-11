@@ -1,5 +1,5 @@
 <?php
-include_once('src/back/import/db');
+include_once AuWebRoot.'/src/back/import/db.php';
 
 class BookletService {
     private static $bookletItemsKey = 'listItems';

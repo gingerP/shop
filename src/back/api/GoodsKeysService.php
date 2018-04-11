@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vinni
- * Date: 3/17/15
- * Time: 12:10 AM
- */
-
-include_once('src/back/import/import');
-include_once('src/back/import/db');
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/db.php';
 
 class GoodsKeysService {
 

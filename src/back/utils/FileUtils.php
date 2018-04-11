@@ -1,6 +1,6 @@
 <?php
-include_once("src/back/import/import");
-include_once("src/back/import/errors");
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/errors.php';
 
 class FileUtils
 {

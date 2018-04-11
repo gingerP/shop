@@ -1,7 +1,7 @@
 <?php
-include_once('src/back/import/import');
-include_once('src/back/import/page');
-include_once('src/back/labels/HttpStatuses.php');
+include_once AuWebRoot.'/src/back/import/import.php';
+include_once AuWebRoot.'/src/back/import/pages.php';
+include_once AuWebRoot.'/src/back/labels/HttpStatuses.php';
 
 use Katzgrau\KLogger\Logger as Logger;
 
@@ -40,6 +40,15 @@ class SiteRoutes {
 
         $klein->respond('GET', '/'.UrlParameters::PAGE__DELIVERY, function ($request, $response) use ($logger) {
             $page = new DeliveryPage($request);
+            $page->validate($request);
+            $response->headers([
+                'Content-Type' => 'text/html; charset=utf-8'
+            ]);
+            return $page->build()->getContent();
+        });
+
+        $klein->respond('GET', '/'.UrlParameters::PAGE__PRODUCTS.'/[:productCode]/?', function ($request, $response) use ($logger) {
+            $page = new ProductPage($request);
             $page->validate($request);
             $response->headers([
                 'Content-Type' => 'text/html; charset=utf-8'
