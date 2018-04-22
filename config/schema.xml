@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="augustovaref" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+  <table name="address" idMethod="native" phpName="Address">
+    <column name="address_id" phpName="AddressId" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="prices" phpName="Prices" type="VARCHAR" size="250"/>
+    <column name="map" phpName="Map" type="VARCHAR" size="40"/>
+    <column name="description" phpName="Description" type="VARCHAR" size="200" required="true"/>
+    <column name="mobile_numbers" phpName="MobileNumbers" type="VARCHAR" size="200"/>
+    <column name="active" phpName="Active" type="BOOLEAN" size="1" required="true" defaultValue="true"/>
+    <column name="title" phpName="Title" type="VARCHAR" size="45"/>
+    <column name="working_hours" phpName="WorkingHours" type="VARCHAR" size="100"/>
+    <column name="weekend" phpName="Weekend" type="VARCHAR" size="100"/>
+    <column name="address" phpName="Address" type="VARCHAR" size="250"/>
+    <column name="email" phpName="Email" type="VARCHAR" size="45"/>
+    <unique name="unique_address_id">
+      <unique-column name="address_id"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="booklets" idMethod="native" phpName="Booklets">
+    <column name="booklet_id" phpName="BookletId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="200"/>
+    <column name="created" phpName="Created" type="TIMESTAMP" required="true"/>
+    <column name="updated" phpName="Updated" type="TIMESTAMP" required="true"/>
+    <column name="data" phpName="Data" type="LONGVARCHAR"/>
+    <column name="code" phpName="Code" type="VARCHAR" size="45" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="errors" idMethod="native" phpName="Errors">
+    <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="100" primaryKey="true" required="true"/>
+    <column name="message" phpName="Message" type="LONGVARCHAR"/>
+    <column name="stack" phpName="Stack" type="LONGVARCHAR"/>
+    <column name="date" phpName="Date" type="TIMESTAMP"/>
+    <unique name="id_UNIQUE">
+      <unique-column name="id"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="goods" idMethod="native" phpName="Goods">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="key_item" phpName="KeyItem" type="CHAR" size="5" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="255" required="true"/>
+    <column name="description" phpName="Description" type="LONGVARCHAR"/>
+    <column name="image_path" phpName="ImagePath" type="LONGVARCHAR"/>
+    <column name="category" phpName="Category" type="VARCHAR" size="45" required="true"/>
+    <column name="version" phpName="Version" type="VARCHAR" size="45" required="true" defaultValue="0"/>
+    <column name="images" phpName="Images" type="VARCHAR" size="5000" required="true" defaultValue="[]"/>
+    <unique name="ID">
+      <unique-column name="id"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="goods_types" idMethod="native" phpName="GoodsTypes">
+    <column name="goods_types_id" phpName="GoodsTypesId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="code" phpName="Code" type="VARCHAR" size="50"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="256"/>
+    <column name="description" phpName="Description" type="VARCHAR" size="512"/>
+    <column name="active" phpName="Active" type="BOOLEAN" size="1" required="true" defaultValue="true"/>
+    <column name="price_file_name" phpName="PriceFileName" type="VARCHAR" size="50"/>
+    <column name="abbreviation" phpName="Abbreviation" type="VARCHAR" size="10"/>
+    <unique name="code">
+      <unique-column name="code"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="nav_key" idMethod="native" phpName="NavKey">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="key_item" phpName="KeyItem" type="VARCHAR" size="5" required="true"/>
+    <column name="value" phpName="Value" type="VARCHAR" size="50" required="true"/>
+    <column name="parent_key" phpName="ParentKey" type="VARCHAR" size="5" required="true"/>
+    <column name="home_view" phpName="HomeView" type="CHAR" sqlType="enum('big','small')" required="true"/>
+    <unique name="id">
+      <unique-column name="id"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="new_table" idMethod="native" phpName="NewTable">
+    <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="100" primaryKey="true" required="true"/>
+    <column name="message" phpName="Message" type="LONGVARCHAR"/>
+    <column name="stack" phpName="Stack" type="LONGVARCHAR"/>
+    <column name="date" phpName="Date" type="TIMESTAMP"/>
+    <unique name="id_UNIQUE">
+      <unique-column name="id"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="news" idMethod="native" phpName="News">
+    <column name="news_id" phpName="NewsId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="title" phpName="Title" type="LONGVARCHAR"/>
+    <column name="video_type" phpName="VideoType" type="VARCHAR" size="45"/>
+    <column name="text" phpName="Text" type="LONGVARCHAR"/>
+    <column name="video_url" phpName="VideoUrl" type="LONGVARCHAR"/>
+    <column name="content" phpName="Content" type="LONGVARCHAR"/>
+    <column name="active" phpName="Active" type="BOOLEAN" size="1" defaultValue="false"/>
+    <column name="creation_time" phpName="CreationTime" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+    <column name="type" phpName="Type" type="VARCHAR" size="10" required="true" defaultValue="raw"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="pages_cache" idMethod="native" phpName="PagesCache">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="hash" phpName="Hash" type="VARCHAR" size="45" required="true"/>
+    <column name="content" phpName="Content" type="LONGVARCHAR"/>
+    <unique name="id_UNIQUE">
+      <unique-column name="id"/>
+    </unique>
+    <unique name="hash_UNIQUE">
+      <unique-column name="hash"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="preferences" idMethod="native" phpName="Preferences">
+    <column name="preferences_id" phpName="PreferencesId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="key" phpName="Key" type="VARCHAR" size="45" required="true"/>
+    <column name="value" phpName="Value" type="VARCHAR" size="200" required="true"/>
+    <column name="description" phpName="Description" type="VARCHAR" size="200"/>
+    <column name="value_type" phpName="ValueType" type="VARCHAR" size="45" required="true" defaultValue="string"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="sessions" idMethod="native" phpName="Sessions">
+    <column name="session_id" phpName="SessionId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="100" required="true"/>
+    <column name="creation_date" phpName="CreationDate" type="DATE" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER" required="true"/>
+    <index name="user_id">
+      <index-column name="user_id"/>
+    </index>
+    <unique name="name">
+      <unique-column name="name"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="user_order" idMethod="native" phpName="UserOrder">
+    <column name="user_order_id" phpName="UserOrderId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="good_id" phpName="GoodId" type="INTEGER" required="true"/>
+    <column name="good_index" phpName="GoodIndex" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="goods" name="fk_good_id" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="good_id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_good_id">
+      <index-column name="good_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="users" idMethod="native" phpName="Users">
+    <column name="user_id" phpName="UserId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="30" required="true"/>
+    <column name="password" phpName="Password" type="VARCHAR" size="100" required="true"/>
+    <unique name="name">
+      <unique-column name="name"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+</database>

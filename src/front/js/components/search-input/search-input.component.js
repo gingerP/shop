@@ -1,83 +1,52 @@
 (function () {
-    return;
+
     function debounce(cb, time) {
         var timeout;
-        return function() {
+        return function () {
             var args = arguments;
             clearTimeout(timeout);
-            timeout = setTimeout(function() {
+            timeout = setTimeout(function () {
                 cb.call(null, args);
             }, time);
         };
     }
 
-    Handlebars.registerPartial('productsPartial',
-        '<div class="search-result-products">\
-            <div class="search-result-title">Товары (найдено {{items.length}})</div>\
-        {{#each items}}\
-            <a class="search-result-product" href="{{this.url}}">\
-                <img class="search-result-product-icon" src="{{this.icon}}">\
-                <div class="search-result-product-text">{{this.name}}</div>\
-            </a>\
-        {{/each}}\
-        </div>');
-    Handlebars.registerPartial('contactsPartial',
-        '<div class="search-result-contacts">\
-            <div class="search-result-title">Контакты (найдено {{items.length}})</div>\
-        {{#each items}}\
-            <a class="search-result-contact" href="{{this.url}}">{{this.name}}</a>\
-        {{/each}}\
-        </div>');
-    Handlebars.registerPartial('navKeysPartial',
-        '<div class="search-result-navs">\
-            <div class="search-result-title">Категории (найдено {{items.length}})</div>\
-        {{#each items}}\
-            <a class="search-result-nav" href="{{this.url}}">{{this.name}}</a>\
-        {{/each}}\
-        </div>');
-    Handlebars.registerPartial('containerPartial',
-        '<div class="search-result-container">\
-            <div class="search-result-container-height">\
-            {{#if isEmpty}}\
-            <div class="search-result-empty">К сожаление, ничего не найдено</div>\
-            {{/if}}\
-            {{#if contacts.length}}\
-            {{> contactsPartial items=contacts}}\
-            {{/if}}\
-            {{#if navKeys.length}}\
-            {{> navKeysPartial items=navKeys}}\
-            {{/if}}\
-            {{#if products.length}}\
-            {{> productsPartial items=products}}\
-            {{/if}}\
-            </div>\
-        </div>');
-    var container = Handlebars.compile('{{> containerPartial}}');
+    function SearchInput() {
+    }
 
-    SearchInput = function SearchInput() {};
-
-    SearchInput.prototype.initialize = function initialize(inputSelector, resultPlaceholderSelector,
-                                                           selectorMobButtonSelector, parentSelector,
-                                                           closeBtnSelector) {
+    SearchInput.prototype.initialize = function initialize() {
         var self = this;
-        self._selector = inputSelector;
-        self._placeholderSelector = resultPlaceholderSelector;
-        self._selectorMobButtonSelector = selectorMobButtonSelector;
-        self._parentSelector = parentSelector;
-        self._closeBtnSelector = closeBtnSelector;
+        self._topPanelFooterSelector = '.top-panel-footer';
+        self._panelSearchSelector = '.top-panel-search';
+        self._selector = '.search-input';
+        self._placeholderSelector = '.search-result-placeholder';
+        self._selectorMobButtonSelector = '.search-button-mob';
+        self._parentSelector = '.search-button-container';
+        self._closeBtnSelector = '.search-input-close';
+        self._searchBtnOpenerSelector = '.search-button-opener';
+        self._searchBtnCloserSelector = '.search-button-closer';
+
         self._debounceTimeout = 300;
         self._blackoutMaxScreenSize = 700;
+
+        self.$body = $(document.body);
         self.$mobButton = $(self._selectorMobButtonSelector);
         self.$input = $(self._selector);
         self.$placeholder = $(self._placeholderSelector);
         self.$parent = $(self._parentSelector);
         self.$closeBtn = $(self._closeBtnSelector);
+        self.$searchBtnOpener = $(self._searchBtnOpenerSelector);
+        self.$searchBtnCloser = $(self._searchBtnCloserSelector);
+        self.$panelSearch = $(self._panelSearchSelector);
+        self.$topPanelFooter = $(self._topPanelFooterSelector);
+
         self.initializeEvents();
         self.requestPage = 0;
         self.requestLimit = 200;
         self.products = [];
         self.navKeys = [];
         self.contacts = [];
+        self.isMobOpened = false;
     };
 
     SearchInput.prototype.initializeEvents = function initializeEvents() {
@@ -88,25 +57,47 @@
                     self.search();
                 }
             }, self._debounceTimeout))
-            .on('focus', function() {
+            .on('focus', function () {
                 self.scrollToInput();
                 self.search();
                 self.activateBlackout();
             })
-            .on('blur', debounce(function() {
+            .on('blur', debounce(function () {
                 self.clearSearchedData();
                 self.closeSearchView();
             }, self._debounceTimeout));
         self.$mobButton
-            .on('click', function() {
+            .on('click', function () {
                 self.$parent.addClass('input-opened');
                 self.$input.focus();
             });
         self.$closeBtn
-            .on('click', function() {
+            .on('click', function () {
                 self.clearSearchedData();
                 self.closeSearchView();
-            })
+            });
+        self.$searchBtnOpener
+            .on('click', function () {
+                self.isMobOpened = !self.isMobOpened;
+                if (self.isMobOpened) {
+                    setTimeout(function () {
+                        self.$input.focus();
+                    }, 300);
+                    self.$body.addClass('block-scrolling');
+                    self.$topPanelFooter.addClass('opened-mob-search');
+                } else {
+                    self.$body.removeClass('block-scrolling');
+                    self.$topPanelFooter.removeClass('opened-mob-search');
+                }
+            });
+        self.$searchBtnCloser
+            .on('click', function () {
+                if (self.isMobOpened) {
+                    self.isMobOpened = false;
+                    self.$body.removeClass('block-scrolling');
+                    self.$topPanelFooter.removeClass('opened-mob-search');
+                }
+            });
     };
 
     SearchInput.prototype.search = function search() {
@@ -132,9 +123,6 @@
 
     SearchInput.prototype.applySearchResults = function () {
         var self = this;
-        var isEmtyVisible = !self.products.length && !self.navKeys.length && !self.contacts.length;
-        var html = container({products: self.products, navKeys: self.navKeys, contacts: self.contacts, isEmpty: isEmtyVisible});
-        self.$placeholder.html(html);
     };
 
     SearchInput.prototype.requestSearch = function requestSearch(searchValue, cb) {
@@ -191,6 +179,6 @@
         self.deactivateBlackout();
     };
 
+    new SearchInput().initialize();
 
-    return SearchInput;
 })();

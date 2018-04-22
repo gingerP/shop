@@ -10,6 +10,9 @@ use Katzgrau\KLogger\Logger as Logger;
 
 $klein = new \Klein\Klein();
 $logger = new Logger(AU_CONFIG['log.file'], Psr\Log\LogLevel::DEBUG);
+$klein->respond(function ($request, $response) {
+    $start = microtime();
+});
 
 new SiteRoutes($klein);
 new ApiRoutes($klein);
@@ -17,7 +20,7 @@ new AdminRoutes($klein);
 
 $klein->respond(function ($request, $response, $service, $app) use ($klein, $logger) {
     // Handle exceptions => flash the message and redirect to the referrer
-    $logger->debug($request->method() . ' ' . $request->uri() . ' ' . $response->code() .' ' . $request->userAgent());
+    $logger->debug($request->method() . ' ' . $request->uri() . ' ' . $response->code() . ' ' . $request->userAgent());
     $klein->onError(function ($klein, $error) use ($response, $logger) {
         if ($error instanceof ProductNotFoundError) {
             //sendNotFoundPage();

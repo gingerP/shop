@@ -7,6 +7,10 @@ function extractProductId($product) {
 class SearchService
 {
 
+    public static function searchAsHtml() {
+
+    }
+
     public static function search($searchValue, $page = 0, $limit = 10, $includeNav = true, $includeContacts = true, $shouldNormalize = true)
     {
         $connection = (new DBConnection())->init();

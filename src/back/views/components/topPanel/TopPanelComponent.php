@@ -14,6 +14,7 @@ class TopPanelComponent extends AbstractComponent
     public function build()
     {
         $componentInfo = [
+            'i18n' => Localization,
             'headerLinks' => array_map(
                 function (&$item) {
                     $item['class'] .= ' ' . (in_array($this->pageName, $item['code']) ? 'selected' : '');

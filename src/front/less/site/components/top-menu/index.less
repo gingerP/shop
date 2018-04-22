@@ -1,8 +1,20 @@
-@import (reference) "../variables";
+@import (reference) "../../variables";
 @topPanelLinkHeight: 50px;
+@topPanelHeight: 150px;
 
 .top-panel {
+  height: @topPanelHeight;
+
+  &-list-container {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
+
   &-links {
+    position: fixed;
+    width: 100%;
+    z-index: 80;
     min-height: @topPanelLinkHeight;
     background-color: @colorsSetDark;
     &-container {
@@ -19,6 +31,7 @@
       float: left;
     }
   }
+
   &-link {
     font-weight: bold;
     line-height: @topPanelLinkHeight;
@@ -37,32 +50,16 @@
     }
   }
 
-  &-logo {
-    width: 300px;
-    float: left;
-    height: 100px;
-  }
-  &-search {
-    width: ~'calc(100% - 300px)';
-    float: left;
-    padding: 27px 20px;
-    box-sizing: border-box;
-    &-input-container {
-      .search-input {
-        height: 40px;
-        width: ~'calc(100% - 70px - 4px)';
-        box-sizing: border-box;
-        padding: 0 20px;
-      }
-      .search-button {
-        height: 40px;
-        width: 70px;
-      }
-    }
+  &-overlay,
+  &-opener,
+  &-company-name {
+    display: none;
   }
 
   &-footer {
     height: 100px;
+    top: @topPanelLinkHeight;
+    position: relative;
   }
 }
 
@@ -77,13 +74,4 @@
   }
 }
 
-@media (max-width: 1400px) {
-  .top-panel{
-    &-footer,
-    &-links {
-      &-container {
-        width: 100%;
-      }
-    }
-  }
-}
+@import "./media";
