@@ -1,56 +1,59 @@
 <?php
 
-function extractProductId($product) {
+function extractProductId($product)
+{
     return $product[DB::TABLE_GOODS__ID];
 }
 
 class SearchService
 {
 
-    public static function searchAsHtml() {
+    private static $mustache;
 
+    public static function searchAsHtml($searchValue, $page = 0, $limit = 10, $includeNav = true, $includeContacts = true, $shouldNormalize = true)
+    {
+        $responseData = self::search($searchValue, $page = 0, $limit = 10, $includeNav = true, $includeContacts = true, $shouldNormalize = true);
+        $renderEngine = self::getRenderEngine();
+        $template = $renderEngine->loadTemplate('search-response.mustache');
+        return $template->render($responseData);
     }
 
     public static function search($searchValue, $page = 0, $limit = 10, $includeNav = true, $includeContacts = true, $shouldNormalize = true)
     {
         $connection = (new DBConnection())->init();
-        $addressType = (new DBAddressType())->setConnection($connection);
-        $goodsType = (new DBGoodsType())->setConnection($connection);
-        $navKeysType = (new DBNavKeyType())->setConnection($connection);
 
         $link = $connection->getLink();
         $escapedValue = mysqli_real_escape_string($link, $searchValue);
         $result = [];
+        $isEmpty = true;
+
         if ($includeNav == true) {
+            $navKeysType = (new DBNavKeyType())->setConnection($connection);
             $navs = $navKeysType->extractDataFromResponse($navKeysType->executeRequestLikeArrayWithLimit(
                 [DB::TABLE_NAV_KEY__VALUE],
                 [$escapedValue],
                 DB::TABLE_NAV_KEY__VALUE, 'asc', 0, 20
             ));
             $result['navs'] = $shouldNormalize == true ? self::normalizeNavs($navs) : $navs;
+            $isEmpty = $isEmpty && count($result['navs']) == 0;
         }
+
         if ($includeContacts == true) {
+            $addressType = (new DBAddressType())->setConnection($connection);
             $contacts = $addressType->extractDataFromResponse($addressType->executeRequestLikeArrayWithLimit(
                 [DB::TABLE_ADDRESS__ADDRESS, DB::TABLE_ADDRESS__EMAIL, DB::TABLE_ADDRESS__TITLE],
                 [$escapedValue, $escapedValue, $escapedValue],
                 DB::TABLE_ADDRESS__TITLE, 'asc', 0, 20
             ));
             $result['contacts'] = $shouldNormalize == true ? self::normalizeContacts($contacts) : $contacts;
+            $isEmpty = $isEmpty && count($result['contacts']) == 0;
         }
-        $products = $goodsType->extractDataFromResponse($goodsType->executeRequestLikeArrayWithLimit(
-            [DB::TABLE_GOODS__NAME], [$escapedValue],
-            DB::TABLE_GOODS__NAME, 'asc', 0, 200
-        ));
-        $productsIds = array_map('extractProductId', $products);
-        $goodsType = (new DBGoodsType())->setConnection($connection);
-        $products = array_merge(
-            $products,
-            $goodsType->extractDataFromResponse($goodsType->searchByCriteriaExcludingIds(
-                [DB::TABLE_GOODS__DESCRIPTION], [$escapedValue], $productsIds,
-                DB::TABLE_GOODS__NAME, 'asc', 0, 200
-            ))
-        );
-        $result['products'] = $shouldNormalize == true ? self::normalizeProducts($products) : $products;
+
+        $Products = (new DBGoodsType())->setConnection($connection);
+        $products = $Products->searchByNameDescription($escapedValue, $page, $limit);
+        $result['products'] = $shouldNormalize == true ? self::normalizeProducts($products['list']) : $products['list'];
+        $isEmpty = $isEmpty && count($result['products']) == 0;
+        $result['isEmpty'] = $isEmpty;
 
         return $result;
     }
@@ -68,7 +71,7 @@ class SearchService
                 array_push($normalized, [
                     'name' => $product[DB::TABLE_GOODS__NAME],
                     'url' => URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM]),
-                    'icon' => $imagesSmall[0]
+                    'icon' => count($imagesSmall) ? '/' . $imagesSmall[0] : ''
                 ]);
             }
         }
@@ -102,6 +105,17 @@ class SearchService
             }
         }
         return $normalized;
+    }
+
+    public static function getRenderEngine()
+    {
+        if (is_null(self::$mustache)) {
+            self::$mustache = new Mustache_Engine([
+                'loader' => new Mustache_Loader_FilesystemLoader(realpath(__DIR__)),
+                'pragmas' => [Mustache_Engine::PRAGMA_FILTERS]
+            ]);
+        }
+        return self::$mustache;
     }
 
 }

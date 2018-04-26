@@ -1,0 +1,34 @@
+<div class="search-result-container">
+    <div class="search-result-container-height">
+        {{#isEmpty}}
+            <div class="search-result-empty">К сожаление, ничего не найдено</div>
+        {{/isEmpty}}
+        {{#contacts.0}}
+            <div class="search-result-contacts">
+                <div class="search-result-title">Контакты (найдено {{contacts.length}})</div>
+                {{#contacts}}
+                    <a class="search-result-contact" href="{{url}}">{{name}}</a>
+                {{/contacts}}
+            </div>
+        {{/contacts.0}}
+        {{#navs.0}}
+            <div class="search-result-navs">
+                <div class="search-result-title">Категории (найдено {{navs.length}})</div>
+                {{#navs}}
+                    <a class="search-result-nav" href="{{url}}">{{name}}</a>
+                {{/navs}}
+            </div>
+        {{/navs.0}}
+        {{#products.0}}
+            <div class="search-result-products">
+                <div class="search-result-title">Товары (найдено {{products.length}})</div>
+                {{#products}}
+                    <a class="search-result-product" href="{{url}}">
+                        <img class="search-result-product-icon" src="{{icon}}">
+                        <div class="search-result-product-text">{{name}}</div>
+                    </a>
+                {{/products}}
+            </div>
+        {{/products.0}}
+    </div>
+</div>

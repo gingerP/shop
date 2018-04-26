@@ -7,7 +7,7 @@ include_once AuWebRoot.'/src/back/api/GoodsKeysService.php';
 include_once AuWebRoot.'/src/back/api/BookletService.php';
 include_once AuWebRoot.'/src/back/api/NewsService.php';
 include_once AuWebRoot.'/src/back/api/PreferencesService.php';
-include_once AuWebRoot.'/src/back/api/SearchService.php';
+include_once AuWebRoot.'/src/back/api/search-service/SearchService.php';
 include_once AuWebRoot.'/src/back/api/DropboxService.php';
 include_once AuWebRoot.'/src/back/api/ErrorsService.php';
 

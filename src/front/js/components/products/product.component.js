@@ -20,6 +20,7 @@ $(document).ready(function () {
 
 
     function initializeImagesViewInLine() {
+        var $gallery = $('#gallery');
         var $images = $('.s_images .image_preview');
         var $image = $images.first();
         var $doc = $(document);
@@ -28,8 +29,10 @@ $(document).ready(function () {
 
         function onResize() {
             if ($doc.width() < 1260) {
+                $gallery.addClass('images-in-line');
                 $galleryViewport.css('width', imagesLineWidth + 'px');
             } else {
+                $gallery.removeClass('images-in-line');
                 $galleryViewport.removeAttr('style');
             }
         }

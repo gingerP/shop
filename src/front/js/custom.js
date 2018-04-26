@@ -147,70 +147,6 @@ function initBlackoutLogic() {
     );
 }
 
-function initTreeLogic() {
-    var animationSpeed = 200;
-    var images_asc = ["images/arrow00.png", "images/arrow15.png", "images/arrow30.png", "images/arrow45.png", "images/arrow60.png", "images/arrow75.png", "images/arrow90.png"];
-
-    var images_desc = images_asc.slice(0);
-    images_desc.reverse();
-    function openTree($node) {
-        var $image = $('.tree_btn>img', $node);
-        $('>ul', $node).slideDown(animationSpeed, function () {
-            $('>ul', $node).removeClass('tree_node_close').addClass('tree_node_open');
-        });
-        if ($image.length) {
-            rotateIcon($image, images_asc, animationSpeed / images_asc.length);
-        }
-    }
-
-    function closeTree($node) {
-        var $image = $('.tree_btn>img', $node);
-        $('>ul', $node).slideUp(animationSpeed, function () {
-            $('>ul', $node).removeClass('tree_node_open').addClass('tree_node_close');
-        });
-        if ($image.length) {
-            rotateIcon($image, images_desc, animationSpeed / images_desc.length);
-        }
-    }
-
-    function rotateIcon(imgObject, images, timeStep) {
-        var imageIndex = 0;
-        var animation = setInterval(function () {
-            imageIndex++;
-            imgObject[0].src = images[imageIndex];
-            if (imageIndex == images.length - 1) {
-                clearInterval(animation);
-            }
-        }, timeStep);
-    }
-
-    function initCloseNav() {
-        $('.nav-close-btn').click(function () {
-            $('.nav-tree-container').removeClass('opened');
-        });
-    }
-
-
-    initCloseNav();
-
-    $('.tree .tree_btn').click(function () {
-        var $node = $(this).closest('li');
-
-        if ($('>ul', $node).css('display') == 'none') {
-            openTree($node);
-        } else {
-            closeTree($node);
-            //close all inner nodes
-            $nodesToClose = $('li', $node);
-            for (var nodeIndex = 0; nodeIndex < $nodesToClose.length; nodeIndex++) {
-                if ($('ul.tree_node_open', $nodesToClose[nodeIndex]).length) {
-                    closeTree($($nodesToClose[nodeIndex]));
-                }
-            }
-        }
-    });
-}
-
 function initPathLinkSideBar() {
     var navBar = $('.nav-tree-container');
     $('[data-code=GN]').click(function (event) {
@@ -586,7 +522,6 @@ $(document).ready(function () {
         initPriceGalleryLogic();
         //initNewsGalleryLogic();
     } else if (pages.isCatalog) {
-        initTreeLogic();
         keyBoard.handle(37, function () {
             $('.prev_link').trigger('click')
         });
@@ -599,7 +534,6 @@ $(document).ready(function () {
 
     } else if (pages.isSingleItem) {
         initPreviewImage();
-        initTreeLogic();
     }
 
     var agentClass = AuUtils.isIE() ? 'ie' : 'not_ie';

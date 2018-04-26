@@ -1,4 +1,39 @@
 (function () {
+    var emptyResult = '<span class="search-empty-result-mob">Ничего не найдено. Закрыть поиск.</span>';
+    var searchResultTemplate = [
+        '		<div class="search-result-container">',
+        '			{{#isEmpty}}',
+        '				<div class="search-result-empty">К сожаление, ничего не найдено</div>',
+        '			{{/isEmpty}}',
+        '			{{#contacts.0}}',
+        '				<div class="search-result-contacts">',
+        '					<div class="search-result-title">Контакты (найдено {{contacts.length}})</div>',
+        '					{{#contacts}}',
+        '						<a class="search-result-contact" href="{{url}}">{{name}}</a>',
+        '					{{/contacts}}',
+        '				</div>',
+        '			{{/contacts.0}}',
+        '			{{#navs.0}}',
+        '				<div class="search-result-navs">',
+        '					<div class="search-result-title">Категории (найдено {{navs.length}})</div>',
+        '					{{#navs}}',
+        '						<a class="search-result-nav" href="{{url}}">{{name}}</a>',
+        '					{{/navs}}',
+        '				</div>',
+        '			{{/navs.0}}',
+        '			{{#products.0}}',
+        '				<div class="search-result-products">',
+        '					<div class="search-result-title">Товары (найдено {{products.length}})</div>',
+        '					{{#products}}',
+        '						<a class="search-result-product" href="{{url}}">',
+        '							<img class="search-result-product-icon" src="{{icon}}">',
+        '							<div class="search-result-product-text">{{name}}</div>',
+        '						</a>',
+        '					{{/products}}',
+        '				</div>',
+        '			{{/products.0}}',
+        '		</div>'
+    ].join('');
 
     function debounce(cb, time) {
         var timeout;
@@ -19,10 +54,9 @@
         self._topPanelFooterSelector = '.top-panel-footer';
         self._panelSearchSelector = '.top-panel-search';
         self._selector = '.search-input';
-        self._placeholderSelector = '.search-result-placeholder';
+        self._placeholderSelector = '.top-panel-search-result-placeholder';
         self._selectorMobButtonSelector = '.search-button-mob';
         self._parentSelector = '.search-button-container';
-        self._closeBtnSelector = '.search-input-close';
         self._searchBtnOpenerSelector = '.search-button-opener';
         self._searchBtnCloserSelector = '.search-button-closer';
 
@@ -34,7 +68,6 @@
         self.$input = $(self._selector);
         self.$placeholder = $(self._placeholderSelector);
         self.$parent = $(self._parentSelector);
-        self.$closeBtn = $(self._closeBtnSelector);
         self.$searchBtnOpener = $(self._searchBtnOpenerSelector);
         self.$searchBtnCloser = $(self._searchBtnCloserSelector);
         self.$panelSearch = $(self._panelSearchSelector);
@@ -42,7 +75,7 @@
 
         self.initializeEvents();
         self.requestPage = 0;
-        self.requestLimit = 200;
+        self.requestLimit = 10;
         self.products = [];
         self.navKeys = [];
         self.contacts = [];
@@ -63,18 +96,12 @@
                 self.activateBlackout();
             })
             .on('blur', debounce(function () {
-                self.clearSearchedData();
-                self.closeSearchView();
+                 self.closeSearchView();
             }, self._debounceTimeout));
         self.$mobButton
             .on('click', function () {
                 self.$parent.addClass('input-opened');
                 self.$input.focus();
-            });
-        self.$closeBtn
-            .on('click', function () {
-                self.clearSearchedData();
-                self.closeSearchView();
             });
         self.$searchBtnOpener
             .on('click', function () {
@@ -96,6 +123,8 @@
                     self.isMobOpened = false;
                     self.$body.removeClass('block-scrolling');
                     self.$topPanelFooter.removeClass('opened-mob-search');
+                    self.closeSearchView();
+                    self.clearSearchedData();
                 }
             });
     };
@@ -121,28 +150,40 @@
         return self.value !== self.$input.val();
     };
 
-    SearchInput.prototype.applySearchResults = function () {
+    SearchInput.prototype.applySearchResults = function (result) {
         var self = this;
+        self.$placeholder.html(
+            Mustache.render(searchResultTemplate, {
+                isEmpty: !self.products.length && self.navKeys.length && !self.contacts.length,
+                products: self.products,
+                navs: self.navKeys,
+                contacts: self.contacts
+            })
+        );
     };
 
     SearchInput.prototype.requestSearch = function requestSearch(searchValue, cb) {
         var self = this;
-        $.get(
+        $.ajax(
             '/api/search',
             {
-                search: searchValue,
-                page: self.requestPage,
-                limit: self.requestLimit
-            },
-            function (data) {
-                cb(data.products || [], data.navs || [], data.contacts || []);
+                type: 'GET',
+                data: {
+                    search: searchValue,
+                    page: self.requestPage,
+                    limit: self.requestLimit
+                },
+                dataType: 'json',
+                success: function (data) {
+                    cb(data.products || [], data.navs || [], data.contacts || []);
+                }
             }
         );
     };
 
     SearchInput.prototype.showHideResults = function hideResults(isVisible) {
         var self = this;
-        self.$placeholder.html('');
+        self.$placeholder.html(emptyResult);
     };
 
     SearchInput.prototype.activateBlackout = function activateBlackout() {

@@ -1,73 +1,82 @@
 <?php
 
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/db.php';
 
-class DBGoodsType extends DBType{
+class DBGoodsType extends DBType
+{
 
     protected $tableName = DB::TABLE_GOODS___NAME;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         return $this;
     }
 
-    protected function getOrder() {
+    protected function getOrder()
+    {
         return DB::TABLE_GOODS___ORDER;
     }
 
-    protected function getIndexColumn() {
+    protected function getIndexColumn()
+    {
         return DB::TABLE_GOODS__ID;
     }
 
-    public function getGoodsSearchCount(&$whereParamKeyArray, &$whereValueArray) {
-        $countRequest = "SELECT COUNT(t.".DB::TABLE_ID.") FROM ".$this->getTable()." AS t";
-        for($i = 0; $i < count($whereParamKeyArray); $i++) {
+    public function getGoodsSearchCount(&$whereParamKeyArray, &$whereValueArray)
+    {
+        $countRequest = "SELECT COUNT(t." . DB::TABLE_ID . ") FROM " . $this->getTable() . " AS t";
+        for ($i = 0; $i < count($whereParamKeyArray); $i++) {
             if ($whereParamKeyArray[$i] != '' && $whereValueArray[$i] != '') {
                 if ($i == 0) {
-                    $countRequest = $countRequest." WHERE";
+                    $countRequest = $countRequest . " WHERE";
                 } elseif ($i != count($whereParamKeyArray)) {
-                    $countRequest = $countRequest." OR";
+                    $countRequest = $countRequest . " OR";
                 }
-                $countRequest = $countRequest." t.".$whereParamKeyArray[$i]." REGEXP '".$whereValueArray[$i]."'";
+                $countRequest = $countRequest . " t." . $whereParamKeyArray[$i] . " REGEXP '" . $whereValueArray[$i] . "'";
             }
         }
         $row = mysqli_fetch_row($this->execute($countRequest));
         $this->totalCount = $row[0];
-        $this->logger->debug("DBConnection.getGoodsSearchCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getGoodsSearchCount: " . $countRequest . " TOTALCOUNT: " . $this->totalCount);
     }
 
-    public function getGoodsKeyCount($keys) {
-        $pattern = "^(".implode("|", $keys)."){1}[0-9]{0,3}$";
-        $countRequest = "SELECT COUNT(t.".DB::TABLE_ID.") FROM ".$this->getTable()." AS t WHERE t.".DB::TABLE_GOODS__KEY_ITEM." REGEXP '".$pattern."'";
+    public function getGoodsKeyCount($keys)
+    {
+        $pattern = "^(" . implode("|", $keys) . "){1}[0-9]{0,3}$";
+        $countRequest = "SELECT COUNT(t." . DB::TABLE_ID . ") FROM " . $this->getTable() . " AS t WHERE t." . DB::TABLE_GOODS__KEY_ITEM . " REGEXP '" . $pattern . "'";
         $row = mysqli_fetch_row($this->execute($countRequest));
         $this->totalCount = $row[0];
-        $this->logger->debug("DBConnection.getGoodsKeyCount: ".$countRequest." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getGoodsKeyCount: " . $countRequest . " TOTALCOUNT: " . $this->totalCount);
     }
 
-    protected function getTable() {
-        return "(SELECT * FROM ".DB::TABLE_GOODS___NAME.")";
+    protected function getTable()
+    {
+        return "(SELECT * FROM " . DB::TABLE_GOODS___NAME . ")";
     }
 
-    public function getRandomRowByKeys($keys, $randomItemsCount) {
+    public function getRandomRowByKeys($keys, $randomItemsCount)
+    {
         if ($randomItemsCount < 1) {
             $randomItemsCount = 1;
         }
         $regexp = "'^(";
-        for($index = 0; $index < count($keys); $index++) {
-            $regexp.= $index > 0 ? "|" : "";
-            $regexp.=$keys[$index];
+        for ($index = 0; $index < count($keys); $index++) {
+            $regexp .= $index > 0 ? "|" : "";
+            $regexp .= $keys[$index];
         }
-        $regexp.="){1}[0-9]{1,3}$'";
-        $this->request = "SELECT * FROM ".DB::TABLE_GOODS___NAME
-                                ." WHERE ".DB::TABLE_GOODS__KEY_ITEM." REGEXP ".$regexp." ORDER BY RAND() LIMIT ".$randomItemsCount;
+        $regexp .= "){1}[0-9]{1,3}$'";
+        $this->request = "SELECT * FROM " . DB::TABLE_GOODS___NAME
+            . " WHERE " . DB::TABLE_GOODS__KEY_ITEM . " REGEXP " . $regexp . " ORDER BY RAND() LIMIT " . $randomItemsCount;
         $this->execute($this->request);
         $this->totalCount = mysqli_num_rows($this->response);
-        $this->logger->debug("DBConnection.getRandomRowByKeys: ".$this->request." TOTALCOUNT: ".$this->totalCount);
+        $this->logger->debug("DBConnection.getRandomRowByKeys: " . $this->request . " TOTALCOUNT: " . $this->totalCount);
         return $this->getResponse();
     }
 
-    public function getRandomRowByKeysWithDefault($keys, $randomItemsCount, $defKeys, $defRandomItemsCount) {
+    public function getRandomRowByKeysWithDefault($keys, $randomItemsCount, $defKeys, $defRandomItemsCount)
+    {
         $ret = $this->getRandomRowByKeys($keys, $randomItemsCount);
         if ($this->getTotalCount() == 0) {
             return $this->getRandomRowByKeys($defKeys, $defRandomItemsCount);
@@ -75,7 +84,8 @@ class DBGoodsType extends DBType{
         return $ret;
     }
 
-    public function getCatalogItemPosition($itemId, $sort_column) {
+    public function getCatalogItemPosition($itemId, $sort_column)
+    {
         $tableGoods_NAME = DB::TABLE_GOODS___NAME;
         $tableGoods_keyItem = DB::TABLE_GOODS__KEY_ITEM;
         if (preg_match('/^([\w]{2}){1}([\d]{0,3}){1}$/', $itemId, $itemInfo, PREG_OFFSET_CAPTURE) == 1) {
@@ -88,54 +98,59 @@ class DBGoodsType extends DBType{
         return $this->totalCount;
     }
 
-    public function getAdminSortedForCommon($limitBegin, $limitEnd) {
-        $this->request = "SELECT * FROM ".$this->getTableName()." AS t ";
-        $this->request = $this->request." LEFT JOIN ".DB::TABLE_USER_ORDER___NAME." uo ON t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
-        $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
-        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
+    public function getAdminSortedForCommon($limitBegin, $limitEnd)
+    {
+        $this->request = "SELECT * FROM " . $this->getTableName() . " AS t ";
+        $this->request = $this->request . " LEFT JOIN " . DB::TABLE_USER_ORDER___NAME . " uo ON t." . DB::TABLE_GOODS__ID . " = uo." . DB::TABLE_USER_ORDER__GOOD_ID . " ";
+        $this->request = $this->request . " ORDER BY uo." . DB::TABLE_USER_ORDER__GOOD_INDEX . " ASC, t." . DB::TABLE_GOODS__ID . " ASC ";
+        $this->request = $this->request . " LIMIT " . $limitBegin . "," . $limitEnd;
         $this->execute($this->request);
-        $this->logger->debug("DBConnection.getUserSortedForCommon REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.getUserSortedForCommon REQUEST: " . $this->request);
         return $this->response;
     }
 
-    public function getUserSortedForMenu($goodKeys, $limitBegin, $limitEnd) {
-        $regExp = "^(".implode('|', $goodKeys)."){1}";
-        $this->request = "SELECT * FROM ".$this->getTableName()." AS t";
-        $this->request = $this->request." LEFT JOIN ".DB::TABLE_USER_ORDER___NAME." uo ON t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
-        $this->request = $this->request." WHERE LOWER(t.".DB::TABLE_GOODS__CATEGORY.") REGEXP '$regExp'";
-        $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
-        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
+    public function getUserSortedForMenu($goodKeys, $limitBegin, $limitEnd)
+    {
+        $regExp = "^(" . implode('|', $goodKeys) . "){1}";
+        $this->request = "SELECT * FROM " . $this->getTableName() . " AS t";
+        $this->request = $this->request . " LEFT JOIN " . DB::TABLE_USER_ORDER___NAME . " uo ON t." . DB::TABLE_GOODS__ID . " = uo." . DB::TABLE_USER_ORDER__GOOD_ID . " ";
+        $this->request = $this->request . " WHERE LOWER(t." . DB::TABLE_GOODS__CATEGORY . ") REGEXP '$regExp'";
+        $this->request = $this->request . " ORDER BY uo." . DB::TABLE_USER_ORDER__GOOD_INDEX . " ASC, t." . DB::TABLE_GOODS__ID . " ASC ";
+        $this->request = $this->request . " LIMIT " . $limitBegin . "," . $limitEnd;
         $this->execute($this->request);
-        $this->logger->debug("DBConnection.getUserSortedForMenu REQUEST: ".$this->request." RESPONSE_COUNT: ".$this->responseSize);
+        $this->logger->debug("DBConnection.getUserSortedForMenu REQUEST: " . $this->request . " RESPONSE_COUNT: " . $this->responseSize);
         return $this->response;
     }
 
-    public function getUserSortedForSearch($keyMas, $valueMas, $limitBegin, $limitEnd) {
-        $this->request = "SELECT * FROM ".$this->getTableName()." AS t ";
-        $this->request = $this->request." left join ".DB::TABLE_USER_ORDER___NAME." uo on t.".DB::TABLE_GOODS__ID." = uo.".DB::TABLE_USER_ORDER__GOOD_ID." ";
-        for($i = 0; $i < count($keyMas); $i++) {
+    public function getUserSortedForSearch($keyMas, $valueMas, $limitBegin, $limitEnd)
+    {
+        $this->request = "SELECT * FROM " . $this->getTableName() . " AS t ";
+        $this->request = $this->request . " left join " . DB::TABLE_USER_ORDER___NAME . " uo on t." . DB::TABLE_GOODS__ID . " = uo." . DB::TABLE_USER_ORDER__GOOD_ID . " ";
+        for ($i = 0; $i < count($keyMas); $i++) {
             if ($keyMas[$i] != '' && $valueMas[$i] != '') {
                 if ($i == 0) {
-                    $this->request = $this->request." WHERE";
+                    $this->request = $this->request . " WHERE";
                 } elseif ($i != count($keyMas)) {
-                    $this->request = $this->request." OR";
+                    $this->request = $this->request . " OR";
                 }
-                $this->request = $this->request." LOWER(t.".$keyMas[$i].") REGEXP '".$valueMas[$i]."'";
+                $this->request = $this->request . " LOWER(t." . $keyMas[$i] . ") REGEXP '" . $valueMas[$i] . "'";
             }
         }
-        $this->request = $this->request." ORDER BY uo.".DB::TABLE_USER_ORDER__GOOD_INDEX." ASC, t.".DB::TABLE_GOODS__ID." ASC ";
-        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitEnd;
+        $this->request = $this->request . " ORDER BY uo." . DB::TABLE_USER_ORDER__GOOD_INDEX . " ASC, t." . DB::TABLE_GOODS__ID . " ASC ";
+        $this->request = $this->request . " LIMIT " . $limitBegin . "," . $limitEnd;
         $this->responseSize = mysqli_num_rows($this->execute($this->request));
-        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: " . $this->request);
         return $this->response;
     }
 
-    public function getCode($id) {
+    public function getCode($id)
+    {
         $row = $this->get($id);
         return $row[DB::TABLE_GOODS__KEY_ITEM];
     }
 
-    public function findByCode($keyItem) {
+    public function findByCode($keyItem)
+    {
         $response = $this->executeRequest(DB::TABLE_GOODS__KEY_ITEM, $keyItem, DB::TABLE_GOODS___ORDER, DB::ASC);
         $row = mysqli_fetch_array($response);
         if ($row) {
@@ -144,64 +159,62 @@ class DBGoodsType extends DBType{
         return null;
     }
 
-    public function getCategoriesCount() {
+    public function getCategoriesCount()
+    {
         $result = [];
-        $this->request = "SELECT count(*) count, category FROM ".$this->getTableName()." GROUP BY ".DB::TABLE_GOODS__CATEGORY.";";
+        $this->request = "SELECT count(*) count, category FROM " . $this->getTableName() . " GROUP BY " . DB::TABLE_GOODS__CATEGORY . ";";
         $this->execute($this->request);
-        while($row = mysqli_fetch_array($this->response)) {
+        while ($row = mysqli_fetch_array($this->response)) {
             $result[$row['category']] = $row['count'];
         }
         return $result;
     }
 
-    public function searchByCriteriaExcludingIds($whereParamKeyArray, $whereValueArray, $excludedIds, $order, $orderRule, $limitBegin, $limitNum) {
-        $this->request = "SELECT t.* FROM ".$this->getTable()." AS t ";
+    public function searchByCriteriaExcludingIds($whereParamKeyArray, $whereValueArray, $excludedIds, $order, $orderRule, $limitBegin, $limitNum)
+    {
+        $this->request = "SELECT t.* FROM " . $this->getTable() . " AS t ";
         $hasWhereValues = false;
-        for($i = 0; $i < count($whereParamKeyArray); $i++) {
+        for ($i = 0; $i < count($whereParamKeyArray); $i++) {
             if ($whereParamKeyArray[$i] != '' && $whereValueArray[$i] != '') {
                 $hasWhereValues = true;
                 if ($i == 0) {
-                    $this->request = $this->request." WHERE";
+                    $this->request = $this->request . " WHERE";
                 } elseif ($i != count($whereParamKeyArray)) {
-                    $this->request = $this->request." OR";
+                    $this->request = $this->request . " OR";
                 }
-                $this->request = $this->request." LOWER(t.".$whereParamKeyArray[$i].") LIKE '%".$whereValueArray[$i]."%'";
+                $this->request = $this->request . " LOWER(t." . $whereParamKeyArray[$i] . ") LIKE '%" . $whereValueArray[$i] . "%'";
             }
         }
         if (count($excludedIds) > 0) {
             if ($hasWhereValues) {
-                $this->request = $this->request.' AND ';
+                $this->request = $this->request . ' AND ';
             } else {
-                $this->request = $this->request.' WHERE ';
+                $this->request = $this->request . ' WHERE ';
             }
-            $this->request = $this->request.' '.DB::TABLE_GOODS__ID.' NOT IN ('.implode(',', $excludedIds).')';
+            $this->request = $this->request . ' ' . DB::TABLE_GOODS__ID . ' NOT IN (' . implode(',', $excludedIds) . ')';
         }
-        if ($order != '') $this->request = $this->request." ORDER BY t.".$order." ".$orderRule;
-        $this->request = $this->request." LIMIT ".$limitBegin.",".$limitNum;
+        if ($order != '') $this->request = $this->request . " ORDER BY t." . $order . " " . $orderRule;
+        $this->request = $this->request . " LIMIT " . $limitBegin . "," . $limitNum;
         $this->execute($this->request);
-        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: ".$this->request);
+        $this->logger->debug("DBConnection.executeRequestRegExpArrayWithLimit REQUEST: " . $this->request);
         return $this->response;
     }
 
-    public function searchByNameDescription($valueToSearch, $limitBegin = 0, $limitNum = 200, $order = DB::TABLE_GOODS__NAME, $orderRule = 'asc') {
+    public function searchByNameDescription($valueToSearch, $limitBegin = 0, $limitNum = 200)
+    {
         $connection = (new DBConnection())->init();
         $link = $connection->getLink();
         $escapedValue = mysqli_real_escape_string($link, $valueToSearch);
 
-        $countSqlQuery = "
-            SELECT SUM(count) FROM
-            (
-              SELECT count(*) count FROM goods where name like '%$escapedValue%' 
-                union 
-              SELECT count(*) count FROM goods where description like '%$escapedValue%' and name not like '%$escapedValue%'
-            ) goods;";
+        $countSqlQuery = "SELECT count(*) count FROM goods where name like '%$escapedValue%' or description like '%$escapedValue%';";
         $sqlQuery = "
           SELECT * FROM 
           (
-            SELECT * FROM goods where name like '%$escapedValue%'
+            (SELECT * FROM goods where name like '%$escapedValue%' order by name)
               union 
-            SELECT * FROM goods where description like '%$escapedValue%' and name not like '%$escapedValue%'
-          ) goods order by name like '%$escapedValue%' desc, name asc limit $limitBegin, $limitNum;";
+            (SELECT * FROM goods where description like '%$escapedValue%' and name not like '%$escapedValue%' order by description)
+          ) goods limit $limitBegin, $limitNum;";
+        $this->logger->debug("DBConnection.searchByNameDescription REQUEST: " . $sqlQuery);
         $countData = $this->extractDataFromResponse($this->execute($countSqlQuery));
         $products = $this->extractDataFromResponse($this->execute($sqlQuery));
         //echo $sqlQuery."\n\n\n\n";
@@ -213,13 +226,15 @@ class DBGoodsType extends DBType{
         ];
     }
 
-    public function incrementVersion($id) {
-        $this->execute("update ".
-            $this->getTableName()." set ".
-            DB::TABLE_GOODS__VERSION." = ".DB::TABLE_GOODS__VERSION." + 1 where ".DB::TABLE_GOODS__ID."=".$id);
+    public function incrementVersion($id)
+    {
+        $this->execute("update " .
+            $this->getTableName() . " set " .
+            DB::TABLE_GOODS__VERSION . " = " . DB::TABLE_GOODS__VERSION . " + 1 where " . DB::TABLE_GOODS__ID . "=" . $id);
     }
 
-    protected function getTableName() {
+    protected function getTableName()
+    {
         return $this->tableName;
     }
 }

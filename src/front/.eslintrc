@@ -1,6 +1,7 @@
 {
 
   "globals": {
+    "Mustache": true,
     "AuUtils": true,
     "keyBoard": true,
     "SearchInput": true,

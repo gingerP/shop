@@ -402,6 +402,7 @@ abstract class APagesCreator
             <script type="text/javascript" src="/src/front/js/components/core/keyboard/keyboard.component.js"></script>
             <script type="text/javascript" src="/src/front/js/components/search-input/search-input.component.js"></script>
             <script type="text/javascript" src="/src/front/js/components/top-menu/top-menu.component.js"></script>
+            <script type="text/javascript" src="/node_modules/mustache/mustache.min.js"></script>
         ';
     }
 }

@@ -7,3 +7,87 @@
     }
   }
 }
+
+@media (max-width: 1280px) {
+  #gallery {
+    height: 250px;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 1024px) {
+  .product {
+    .left_block {
+      width: ~'calc(50% - 10px)';
+      .squareX {
+        width: 100%;
+        height: auto;
+      }
+    }
+    .right_block {
+      width: ~'calc(50% - 20px)';
+    }
+  }
+
+  #main_gallery_image {
+    position: relative;
+    width: 100%;
+    height: auto;
+    opacity: 1;
+  }
+
+  #img_effect {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+    top: 0;
+  }
+}
+
+@media (max-width: 1200px) {
+  .product-top-item-label {
+    width: ~'calc(100% - 40px - 20px)';
+  }
+
+  .contact-us-viber,
+  .contact-us-vk,
+  .contact-us-email {
+    margin: auto;
+    clear: left;
+  }
+}
+
+@media (max-width: 900px) {
+  #zoom_switcher {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .product {
+    .left_block {
+      width: 100%;
+      margin: 0;
+      .squareX {
+        .gallery_left_arrow,
+        .gallery_right_arrow {
+          opacity: 1 !important;
+          .icon {
+            display: block !important;
+            opacity: 1 !important;
+          }
+        }
+      }
+    }
+    .right_block {
+      margin: 10px;
+      width: ~'calc(100% - 20px)';
+    }
+    .s_images {
+      > div {
+        margin: 10px;
+      }
+    }
+  }
+}
