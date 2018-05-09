@@ -40,6 +40,10 @@ $(document).ready(function () {
         onResize();
     }
 
+    function initializeProductEmailForm() {
+        (new FeedbackComponent(document.querySelector('.email-form'))).initialize();
+    }
+
     imageZoom = new ImageZoom().init('.squareX', '#main_gallery_image', imageNamePrepare, zoomCallback);
 
     imageGallery.current = 0;
@@ -50,5 +54,6 @@ $(document).ready(function () {
     });
 
     initializeImagesViewInLine();
+    initializeProductEmailForm();
 
 });

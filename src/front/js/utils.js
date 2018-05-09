@@ -170,9 +170,10 @@ window.AuUtils = {
         var debounceTimeout;
         return function () {
             var args = arguments;
+            var self = this;
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(function () {
-                callback.call(null, args);
+                callback.call(self, args);
             }, timeout);
         };
     }

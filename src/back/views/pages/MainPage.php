@@ -3,6 +3,7 @@ include_once AuWebRoot.'/src/back/import/import.php';
 include_once AuWebRoot.'/src/back/import/tags.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot.'/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
 
 class MainPage extends APagesCreator
 {
@@ -36,17 +37,16 @@ class MainPage extends APagesCreator
         $mainDiv = new Div();
         $div01 = new Div();
         $div01->addStyleClasses(["slide_show", "gallery"]);
-        $div01->addAttribute("style", "height: 320px;");
-        $div01->addChild($this->getPricesGallery());
+        $div01->addChildren($this->getPricesGallery());
         return $mainDiv->addChildren($div01, $this->getCatalogItems());
     }
 
     private function getPricesGallery()
     {
         $mainDiv = new Div();
-        $mainDiv->addStyleClass("prices_gallery center_column");
-        $mainDiv->addChild("<news-gallery-component></news-gallery-component>");
-        return $mainDiv;
+        $map = new Div();
+        $map->addAttribute("id", "main-page-map");
+        return [$map, (new MainPageContactsComponent())->build()];
     }
 
     //TODO check next method for performance (работоспособность)
@@ -258,6 +258,26 @@ class MainPage extends APagesCreator
             $label = 'товар';
         }
         return $label;
+    }
+
+
+
+    protected function getSourceScripts()
+    {
+        $preferences = PreferencesService::getPublicPreferences();
+        $scripts = strtr("<script type='text/javascript'>
+            window.AugustovaApp = {googleApiKey: 'googleApiKeyValue'};
+        </script>", [
+            'googleApiKeyValue' => $preferences['google_maps_api_key']
+        ]);
+        $scripts .= parent::getSourceScripts();
+        if (!$this->isJsUglify) {
+            $scripts .=
+                '
+                <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>
+                <script type="text/javascript" src="/src/front/js/components/main-page-contacts/mainPageContacts.component.js"></script>';
+        }
+        return $scripts;
     }
 
 }

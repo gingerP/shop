@@ -1,0 +1,37 @@
+<div class="main-page-contacts {{contactsGroups.0.backgroundClass}}" data-background-classes="{{backgroundClasses}}" data-groups-ids="{{groupsIds}}">
+    <div class="main-page-contacts-title">{{i18n.main_page.contacts.title}}</div>
+    <a href="{{contactsMoreLink}}" class="main-page-contacts-more">{{i18n.main_page.contacts.more}}</a>
+    <div class="main-page-contacts-tabs">
+        {{#contactsGroups}}
+            <div id="{{groupId}}" class="main-page-contacts-tab {{openedClass}}"
+                 data-background-class="{{backgroundClass}}">{{title}}</div>
+        {{/contactsGroups}}
+    </div>
+    <div class="main-page-contacts-tabs-content">
+        {{#contactsGroups}}
+            <div id="tab-content-{{groupId}}" class="main-page-contact-group {{openedClass}}">
+                {{#contacts}}
+                    <div class="main-page-contact" data-contact="{{info}}" data-group-id="{{groupId}}">
+                        <div class="main-page-contact-address">{{address}}</div>
+                        <!--<a class="main-page-contact-show-on-map">{{i18n.main_page.contacts.show_on_map}}</a>-->
+                        <div class="main-page-contact-phones">
+                            {{#mobileNumbers}}
+                                <a href="tel:{{number}}" class="main-page-contact-phone">
+                                    <div class="main-page-contact-phone-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#414141" height="24"
+                                             viewBox="0 0 24 24" width="24">
+                                            <path d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="main-page-contact-phone-label">{{number}}</div>
+                                </a>
+                            {{/mobileNumbers}}
+                        </div>
+                        <div>{{i18n.main_page.contact.more}}</div>
+                    </div>
+                {{/contacts}}
+            </div>
+        {{/contactsGroups}}
+    </div>
+</div>

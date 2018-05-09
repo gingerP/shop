@@ -1,12 +1,14 @@
 <?php
 include_once AuWebRoot.'/src/back/import/db.php';
 include_once AuWebRoot.'/src/back/import/import.php';
+use Katzgrau\KLogger\Logger as Logger;
 
 class EmailService
 {
 
     public static function sendFeedbackEmail($messageBody, $senderEmail, $senderName, $fromProductCode = '')
     {
+        $logger = new Logger(AU_CONFIG['log.file'], Psr\Log\LogLevel::DEBUG);
         $sendToEmails = DBPreferencesType::getPreferenceValue(Constants::FEEDBACK_MAIL);
         $sendToEmails = explode(";", $sendToEmails);
         $systemMail = DBPreferencesType::getPreferenceValue(Constants::SYSTEM_MAIL);
@@ -27,6 +29,7 @@ class EmailService
             $error = error_get_last();
             throw new Exception('Email sending failed: '.$error['message']);
         }
+        $logger->debug("Email sent from '$senderEmail' to '$systemMail'.");
         return $res;
     }
 

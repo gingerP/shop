@@ -1,0 +1,19 @@
+<form class='email-form' action="mailto:{{feedbackEmail}}" method="post" enctype="text/plain">
+    <div class="email-success-response-message">{{i18n.email.success_response}}</div>
+    <div class='input-block'>
+        <label for='email' class='f-15'>{{i18n.email_form.my_email}}</label>
+        <input name='email-input' class='email input f-15'>
+        <div class='email-validation f-11'></div>
+    </div>
+    <div class='input-block'>
+        <label for='name' class='f-15'>{{i18n.email_form.my_name}}</label>
+        <input name='name-input' class='name input f-15'>
+        <div class='name-validation f-11'></div>
+    </div>
+    <div class='input-block'>
+        <label for='message' class='f-15'>{{i18n.email_form.content}}</label>
+        <textarea name='message-input' class='message input f-15' cols='40' rows='5'></textarea>
+        <div class='message-validation f-11'></div>
+    </div>
+    <button name='submit' class='send input_hover input_block f-17 button'>{{i18n.email_form.submit}}</button>
+</form>

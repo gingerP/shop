@@ -27,7 +27,10 @@ class AbstractComponent
                             return implode(',', $value);
                         }
                     ]
-                )
+                ),
+                'partials' => [
+                    'emailForm' => ''
+                ]
             ]);
         }
         return AbstractComponent::$mustache;

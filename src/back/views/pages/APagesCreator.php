@@ -4,6 +4,7 @@ include_once AuWebRoot.'/src/back/import/import.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 include_once AuWebRoot.'/src/back/import/tags.php';
 include_once AuWebRoot.'/src/back/views/components/topPanel/TopPanelComponent.php';
+include_once AuWebRoot . '/src/back/views/components/categories/CategoriesComponent.php';
 
 use Katzgrau\KLogger\Logger as Logger;
 
@@ -179,14 +180,9 @@ abstract class APagesCreator
 
     public function createPathLinks()
     {
-        $mainTag = new Div();
-        $mainTag->addStyleClasses(["path_link", "f-16"]);
-        /*$blockForTree = new Div();
-        $blockForTree->addStyleClasses(["w-18p"]);*/
-        $blockForCatalog = new Div();
-        $blockForCatalog->addStyleClasses(["path_link_chain"]);
-        $mainTag->addChild($blockForCatalog->addChildren($this->getPathLinkForMainBlock(), $this->getViewModeBlock()));
-        return $mainTag;
+        /*        $Categories = new CategoriesComponent();
+                return $Categories->build();*/
+        return '';
     }
 
     protected function createGeneralContent()
@@ -402,7 +398,9 @@ abstract class APagesCreator
             <script type="text/javascript" src="/src/front/js/components/core/keyboard/keyboard.component.js"></script>
             <script type="text/javascript" src="/src/front/js/components/search-input/search-input.component.js"></script>
             <script type="text/javascript" src="/src/front/js/components/top-menu/top-menu.component.js"></script>
+            <script type="text/javascript" src="/src/front/js/components/email-form/email-form.component.js"></script>
             <script type="text/javascript" src="/node_modules/mustache/mustache.min.js"></script>
+            <script type="text/javascript" src="/src/front/js/utils.js"></script>
         ';
     }
 }

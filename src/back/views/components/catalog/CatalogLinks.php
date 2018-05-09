@@ -34,7 +34,7 @@ class CatalogLinks
         $topBottomStyle = $params['position'] == 'bottom' ? 'link_next_prev_bottom' : '';
         $totalCount = $params['totalCount'];
         $itemsCount = $params['itemsCount'];
-        if ($totalCount != 0) {
+        if ($totalCount != 0 && $totalCount >= $itemsCount) {
             $amountPages = ceil($totalCount / $itemsCount);
             $pageNumber = $params['pageNum'];
             $itemsCount = $params['itemsCount'];

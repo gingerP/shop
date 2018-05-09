@@ -74,7 +74,9 @@ class ContactsPage extends APagesCreator
         $scripts .= parent::getSourceScripts();
         if (!$this->isJsUglify) {
             $scripts .=
-                '<script type="text/javascript" src="/src/front/js/components/contacts/contacts.component.js"></script>';
+                '
+                <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>
+                <script type="text/javascript" src="/src/front/js/components/contacts/contacts.component.js"></script>';
         }
         return $scripts;
     }

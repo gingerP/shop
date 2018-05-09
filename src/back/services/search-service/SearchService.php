@@ -50,11 +50,11 @@ class SearchService
         }
 
         $Products = (new DBGoodsType())->setConnection($connection);
-        $products = $Products->searchByNameDescription($escapedValue, $page, $limit);
+        $products = $Products->searchByNameDescription($escapedValue, $page * $limit, $limit);
         $result['products'] = $shouldNormalize == true ? self::normalizeProducts($products['list']) : $products['list'];
         $isEmpty = $isEmpty && count($result['products']) == 0;
         $result['isEmpty'] = $isEmpty;
-
+        $result['productsTotalCount'] = intval($products['totalCount']);
         return $result;
     }
 

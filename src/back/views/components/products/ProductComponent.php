@@ -1,6 +1,7 @@
 <?php
 
 include_once AuWebRoot.'/src/back/views/components/AbstractComponent.php';
+include_once AuWebRoot . '/src/back/views/components/emailForm/EmailFormComponent.php';
 
 class ProductComponent extends AbstractComponent
 {
@@ -17,7 +18,9 @@ class ProductComponent extends AbstractComponent
     {
         $Products = new DBGoodsType();
         $product = $Products->findByCode($this->productCode);
-        $tpl = parent::getEngine()->loadTemplate('components/products/product.mustache');
+        $engine = parent::getEngine();
+        $engine->getPartialsLoader()->setTemplate('emailForm', (new EmailFormComponent())->build());
+        $tpl = $engine->loadTemplate('components/products/product.mustache');
         $productCode = $this->productCode;
         $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES], false);
         $imagesCatalogRoot = DBPreferencesType::getPreferenceValue(Constants::CATALOG_PATH);
@@ -41,6 +44,10 @@ class ProductComponent extends AbstractComponent
                 'l' => '/' . $imagesCatalogRoot . '/' . $productCode . '/' . Constants::LARGE_IMAGE . $imageCode . '.jpg'
             ];
         }
+
+        $preparedProduct['shouldPrintImages'] = count($preparedProduct['images']) > 1;
+        $preparedProduct['topDescriptionClass'] = count($preparedProduct['images']) <= 1 ? 'no-border' : '';
+
 
         return $tpl->render($preparedProduct);
     }

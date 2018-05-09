@@ -7,7 +7,6 @@ class CatalogPage extends APagesCreator
 {
 
     private $key = "";
-    private $categoryCode;
     private $urlParams;
     private $pageNumber;
     private $itemsCount;
@@ -25,7 +24,6 @@ class CatalogPage extends APagesCreator
 
     public function build()
     {
-        $this->categoryCode = $this->urlParams['identifier'];
         $this->updateTitleTagChildren(["Каталог - "]);
         $this->setPageCode("catalog_page");
         $this->setIsTreeVisible(true);
@@ -97,7 +95,9 @@ class CatalogPage extends APagesCreator
             $paginationParams['position'] = 'bottom';
             $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
         } else {
-            $loader = new CatalogLoader();
+            $Categories = new CategoriesComponent();
+            $mainTag->addChild($Categories->build());
+/*            $loader = new CatalogLoader();
             $loader->getItemsMainData($this->pageNumber, $this->itemsCount);
             $paginationParams = [
                 'pageNum' => $this->pageNumber,
@@ -108,9 +108,24 @@ class CatalogPage extends APagesCreator
             $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
             $mainTag->addChild($items->getItemsTable($loader->data));
             $paginationParams['position'] = 'bottom';
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));*/
         }
         return $mainTag;
+    }
+
+    public function createPathLinks()
+    {
+
+        if ($this->category == 'GN' || $this->category == '') {
+            $categoryLabel = Localization['panel.top.catalog'];
+            $link = URLBuilder::getCatalogLinkForTree('');
+        } else {
+            $Categories = new DBNavKeyType();
+            $categoryLabel = $Categories->getNameByKey($this->category);
+            $link = URLBuilder::getCatalogLinkForTree($this->category);
+        }
+
+        return "<a href='$link' class='category-title'>$categoryLabel</a>";
     }
 
     public static function getCatalogDOM()

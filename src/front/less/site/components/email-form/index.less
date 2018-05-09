@@ -1,0 +1,66 @@
+.email {
+  &-form {
+    position: relative;
+
+    &-input {
+    }
+
+
+    .successful {
+      background-image: url(/images/icons/ok.png);
+      background-size: 40px;
+    }
+    .error {
+      background-image: url(/images/icons/error.png);
+    }
+    .input-block {
+      margin-bottom: 8px;
+      input {
+        border: 1px solid #E1E1E1;
+        box-sizing: border-box;
+        width: 100%;
+        line-height: 25px;
+        border-radius: 2px;
+        padding: 5px 10px;
+      }
+      textarea {
+        border: 1px solid #E1E1E1;
+        box-sizing: border-box;
+        width: 100%;
+        line-height: 25px;
+        min-height: 130px;
+        padding: 5px 10px;
+      }
+    }
+    label {
+      margin: 0 5px;
+    }
+    .message {
+      resize: vertical;
+      display: block;
+    }
+    .send {
+      margin: 16px auto 0;
+      width: 100px;
+      text-align: center;
+      color: @color_4;
+      background-color: #5181b8;;
+      cursor: pointer;
+      padding: 10px;
+      font-weight: 700;
+      display: block;
+      border: none;
+      box-sizing: content-box;
+    }
+  }
+
+  &-success-response-message {
+    display: none;
+    font-size: 1em;
+    padding: 5px;
+    border-radius: 2px;
+    background: #03A9F4;
+    color: #fff;
+    margin: 10px 0;
+  }
+}

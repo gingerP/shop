@@ -1,0 +1,45 @@
+@linkHeight: 40px;
+
+@media (max-width: 700px) {
+  .pagination {
+    &_bar {
+      width: ~'calc(100% - 10px)';
+
+      .numeric_links {
+        .pagination {
+          &-item {
+            height: @linkHeight;
+            line-height: @linkHeight;
+            margin: 0;
+            border-radius: 0;
+            .text {
+              display: none;
+            }
+            &:first-child {
+              border-radius: 2px 0 0 2px;
+            }
+            &:last-child {
+              border-radius: 0 2px 2px 0;
+            }
+          }
+        }
+
+        .three_dots_style {
+          background-color: #17A086;
+          color: #ffffff;
+          padding: 0;
+        }
+      }
+      .link_next_prev {
+        height: @linkHeight;
+      }
+      .prev_link,
+      .next_link {
+        .arrow {
+          height: @linkHeight;
+          width: @linkHeight;
+        }
+      }
+    }
+  }
+}

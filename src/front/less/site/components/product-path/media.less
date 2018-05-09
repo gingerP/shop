@@ -1,0 +1,21 @@
+@media (max-width: 700px) {
+  .catalog_tree>*:not(:last-child) {
+    .path_link_item_text {
+      width: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 0 0 10px;
+    }
+  }
+  .catalog_tree>*:not(:first-child) {
+    .path_link_item_text {
+      padding-left: 50px;
+    }
+  }
+  .view_mode {
+    .numeric li:not(.selected) {
+      display: none;
+    }
+  }
+}

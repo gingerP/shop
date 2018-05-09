@@ -74,6 +74,7 @@ class DBAddressType extends DBType
             }
 
             $address['popupBody'] =
+            $address['city'] = $contact[DB::TABLE_ADDRESS__CITY];
             $address['title'] = $contact[DB::TABLE_ADDRESS__TITLE];
             $address['address'] = $contact[DB::TABLE_ADDRESS__ADDRESS];
             $address['titleAddress'] = $contact[DB::TABLE_ADDRESS__TITLE_ADDRESS];

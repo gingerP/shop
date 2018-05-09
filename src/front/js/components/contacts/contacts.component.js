@@ -4,66 +4,6 @@
     var CLASS_SLIDE_RIGHT = 'slide-right';
     var CLASS_CONTACT_IMAGE = 'contact-image';
 
-    function GoogleMapComponent(container) {
-        var self = this;
-        var googleScript = document.createElement('script');
-        googleScript.setAttribute('async', '');
-        googleScript.setAttribute('defer', '');
-        googleScript.setAttribute(
-            'src',
-            'https://maps.googleapis.com/maps/api/js?key='
-            + window.AugustovaApp.googleApiKey
-            + '&callback=wakeUpGoogleMapComponent'
-        );
-        window.wakeUpGoogleMapComponent = function () {
-            var mapOptions = {
-                center: new google.maps.LatLng(53.621351, 23.867684),
-                zoom: 10,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            self.map = new google.maps.Map(container, mapOptions);
-            self._postInitProcess();
-        };
-        document.body.appendChild(googleScript);
-        self._postInitCbList = [];
-    }
-
-    GoogleMapComponent.prototype._postInitProcess = function _postInitProcess() {
-        var self = this;
-        self._postInitCbList.forEach(function (cb) {
-            cb(self);
-        });
-    };
-
-    GoogleMapComponent.prototype.postInit = function postInit(cb) {
-        var self = this;
-        self._postInitCbList.push(cb);
-        self._infoWindows = [];
-    };
-
-    GoogleMapComponent.prototype.focusOn = function focusOn(position, info) {
-        var self = this;
-        var marker = new google.maps.LatLng(position[0], position[1]);
-        var infoWindow = new google.maps.InfoWindow();
-        self.removeInfoWindows();
-        infoWindow.setContent(info);
-        infoWindow.setPosition(marker);
-        infoWindow.open(self.map);
-        self._infoWindows.push(infoWindow);
-        self.map.setZoom(15);
-        self.map.panTo(marker);
-    };
-
-    GoogleMapComponent.prototype.removeInfoWindows = function removeInfoWindows() {
-        var self = this;
-        if (self._infoWindows && self._infoWindows.length) {
-            while (self._infoWindows.length) {
-                var infoWindow = self._infoWindows.pop();
-                infoWindow.close();
-            }
-        }
-    };
-
     function ContactComponent(contactDocument) {
         this.$contactDocument = $(contactDocument);
         this.data = this.$contactDocument.data();

@@ -41,6 +41,7 @@ class DB {
     const TABLE_ADDRESS__MAP = 'map';
     const TABLE_ADDRESS__MOBILE_NUMBERS = 'mobile_numbers';
     const TABLE_ADDRESS__TITLE = 'title';
+    const TABLE_ADDRESS__CITY = 'city';
     const TABLE_ADDRESS__COLOR = 'color';
     const TABLE_ADDRESS__ADDRESS = 'address';
     const TABLE_ADDRESS__TITLE_ADDRESS = 'title_address';

@@ -1,9 +1,12 @@
 (function () {
-    var emptyResult = '<span class="search-empty-result-mob">Ничего не найдено. Закрыть поиск.</span>';
     var searchResultTemplate = [
         '		<div class="search-result-container">',
+        '           <div class="search-result-scrolling">',
         '			{{#isEmpty}}',
-        '				<div class="search-result-empty">К сожаление, ничего не найдено</div>',
+        '				<div class="search-result-empty">',
+        '                   К сожаление, ничего не найдено.',
+        '                   <a href="">Очистить поиск</a>',
+        '               </div>',
         '			{{/isEmpty}}',
         '			{{#contacts.0}}',
         '				<div class="search-result-contacts">',
@@ -23,7 +26,7 @@
         '			{{/navs.0}}',
         '			{{#products.0}}',
         '				<div class="search-result-products">',
-        '					<div class="search-result-title">Товары (найдено {{products.length}})</div>',
+        '					<div class="search-result-title">Товары (найдено {{productsTotalCount}})</div>',
         '					{{#products}}',
         '						<a class="search-result-product" href="{{url}}">',
         '							<img class="search-result-product-icon" src="{{icon}}">',
@@ -32,7 +35,16 @@
         '					{{/products}}',
         '				</div>',
         '			{{/products.0}}',
+        '           </div>',
         '		</div>'
+    ].join('');
+    var productsTemplate = [
+        '					{{#products}}',
+        '						<a class="search-result-product" href="{{url}}">',
+        '							<img class="search-result-product-icon" src="{{icon}}">',
+        '							<div class="search-result-product-text">{{name}}</div>',
+        '						</a>',
+        '					{{/products}}'
     ].join('');
 
     function debounce(cb, time) {
@@ -96,7 +108,7 @@
                 self.activateBlackout();
             })
             .on('blur', debounce(function () {
-                 self.closeSearchView();
+                self.closeSearchView();
             }, self._debounceTimeout));
         self.$mobButton
             .on('click', function () {
@@ -133,13 +145,14 @@
         var self = this;
         self.value = self.$input.val().trim();
         if (!self.value) {
-            self.showHideResults(false);
+            self.hideResults();
         } else {
             self.requestPage = 0;
-            self.requestSearch(self.value, function (products, navKeys, contacts) {
-                self.products = products || [];
-                self.navKeys = navKeys || [];
-                self.contacts = contacts || [];
+            self.requestSearch(self.value, function (data) {
+                self.products = data.products || [];
+                self.navKeys = data.navKeys || [];
+                self.contacts = data.contacts || [];
+                self.productsTotalCount = data.productsTotalCount;
                 self.applySearchResults(true);
             });
         }
@@ -150,16 +163,24 @@
         return self.value !== self.$input.val();
     };
 
-    SearchInput.prototype.applySearchResults = function (result) {
+    SearchInput.prototype.applySearchResults = function () {
         var self = this;
         self.$placeholder.html(
             Mustache.render(searchResultTemplate, {
-                isEmpty: !self.products.length && self.navKeys.length && !self.contacts.length,
+                isEmpty: !self.products.length && !self.navKeys.length && !self.contacts.length,
                 products: self.products,
                 navs: self.navKeys,
-                contacts: self.contacts
+                contacts: self.contacts,
+                productsTotalCount: self.productsTotalCount
             })
         );
+        var $scroller = self.$placeholder.find('.search-result-container');
+        var $scrolling = $scroller.find('.search-result-scrolling');
+        $scroller.scroll(function () {
+            if ($scroller.height() + $scroller.scrollTop() > $scrolling.height() - 100) {
+                self.loadNext();
+            }
+        });
     };
 
     SearchInput.prototype.requestSearch = function requestSearch(searchValue, cb) {
@@ -174,16 +195,29 @@
                     limit: self.requestLimit
                 },
                 dataType: 'json',
-                success: function (data) {
-                    cb(data.products || [], data.navs || [], data.contacts || []);
-                }
+                success: cb
             }
         );
     };
 
-    SearchInput.prototype.showHideResults = function hideResults(isVisible) {
+    SearchInput.prototype.loadNext = function loadNext() {
         var self = this;
-        self.$placeholder.html(emptyResult);
+        if (!self.loadingNextInProgress) {
+            self.requestPage++;
+            self.loadingNextInProgress = true;
+            self.requestSearch(self.value, function (response) {
+                var products = response.products;
+                var htmlText = Mustache.render(productsTemplate, {products: products});
+                $('.search-result-products').get(0).innerHTML += htmlText;
+                self.products = self.products.concat(products);
+                self.loadingNextInProgress = false;
+            });
+        }
+    };
+
+    SearchInput.prototype.hideResults = function hideResults() {
+        var self = this;
+        self.$placeholder.html('');
     };
 
     SearchInput.prototype.activateBlackout = function activateBlackout() {
@@ -215,7 +249,7 @@
 
     SearchInput.prototype.closeSearchView = function closeSearchView() {
         var self = this;
-        self.showHideResults(false);
+        self.hideResults(false);
         self.$parent.removeClass('input-opened');
         self.deactivateBlackout();
     };

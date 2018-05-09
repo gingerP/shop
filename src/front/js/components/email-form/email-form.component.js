@@ -1,167 +1,151 @@
-function Feedback() {
-}
+(function () {
 
-Feedback.prototype.initialize = function init() {
-    var vm = this;
-
-    vm.initializeForm();
-    vm.$component = $('#feedback');
-    vm.$feedbackBlocker = $('.feedback_blocker', vm.$component);
-    vm.$feedbackSendBtn = $('.send', vm.$component);
-    vm.isFormSubmit = false;
-    vm.initializeEvents();
-    vm.initializeFormValidation();
-};
-
-Feedback.prototype.initializeForm = function initializeForm() {
-    $('.bottom_panel_window').prepend(
-        "<div id='feedback' class='bottom_panel_item'>\
-            <div class='feedback_blocker'></div>\
-            <div class='title f-16'>Напишите нам письмо (<a href='mailto:augustova@mail.ru?subject=Сообщение с сайта для ЧТУП\"Августово-Компани\"'>augustova@mail.ru</a>)</div>\
-            <div class='feedback_container'>\
-                <div class='input_block' >\
-                    <label for='message' class='f-15'>Содержимое письма</label>\
-                    <textarea id='message' placeholder='Содержимое письма' class='message input f-15' cols='40' rows='5'></textarea>\
-                    <div class='message_validation f-11'></div>\
-                </div>\
-                <div class='input_block' >\
-                    <label for='name' class='f-15'>Меня зовут</label>\
-                    <input id='name' placeholder='Меня зовут' class='name input f-15'>\
-                    <div class='name_validation f-11'></div>\
-                </div>\
-                <div class='input_block'>\
-                    <label for='email' class='f-15'>Мой e-mail</label>\
-                    <input id='email' placeholder='Мой e-mail' class='email input f-15'>\
-                    <div class='email_validation f-11'></div>\
-                </div>\
-                <button class='send input_hover input_block f-17 button'>Отправить</button>\
-            </div>\
-        </div>");
-};
-
-Feedback.prototype.initializeFormValidation = function initFormValidation() {
-    var vm = this;
-    $('.message', vm.$component).on('change paste focus textInput input', function () {
-        if (vm.isFormSubmit) {
-            var value = $(this).val();
-            if (AuUtils.hasContent(value) && (value.length > 1000 || value.length == 0)) {
-                $('.message', vm.$component).addClass('validation_error');
-                $('.message_validation', vm.$component).addClass('validation_message').val('Сообщение слишком большое.');
-            } else {
-                $('.message', vm.$component).removeClass('validation_error');
-                $('.message_validation', vm.$component).removeClass('validation_message').val('');
-            }
-        }
-    });
-    $('.name', vm.$component).on('change paste focus textInput input', function () {
-        if (vm.isFormSubmit) {
-            var value = $(this).val();
-            if (AuUtils.hasContent(value) && value.length > 50) {
-                $('.name', vm.$component).addClass('validation_error');
-                $('.name_validation', vm.$component).addClass('validation_message').val('Имя слишком большое.');
-            } else {
-                $('.name', vm.$component).removeClass('validation_error');
-                $('.name_validation', vm.$component).removeClass('validation_message').val('');
-            }
-        }
-    });
-};
-
-//popup.setData(popupContent);
-Feedback.prototype.isFeedbackNotActive = function isFeedbackNotActive() {
-    return !popup.isVisible;
-};
-
-Feedback.prototype.validateForm = function validateForm() {
-    var vm = this;
-    $('.input', vm.$component).trigger('change');
-    return $('.validation_message', vm.$component).length == 0;
-};
-
-Feedback.prototype.isEmptyMessage = function isEmptyMessage() {
-    var vm = this;
-    return $('.message', vm.$component).val() == '';
-};
-
-Feedback.prototype.initializeEvents = function initEvents() {
-    var vm = this;
-
-    function onEmailSendFailed() {
-        vm.$feedbackSendBtn.removeClass('input_disable').trigger('mouseleave');
-        vm.$feedbackBlocker.removeClass('progress').removeClass('successful').addClass('error');
-        setTimeout(function () {
-            vm.$feedbackBlocker.fadeOut(100);
-        }, 3000);
-    }
-    function onEmailSendCallback(data) {
-        vm.$feedbackSendBtn.removeClass('input_disable').trigger('mouseleave');
-        if (data === true) {
-            vm.$feedbackBlocker.removeClass('progress').removeClass('error').addClass('successful');
-        } else {
-            vm.$feedbackBlocker.removeClass('progress').removeClass('successful').addClass('error');
-        }
-        setTimeout(function () {
-            if (data === true) {
-                vm.isFormSubmit = false;
-                $('input, textarea', vm.$component).val('');
-                $('.validation_error', vm.$component).removeClass('validation_error');
-            }
-            vm.$feedbackBlocker.fadeOut(100);
-        }, 3000);
+    function FeedbackComponent(container) {
+        var self = this;
+        self._$container = $(container);
+        self._$submitBtn = self._$container.find('[name=submit]');
+        self._$inputs = self._$container.find('.input');
+        self._$messageInput = self._$container.find('[name=message-input]');
+        self._$messageInputValidationMessage = self._$container.find('.message-validation');
+        self._$emailInput = self._$container.find('[name=email-input]');
+        self._$emailInputValidationMessage = self._$container.find('.email-validation');
+        self._$nameInput = self._$container.find('[name=name-input]');
+        self._$nameInputValidationMessage = self._$container.find('.name-validation');
+        self._$successResponseMessage = self._$container.find('.email-success-response-message');
     }
 
-    vm.$feedbackSendBtn.on('click', function () {
-        vm.isFormSubmit = true;
-        if (!$(this).hasClass('input_disable') && vm.validateForm() && !vm.isEmptyMessage()) {
-            var messageBody = $('.message', vm.$component).val();
-            var senderName = $('.name', vm.$component).val();
-            var senderEmail = $('.email', vm.$component).val();
+    FeedbackComponent.prototype.initialize = function init() {
+        var self = this;
+        self.isFormSubmit = false;
+        self.initializeEvents();
+        self.initializeFormValidation();
+    };
 
-            var data = {
-                message_body: messageBody,
-                sender_name: senderName,
-                sender_email: senderEmail,
-                product: vm.getPageProductCode(),
-                page: window.location.href
-            };
-            vm.$feedbackBlocker.fadeIn(100);
-            vm.$feedbackBlocker.removeClass('successful').removeClass('error').addClass('progress');
-            vm.$feedbackSendBtn.addClass('input_disable');
-
-            vm.sendEmail(data, onEmailSendCallback, onEmailSendFailed)
+    FeedbackComponent.prototype.initializeFormValidation = function initializeFormValidation() {
+        var self = this;
+        function isMessageValid(value) {
+            return AuUtils.hasContent(value) && (value.length > 100000 || value.length === 0);
         }
-    }).focusin(function () {
-        vm.$feedbackSendBtn.trigger('mouseenter');
-    }).focusout(function () {
-        vm.$feedbackSendBtn.trigger('mouseleave');
-    });
-};
 
-Feedback.prototype.getPageProductCode = function getPageProductCode() {
-    var urlParts = window.location.href.split('/');
-    if (urlParts.length) {
-        var destPart = urlParts[urlParts.length - 1];
-        var destParts = destPart.split('&');
-        if (destParts.length) {
-            while (destParts.length) {
-                var part = destParts.pop();
-                if (part.indexOf('page_id=') === 0) {
-                    return part.split('=')[1];
+        function isNameValid(value) {
+            return AuUtils.hasContent(value) && value.length > 50;
+        }
+        self._$messageInput.on('change paste focus textInput input', function () {
+            if (self.isFormSubmit) {
+                if (isMessageValid(self._$messageInput.val())) {
+                    self._$messageInput.addClass('validation_error');
+                    self._$messageInputValidationMessage
+                        .addClass('validation_message').val('Сообщение слишком большое.');
+                } else {
+                    self._$messageInput.removeClass('validation_error');
+                    self._$messageInputValidationMessage.removeClass('validation_message').val('');
+                }
+            }
+        });
+        self._$nameInput.on('change paste focus textInput input', function () {
+            if (self.isFormSubmit) {
+                if (isNameValid(self._$nameInput.val())) {
+                    self._$nameInput.addClass('validation_error');
+                    self._$nameInputValidationMessage.addClass('validation_message').val('Имя слишком большое.');
+                } else {
+                    self._$nameInput.removeClass('validation_error');
+                    self._$nameInputValidationMessage.removeClass('validation_message').val('');
+                }
+            }
+        });
+    };
+
+    FeedbackComponent.prototype.isFeedbackNotActive = function isFeedbackNotActive() {
+        return !popup.isVisible;
+    };
+
+    FeedbackComponent.prototype.isFormValid = function isFormValid() {
+        var self = this;
+        self._$inputs.trigger('change');
+        return self._$container.find('.validation_message').length === 0;
+    };
+
+    FeedbackComponent.prototype.isEmptyMessage = function isEmptyMessage() {
+        var self = this;
+        return self._$messageInput.val() === '';
+    };
+
+    FeedbackComponent.prototype.validateForm = function validateForm() {
+
+    };
+
+    FeedbackComponent.prototype.initializeEvents = function initEvents() {
+        var self = this;
+
+        function onEmailSendFailed() {
+            self._$submitBtn.removeClass('input_disable').trigger('mouseleave');
+        }
+
+        function onEmailSuccessCallback(data) {
+            self._$submitBtn.removeClass('input_disable').trigger('mouseleave');
+            self._$successResponseMessage.show();
+            clearTimeout(self._successTimeout);
+            self._successTimeout = setTimeout(function () {
+                self._$successResponseMessage.hide();
+                if (data === true) {
+                    self.isFormSubmit = false;
+                    self._$inputs.val('');
+                    $('.validation_error', self.$component).removeClass('validation_error');
+                }
+            }, 5000);
+
+        }
+
+        function canSendEmail() {
+            return !self._$submitBtn.hasClass('input_disable') && self.isFormValid() && !self.isEmptyMessage();
+        }
+
+        self._$submitBtn.on('click', function () {
+            self.isFormSubmit = true;
+            self.validateForm();
+            if (canSendEmail()) {
+                var data = {
+                    message: self._$messageInput.val(),
+                    name: self._$nameInput.val(),
+                    email: self._$emailInput.val(),
+                    product: self.getPageProductCode(),
+                    page: window.location.href
+                };
+                self._$submitBtn.addClass('input_disable');
+
+                self.sendEmail(data).then(onEmailSuccessCallback).fail(onEmailSendFailed);
+            }
+            return false;
+        });
+    };
+
+    FeedbackComponent.prototype.getPageProductCode = function getPageProductCode() {
+        var urlParts = window.location.href.split('/');
+        if (urlParts.length) {
+            var destPart = urlParts[urlParts.length - 1];
+            var destParts = destPart.split('&');
+            if (destParts.length) {
+                while (destParts.length) {
+                    var part = destParts.pop();
+                    if (part.indexOf('page_id=') === 0) {
+                        return part.split('=')[1];
+                    }
                 }
             }
         }
-    }
-    return '';
-};
+        return '';
+    };
 
-Feedback.prototype.sendEmail = function sendEmail(data, callback, callbackFailed) {
-    $.ajax({
-        type: 'POST',
-        contentType: 'application/json;charset=utf-8',
-        data: JSON.stringify(data),
-        url: '/api/sendFeedbackEmail',
-        context: document.body
-    })
-        .done(callback)
-        .fail(callbackFailed);
-};
+    FeedbackComponent.prototype.sendEmail = function sendEmail(data) {
+        return $.ajax({
+            type: 'POST',
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(data),
+            url: '/api/email',
+            context: document.body
+        });
+    };
+
+    window.FeedbackComponent = FeedbackComponent;
+
+})();

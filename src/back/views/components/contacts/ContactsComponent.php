@@ -7,6 +7,7 @@ class ContactsComponent extends AbstractComponent {
 
     function __construct()
     {
+        parent::__construct();
     }
 
     public function build() {
@@ -16,6 +17,4 @@ class ContactsComponent extends AbstractComponent {
         $tpl = parent::getEngine()->loadTemplate('components/contacts/contacts.mustache');
         return $tpl->render(['contacts' => $contacts]);
     }
-
-
 }
