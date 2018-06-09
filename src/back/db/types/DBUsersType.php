@@ -28,8 +28,8 @@ class DBUsersType extends DBType {
 
     public function getUserForName($name) {
         $this->executeRequestWithLimit(DB::TABLE_USERS__NAME, $name, DB::TABLE_USERS___ORDER, DB::ASC, 0, 1);
-        $row = mysqli_fetch_array($this->response);
-        return $row;
+        $users = $this->extractDataFromResponse($this->response);
+        return count($users) > 0 ? $users[0] : null;
     }
 
 }

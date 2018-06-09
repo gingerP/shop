@@ -7,7 +7,7 @@ class AdminPagesCreator {
     private $pagePrefix = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
 
     public function getHtml() {
-        $html = new Html();
+        $html = new Html('ru');
         $head = new Head();
         $head->addChild("
         <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
@@ -21,7 +21,6 @@ class AdminPagesCreator {
         <link rel='stylesheet' type='text/css' href='/dist/style.css'>
         <link rel='stylesheet' type='text/css' href='/dist/admin-style.css'>
         ");
-        $head->addChild(Components::getMenu());
         $head->addChildList($this->getHeadContent());
         $body = new Body();
         $body->addChildList($this->getGeneralContent());
@@ -32,5 +31,7 @@ class AdminPagesCreator {
     protected function getHeadContent() {}
 
     protected function getGeneralContent() {}
+
+    public function validate() {}
 
 } 

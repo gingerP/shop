@@ -1,8 +1,9 @@
 <?php
 
-include_once AuWebRoot.'/src/back/views/components/AbstractComponent.php';
+include_once AuWebRoot . '/src/back/views/components/AbstractComponent.php';
 
-class MainPageContactsComponent extends AbstractComponent {
+class MainPageContactsComponent extends AbstractComponent
+{
 
     private $backgroundClasses = ['blue-bg', 'green-bg'];
 
@@ -11,7 +12,8 @@ class MainPageContactsComponent extends AbstractComponent {
         parent::__construct();
     }
 
-    public function build() {
+    public function build()
+    {
         $contacts = AddressService::getAddresses()['contacts'];
         $contactsMap = [];
 

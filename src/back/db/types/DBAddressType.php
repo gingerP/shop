@@ -38,8 +38,8 @@ class DBAddressType extends DBType
     {
         $ret = array();
         $contacts = $this->extractDataFromResponse($this->getListActive());
-        $contactImagesRoot = DBPreferencesType::getPreferenceValue(Constants::CONTACTS_IMAGES);
-        $contactStyles = DBPreferencesType::getPreferenceValue(Constants::CONTACTS_STYLES);
+        $contactImagesRoot = DBPreferencesType::getPreferenceValue(SettingsNames::CONTACTS_IMAGES);
+        $contactStyles = DBPreferencesType::getPreferenceValue(SettingsNames::CONTACTS_STYLES);
         while (count($contacts)) {
             $contact = array_shift($contacts);
             $address = [];

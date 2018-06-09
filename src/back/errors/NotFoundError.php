@@ -5,7 +5,7 @@ include_once AuWebRoot.'/src/back/errors/BaseError.php';
 
 class NotFoundError extends BaseError
 {
-    public function __construct($message) {
+    public function __construct($message = "") {
         parent::__construct($message, HttpStatuses::NOT_FOUND);
     }
 

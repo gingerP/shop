@@ -4,15 +4,16 @@ class PreferencesService {
 
     public static function getPublicPreferences() {
         return [
-            'contacts_groups' => DBPreferencesType::getPreferenceValue(Constants::CONTACTS_GROUPS),
-            'google_maps_api_key' => DBPreferencesType::getPreferenceValue(Constants::GOOGLE_MAPS_API_KEY)
+            'contacts_groups' => DBPreferencesType::getPreferenceValue(SettingsNames::CONTACTS_GROUPS),
+            'google_maps_api_key' => DBPreferencesType::getPreferenceValue(SettingsNames::GOOGLE_MAPS_API_KEY)
         ];
     }
 
     public static function getAdminPreferences() {
         return [
-            'dropbox_access_token' => DBPreferencesType::getPreferenceValue(Constants::DROPBOX_ACCESS_TOKEN),
-            'dropbox_root_directory' => DBPreferencesType::getPreferenceValue(Constants::DROPBOX_ROOT_DIRECTORY)
+            'dropbox_access_token' => DBPreferencesType::getPreferenceValue(SettingsNames::DROPBOX_ACCESS_TOKEN),
+            'dropbox_root_directory' => DBPreferencesType::getPreferenceValue(SettingsNames::DROPBOX_ROOT_DIRECTORY),
+            'description' => $responseData = DescriptionKeys::$keys
         ];
     }
 

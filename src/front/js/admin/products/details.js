@@ -38,18 +38,24 @@ define([
                 ]
             }
         ];
-        form.loadStruct(formConfig, "json");
-        form.updateFormData = function (data) {
-            this.oldGoodCode = data['key_item'];
-            var updater = {
-                description: function (form, entity) {
-                    var descriptions = (entity.description || '').split('|');
-                    for (var descIndex = 0; descIndex < descriptions.length; descIndex++) {
-                        var description = descriptions[descIndex].split('=');
-                        form.setItemValue(description[0], description[1]);
-                    }
+        form.loadStruct(formConfig, 'json');
+        var updater = {
+            description: function (form, entity) {
+                var description = entity.description || {};
+                var values;
+                var key;
+                var keysSource = form._auCategoriesList || Object.keys(description || {});
+                var index = keysSource.length;
+                while(index) {
+                    index--;
+                    key = keysSource[index];
+                    values = description[key] || [];
+                    form.setItemValue(key, values.join(';'));
                 }
-            };
+            }
+        };
+        form.updateFormData = function (data) {
+            this.oldGoodCode = data.key_item;
             Components.updateFormData(this, data, updater);
             if (!data._isNew && AuUtils.hasContent(data.key_item)) {
                 var radioId = data.key_item.substring(0, 2);
@@ -59,19 +65,21 @@ define([
                 form.setItemValue('id', data._idLabel);
                 form.setItemValue('key_item', data._keyItemLabel);
             }
-
         };
 
         form.updateDescriptionConfig = function (data) {
+            var key;
+            var item;
+            var keysHeight;
+            form._auCategoriesList = Object.keys(data || {});
             if (data) {
-                var keysHeight = {
+                keysHeight = {
                     k_main: 14,
                     k_material: 5
                 };
-                var newColumn = true;
-                for (var key in data) {
+                for (key in data) {
                     if (AuUtils.hasContent(data[key])) {
-                        var item = {
+                        item = {
                             type: 'input',
                             name: key,
                             label: data[key],
@@ -88,12 +96,16 @@ define([
             }
         };
 
-        form.attachEvent("onButtonClick", function (name) {
-        });
         form.lock();
         reloadGoodsKeysTree(form);
 
         return form;
+    }
+
+    function categoryName(item, index, list) {
+        var categoryClassName =
+            'category-level category-' + index + ' ' + (index === list.length - 1 ? 'category-last' : '');
+        return '<span class="' + categoryClassName + '">' + item.value + '(' + item.key_item + ')</span>';
     }
 
     function reloadGoodsKeysTree(form) {
@@ -101,12 +113,12 @@ define([
             .then(
                 /**
                  * @typedef {{
-             *      home_view: string,
-             *      id: number,
-             *      key_item: string,
-             *      parent_key: string,
-             *      value: string
-             * }} Category
+                 *      home_view: string,
+                 *      id: number,
+                 *      key_item: string,
+                 *      parent_key: string,
+                 *      value: string
+                 * }} Category
                  * @param {Category[]} data
                  */
                 function (data) {
@@ -119,14 +131,11 @@ define([
                             form._au_categories_data.push({code: entity.key_item, parent: entity.parent_key});
                             allKeys[entity.key_item] = allKeys[entity.key_item] || 0;
                             allKeys[entity.parent_key] = 1;
-                            var value = _.map(entity.row, function (item, index, list) {
-                                var categoryClassName = 'category-level category-' + index + ' ' + (index === list.length - 1 ? 'category-last' : '');
-                                return '<span class="' + categoryClassName + '">' + item.value + '(' + item.key_item + ')</span>';
-                            }).join(' > ');
                             form.addItem(
                                 'categories_1',
                                 {
-                                    type: 'radio', name: 'category', value: entity.key_item, label: value,
+                                    type: 'radio', name: 'category', value: entity.key_item,
+                                    label: _.map(entity.row, categoryName).join(' > '),
                                     labelWidth: 380, inputWidth: 20, inputLeft: -10, position: 'label-right'
                                 }
                             );

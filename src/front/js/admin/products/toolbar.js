@@ -7,14 +7,15 @@ define([
 
         var updater = {
             description: function (form, entity) {
+                var key;
                 var formData = App.form.getFormData();
-                var descriptions = [];
-                for (var key in formData) {
-                    if (key.indexOf('k_') == 0) {
-                        descriptions.push(key + '=' + formData[key]);
+                var description = {};
+                for (key in formData) {
+                    if (formData.hasOwnProperty(key) && key.indexOf('k_') === 0) {
+                        description[key] = (formData[key] || '').split(';');
                     }
                 }
-                entity.description = descriptions.join('|');
+                entity.description = description;
             }
         };
 
@@ -82,8 +83,7 @@ define([
                 }
 
                 Components.prepareEntity(entity);
-                var id;
-                return Services.updateGood(entity.id, entity)
+                return Services.updateGood(entity)
                     .then(function callback(product) {
                         App.layout.progressOff();
                         id = product.id;

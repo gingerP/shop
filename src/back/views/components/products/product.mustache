@@ -65,20 +65,20 @@
                 <div class="description">
                     <div class="description-category {{topDescriptionClass}}">
                         <div class="description-category-title">{{i18n.product.description.title}}</div>
-                        {{#description.list.0}}
+                        {{#description.main.0}}
                             <div>
 
                                 <ul class="description-value description-list">
-                                    {{#description.list}}
+                                    {{#description.main}}
                                         <li>{{.}}</li>
-                                    {{/description.list}}
+                                    {{/description.main}}
                                 </ul>
                             </div>
-                        {{/description.list.0}}
+                        {{/description.main.0}}
                         {{#description.structuredList}}
                             <div class="description-item good-description-{{odd}} ">
                                 <div class="description-key">{{name}}:</div>
-                                <div class="description-value">{{value}}<br></div>
+                                <div class="description-value">{{value}}</div>
                             </div>
                         {{/description.structuredList}}
                     </div>
@@ -97,7 +97,7 @@
                             <div class="product-top-container">
                                 <div class="product-top-item-links">
                                     <ul>
-                                        {{#viberChatUri}}
+                                        {{#showViber}}
                                             <li>
                                                 <a href="viber://pa?chatURI={{.}}&text=[message text]"
                                                    class="contact-us-viber">
@@ -114,7 +114,7 @@
                                                     <div class="contact-us-viber-label">Viber</div>
                                                 </a>
                                             </li>
-                                        {{/viberChatUri}}
+                                        {{/showViber}}
                                         <li>
                                             <a href="https://vk.com/club143927701" class="contact-us-vk"
                                                rel="nofollow noopener"

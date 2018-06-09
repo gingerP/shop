@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vinni
- * Date: 05.09.13
- * Time: 20:42
- * To change this template use File | Settings | File Templates.
- */
 include_once AuWebRoot.'/src/back/import/import.php';
 class Labels {
     const SEARCH = "search";

@@ -44,15 +44,7 @@ class CatalogPage extends APagesCreator
             "name" => "description",
             "content" => "в каталоге augustova.by вы  найдете спецодежду для вашей работы"
         ]);
-        $treeView = new TreeView();
-        $treeLabels = implode(", ", $treeView->getAllLabels());
-        $metaKeyWords = new Meta();
-        $metaKeyWords->addAttributes([
-            "name" => "keywords",
-            "content" => $treeLabels
-        ]);
-
-        $this->addMetaTags($metaDesc, $metaKeyWords);
+        $this->addMetaTags($metaDesc);
         $this->content = $this->getHtml();
         return $this;
     }

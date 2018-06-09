@@ -19,7 +19,7 @@ class CatalogLoader
     private function isAdminOrderEnabled()
     {
         $preference = new DBPreferencesType();
-        return $preference->getPreference(Constants::USE_ADMIN_ORDER)[DB::TABLE_PREFERENCES__VALUE] == 'true';
+        return $preference->getPreference(SettingsNames::USE_ADMIN_ORDER)[DB::TABLE_PREFERENCES__VALUE] == 'true';
     }
 
     public function getItemsMainData($pageNumber, $num)

@@ -63,7 +63,7 @@ class SearchService
         $normalized = [];
         if ($products) {
             $Preferences = new DBPreferencesType();
-            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+            $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
             while ($product = array_shift($products)) {
                 $code = $product[DB::TABLE_GOODS__KEY_ITEM];
                 $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);

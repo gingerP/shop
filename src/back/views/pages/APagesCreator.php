@@ -171,10 +171,6 @@ abstract class APagesCreator
 
     public function createTree()
     {
-        if ($this->isTreeVisible) {
-            $treeView = new TreeView();
-            return $treeView->createTree($this->getTreeKey());
-        }
         return "";
     }
 

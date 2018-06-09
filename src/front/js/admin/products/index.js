@@ -1,4 +1,6 @@
 require([
+    'common/authorization',
+    'common/authorization-view',
     'common/dialog',
     'common/service-entities',
     'common/services',
@@ -8,7 +10,10 @@ require([
     'products/images',
     'products/toolbar',
     'dropbox/dropbox'
-], function (Dialog, ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
+], function (/**@type Authorization*/
+             Authorization,
+             AuthorizationView,
+             Dialog, ServiceEntities, Services, Components, Grid, Details, Images, Toolbar, AuDropboxDir) {
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
@@ -88,10 +93,10 @@ require([
             if (typeof(callback) === 'function') {
                 callback();
             }
-        })
+        });
     }
 
-    (function init() {
+    function init() {
         AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
         app.loader = getLoader();
         app.layout = initLayout();
@@ -105,6 +110,16 @@ require([
         app.toolbar = Toolbar.init(app, app.layout, app.grid);
         initGoodsOrder();
         app.loader.reloadGrid(app.grid);
-        Services.getDescriptionKeys().then(app.form.updateDescriptionConfig).catch(Dialog.error);
-    })();
+        Services.getDescriptionKeys()
+            .then(function(response) {
+                app.form.updateDescriptionConfig(response.description);
+            })
+            .catch(Dialog.error);
+    }
+
+    Authorization.authorize()
+        .then(init)
+        .catch(function () {
+            AuthorizationView.openLoginForm().then(init);
+        });
 });

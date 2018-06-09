@@ -2,7 +2,7 @@ define([
     'lodash',
     'common/observable',
     'common/services',
-    'dropbox-sdk',
+    'dropboxSdk',
     'common/dialog',
     'filesize',
     'dropbox/dropbox-upload-manager'

@@ -118,14 +118,23 @@ define([
         };
 
         dataView.openDialog = function () {
-            if (!this.isLocked()) {
-                var uploader = $('#file_upload');
-                if (!uploader.length) {
-                    $(document.body).append('<input type="file" name="fileToUpload" id="file_upload" onchange="app.images.uploadFile(this)">').trigger('click');
+            var self = this;
+            self._uploadInputId = self._uploadInputId || 'file-upload-' + Date.now();
+            self._$uploadInput = self._$uploadInput || $('#' + self._uploadInputId);
+            if (!self.isLocked()) {
+                if (!self._$uploadInput.length) {
+                    var inputHtml = '<input type="file" name="fileToUpload" id="' + self._uploadInputId + '">';
+                    $(document.body).append(inputHtml);
+                    self._$uploadInput = $('#' + self._uploadInputId);
+                    self._$uploadInput.on('change', function () {
+                        self.uploadFile(this);
+                    }).trigger('click');
+                } else {
+                    self._$uploadInput.trigger('click');
                 }
-                $('#file_upload').trigger('click');
             }
         };
+
         dataView.saveImages = function (id) {
             var index = 0;
             var images = [];

@@ -1,4 +1,6 @@
 require([
+    'common/authorization',
+    'common/authorization-view',
     'common/services',
     'common/components',
     'common/dialog',
@@ -7,7 +9,10 @@ require([
     'booklets/booklet-background-component',
     'booklets/booklet-full-page-preview',
     'booklets/handlebars-helpers'
-], function (Services, Components, Dialog, BookletComponent, BookletController, BookletBackground, FullPagePreview) {
+], function (/**@type Authorization*/
+             Authorization,
+             AuthorizationView,
+             Services, Components, Dialog, BookletComponent, BookletController, BookletBackground, FullPagePreview) {
 
     function initLayout() {
         var layout = new dhtmlXLayoutObject({
@@ -233,6 +238,10 @@ require([
     if (AuUtils.hasContent(URL_PARAMS.id)) {
         FullPagePreview.render(URL_PARAMS.id);
     } else {
-        initPage();
+        Authorization.authorize()
+            .then(initPage)
+            .catch(function () {
+                AuthorizationView.openLoginForm().then(initPage);
+            });
     }
 });

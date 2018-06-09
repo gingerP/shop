@@ -11,6 +11,7 @@ include_once AuWebRoot.'/src/back/utils/ProductsUtils.php';
 
 include_once AuWebRoot.'/src/back/labels/HttpStatuses.php';
 include_once AuWebRoot.'/src/back/labels/Constants.php';
+include_once AuWebRoot.'/src/back/labels/SettingsNames.php';
 include_once AuWebRoot.'/src/back/labels/Labels.php';
 include_once AuWebRoot.'/src/back/labels/UrlParameters.php';
 include_once AuWebRoot.'/src/back/labels/UrlValues.php';

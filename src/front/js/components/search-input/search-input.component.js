@@ -186,7 +186,7 @@
     SearchInput.prototype.requestSearch = function requestSearch(searchValue, cb) {
         var self = this;
         $.ajax(
-            '/api/search',
+            '/api/products',
             {
                 type: 'GET',
                 data: {

@@ -9,9 +9,9 @@ class EmailService
     public static function sendFeedbackEmail($messageBody, $senderEmail, $senderName, $fromProductCode = '')
     {
         $logger = new Logger(AU_CONFIG['log.file'], Psr\Log\LogLevel::DEBUG);
-        $sendToEmails = DBPreferencesType::getPreferenceValue(Constants::FEEDBACK_MAIL);
+        $sendToEmails = DBPreferencesType::getPreferenceValue(SettingsNames::FEEDBACK_MAIL);
         $sendToEmails = explode(";", $sendToEmails);
-        $systemMail = DBPreferencesType::getPreferenceValue(Constants::SYSTEM_MAIL);
+        $systemMail = DBPreferencesType::getPreferenceValue(SettingsNames::SYSTEM_MAIL);
 
         if (count($sendToEmails) == 0 || $sendToEmails[0] == '') {
             throw new Exception('Empty system email.');
@@ -35,7 +35,7 @@ class EmailService
 
     private static function getHtmlMessage($messageBody, $senderEmail, $senderName, $fromProductCode)
     {
-        $publicUrl = DBPreferencesType::getPreferenceValue(Constants::PUBLIC_URL);
+        $publicUrl = DBPreferencesType::getPreferenceValue(SettingsNames::PUBLIC_URL);
         $escapedMessageBody = htmlentities($messageBody);
         $html = "<!doctype html>
                     <html>

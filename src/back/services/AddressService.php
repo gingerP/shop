@@ -14,7 +14,7 @@ class AddressService
         $addressType = new DBAddressType();
         return [
             'contacts' => $addressType->getActiveAddresses(),
-            'contacts_groups' => DBPreferencesType::getPreferenceValue(Constants::CONTACTS_GROUPS)
+            'contacts_groups' => DBPreferencesType::getPreferenceValue(SettingsNames::CONTACTS_GROUPS)
         ];
     }
 

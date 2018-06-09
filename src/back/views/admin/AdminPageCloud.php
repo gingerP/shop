@@ -1,8 +1,10 @@
 <?php
 
-include_once('src/back/import/admin_pages');
+include_once AuWebRoot . '/src/back/views/admin/AdminPagesCreator.php';
 
 class AdminPageCloud extends AdminPagesCreator {
+
+    private $content;
 
     protected function getHeadContent() {
         return ["
@@ -20,6 +22,15 @@ class AdminPageCloud extends AdminPagesCreator {
 
     protected function getGeneralContent() {
         return [];
+    }
+
+    public function build() {
+        $this->content = $this->getHtml();
+        return $this;
+    }
+
+    public function getContent() {
+        return $this->content;
     }
 
 }

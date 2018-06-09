@@ -15,7 +15,7 @@ class Item {
         $blackOut->addChild($mainDiv);
         TagUtils::createShadow($mainDiv);
         $mainDiv->addStyleClasses(["simple_item_metro", "ciic"]);
-        $imagesCount = min(count($images), Constants::MAX_IMAGE_COUNT_METRO_VIEW);
+        $imagesCount = min(count($images), SettingsNames::MAX_IMAGE_COUNT_METRO_VIEW);
 
         $row0 = new Div();
         $row0->addStyleClass("images_row");

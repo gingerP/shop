@@ -92,14 +92,14 @@ class BookletService {
     }
 
     public static function getBookletBackgroundImages() {
-        $bacgroundPath = DBPreferencesType::getPreferenceValue(Constants::BOOKLET_BACKGROUND_IMAGES_PATH);
+        $bacgroundPath = DBPreferencesType::getPreferenceValue(SettingsNames::BOOKLET_BACKGROUND_IMAGES_PATH);
         $bacgroundImagesList = FileUtils::getFilesByPrefixByDescription($bacgroundPath, '.*', 'jpg');
         $bacgroundImagesList = array_merge($bacgroundImagesList, FileUtils::getFilesByPrefixByDescription($bacgroundPath, '.*', 'png'));
         return $bacgroundImagesList;
     }
 
     private static function saveBookletImage($bookletCode, $imageName, $base64Image) {
-        $bookletImagesRoot = DBPreferencesType::getPreferenceValue(Constants::BOOKLET_IMAGE_PATH);
+        $bookletImagesRoot = DBPreferencesType::getPreferenceValue(SettingsNames::BOOKLET_IMAGE_PATH);
         $bookletImageDirectory = FileUtils::buildPath($bookletImagesRoot, $bookletCode);
         FileUtils::createDir($bookletImageDirectory);
 
@@ -111,7 +111,7 @@ class BookletService {
     }
 
     private static function saveBookletBinaryImage($bookletCode, $imageName, $binaryImage, $imageExtension) {
-        $bookletImagesRoot = DBPreferencesType::getPreferenceValue(Constants::BOOKLET_IMAGE_PATH);
+        $bookletImagesRoot = DBPreferencesType::getPreferenceValue(SettingsNames::BOOKLET_IMAGE_PATH);
         $bookletImageDirectory = FileUtils::buildPath($bookletImagesRoot, $bookletCode);
         FileUtils::createDir($bookletImageDirectory);
 

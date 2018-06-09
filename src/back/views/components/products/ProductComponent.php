@@ -23,16 +23,17 @@ class ProductComponent extends AbstractComponent
         $tpl = $engine->loadTemplate('components/products/product.mustache');
         $productCode = $this->productCode;
         $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES], false);
-        $imagesCatalogRoot = DBPreferencesType::getPreferenceValue(Constants::CATALOG_PATH);
+        $imagesCatalogRoot = DBPreferencesType::getPreferenceValue(SettingsNames::CATALOG_PATH);
         $preparedProduct = [
             'name' => $product[DB::TABLE_GOODS__NAME],
             'description' => $this->prepareDescription($product[DB::TABLE_GOODS__DESCRIPTION]),
             'images' => [],
             'imagesNum' => count($imagesCodes),
             'smallImagesTotalWidth' => count($imagesCodes) * 130,
-            'viberChatUri' => urlencode(DBPreferencesType::getPreferenceValue(Constants::VIBER_CHAT_URI, '')),
-            'viberPhoneNumber' => DBPreferencesType::getPreferenceValue(Constants::VIBER_PHONE_NUMBER, ''),
-            'email' => DBPreferencesType::getPreferenceValue(Constants::FEEDBACK_MAIL, ''),
+            'showViber' => false,
+            'viberChatUri' => urlencode(DBPreferencesType::getPreferenceValue(SettingsNames::VIBER_CHAT_URI, '')),
+            'viberPhoneNumber' => DBPreferencesType::getPreferenceValue(SettingsNames::VIBER_PHONE_NUMBER, ''),
+            'email' => DBPreferencesType::getPreferenceValue(SettingsNames::FEEDBACK_MAIL, ''),
             'emailSubject' => Localization['product.contact.email.subject'],
             'i18n' => Localization
         ];
@@ -58,20 +59,20 @@ class ProductComponent extends AbstractComponent
         $descriptionStructuredList = [];
         $odd = false;
         foreach ($descriptionObject as $key => $descValue) {
-            if ($key != 'k_main' && $descValue != '' && !is_null($descValue)) {
+            if ($key != 'k_main' && $descValue != '' && !is_null($descValue) && count($descValue) > 0) {
                 $odd = !$odd;
                 $descriptionStructuredList[] = [
                     'odd' => $odd ? 'odd' : 'even',
                     'name' => array_key_exists('product.description.' . $key, Localization)
                         ? Localization['product.description.' . $key]
                         : '',
-                    'value' => $descValue
+                    'value' => implode('; ', $descValue)
                 ];
             }
         }
 
         return [
-            'list' => $descriptionObject['k_main'],
+            'main' => $descriptionObject['k_main'],
             'structuredList' => $descriptionStructuredList
         ];
     }

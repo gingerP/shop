@@ -1,10 +1,10 @@
 <?php
 
-include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/views/admin/AdminPagesCreator.php';
 
 class AdminPageBooklets extends AdminPagesCreator {
 
-    public function AdminPageBooklets() {}
+    private $content;
 
     protected function getHeadContent() {
         return [
@@ -26,6 +26,15 @@ class AdminPageBooklets extends AdminPagesCreator {
 
     protected function getGeneralContent() {
         return [];
+    }
+
+    public function build() {
+        $this->content = $this->getHtml();
+        return $this;
+    }
+
+    public function getContent() {
+        return $this->content;
     }
 
 } 

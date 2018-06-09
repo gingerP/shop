@@ -12,7 +12,7 @@ class PriceService {
     public static function getPrices() {
         $ret = [];
         $pref = new DBPreferencesType();
-        $pricesDir = $pref->getPreference(Constants::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
+        $pricesDir = $pref->getPreference(SettingsNames::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
         $prices = FileUtils::getFilesByDescription($pricesDir, 'xls');
         $pricesX = FileUtils::getFilesByDescription($pricesDir, 'xlsx');
         $files = array_merge($prices, $pricesX);
@@ -30,7 +30,7 @@ class PriceService {
 
     public static function deletePrice($fileName) {
         $pref = new DBPreferencesType();
-        $pricesDir = $pref->getPreference(Constants::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
+        $pricesDir = $pref->getPreference(SettingsNames::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
         return unlink($pricesDir.DIRECTORY_SEPARATOR.$fileName);
     }
 
@@ -56,7 +56,7 @@ class PriceService {
         $result = [];
         if (count($data) > 0) {
             $dbPreference = new DBPreferencesType();
-            $priceDirectory = $dbPreference->getPreference(Constants::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
+            $priceDirectory = $dbPreference->getPreference(SettingsNames::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
             for($orderIndex = 0; $orderIndex < count(self::$operationsOrder); $orderIndex++) {
                 $currentAction = self::$operationsOrder[$orderIndex];
                 foreach ($data as $key => $value) {

@@ -1,7 +1,7 @@
 <?php
-include_once AuWebRoot.'/src/back/import/db.php';
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/errors.php';
+include_once AuWebRoot . '/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/errors.php';
 
 class ProductsService
 {
@@ -18,7 +18,10 @@ class ProductsService
             DB::TABLE_GOODS__ID => DB::TABLE_GOODS__ID,
             DB::TABLE_GOODS__KEY_ITEM => DB::TABLE_GOODS__KEY_ITEM,
             DB::TABLE_GOODS__NAME => DB::TABLE_GOODS__NAME,
-            DB::TABLE_GOODS__DESCRIPTION => DB::TABLE_GOODS__DESCRIPTION,
+            DB::TABLE_GOODS__DESCRIPTION => function ($descriptionString) {
+                $json = json_decode($descriptionString);
+                return is_null($json) ? [] : $json;
+            },
             DB::TABLE_GOODS__IMAGE_PATH => DB::TABLE_GOODS__IMAGE_PATH,
             DB::TABLE_GOODS__CATEGORY => DB::TABLE_GOODS__CATEGORY,
             DB::TABLE_GOODS__IMAGES => function ($imagesString) {
@@ -64,12 +67,17 @@ class ProductsService
             $values[DB::TABLE_GOODS__KEY_ITEM] =
                 ProductsService::getNextGoodCode($values[DB::TABLE_GOODS__CATEGORY]);
         }
+        $values[DB::TABLE_GOODS__DESCRIPTION] = json_encode(
+            isset($values[DB::TABLE_GOODS__DESCRIPTION]) ? $values[DB::TABLE_GOODS__DESCRIPTION] : [],
+            JSON_UNESCAPED_UNICODE
+        );
+
         $newId = $goodsType->update($id, $values);
         if (!is_null($id)) {
             $goodsType = new DBGoodsType();
             $goodsType->incrementVersion($id);
         }
-        return ProductsService::getGood($newId);
+        return ProductsService::getProduct($newId);
     }
 
     public static function validate_updateImages()
@@ -109,7 +117,7 @@ class ProductsService
         $productCode = $product[DB::TABLE_GOODS__KEY_ITEM];
 
         $Preferences = new DBPreferencesType();
-        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         FileUtils::createDir(FileUtils::buildPath($catalogPath, $productCode));
 
         for ($imgIndex = 0; $imgIndex < count($imagesFromFront); $imgIndex++) {
@@ -120,7 +128,7 @@ class ProductsService
                 if ($origin === 'cloud') {
                     $filePath = $image['data'];
                     $fileContent = DropboxService::downloadFile($filePath);
-                    if ($fileContent == false)  {
+                    if ($fileContent == false) {
                         continue;
                     }
                     $imageName = self::saveNewImageFromBinary($fileContent, $productCode);
@@ -142,7 +150,7 @@ class ProductsService
     private static function deleteImagesAllExcept($imagesCodes, $productCode)
     {
         $Preferences = new DBPreferencesType();
-        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         $productDir = FileUtils::buildPath($catalogPath, $productCode);
         $except = [];
         foreach ($imagesCodes as $imageCode) {
@@ -160,7 +168,7 @@ class ProductsService
     {
         $Preferences = new DBPreferencesType();
         $imageName = Utils::getRandomString(20);
-        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
 
         $smallImageName = FileUtils::buildPath($catalogPath, $productCode, Constants::SMALL_IMAGE . $imageName . '.jpg');
         self::saveImageFromBinary($smallImageName, $binaryImage,
@@ -191,7 +199,7 @@ class ProductsService
         $base64 = str_replace(' ', '+', $base64);
         $Preferences = new DBPreferencesType();
         $imageName = Utils::getRandomString(20);
-        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
 
         $smallImageName = FileUtils::buildPath($catalogPath, $productCode, Constants::SMALL_IMAGE . $imageName . '.jpg');
         self::saveImageFromBase64($smallImageName, $base64,
@@ -234,7 +242,7 @@ class ProductsService
         $imageEditorS->saveImage($imagePath, 100);
     }
 
-    public static function getGood($id)
+    public static function getProduct($id)
     {
         $goodsType = new DBGoodsType();
         $row = $goodsType->get($id);
@@ -242,7 +250,7 @@ class ProductsService
             DB::TABLE_GOODS__ID => $row[DB::TABLE_GOODS__ID],
             DB::TABLE_GOODS__KEY_ITEM => $row[DB::TABLE_GOODS__KEY_ITEM],
             DB::TABLE_GOODS__NAME => $row[DB::TABLE_GOODS__NAME],
-            DB::TABLE_GOODS__DESCRIPTION => $row[DB::TABLE_GOODS__DESCRIPTION],
+            DB::TABLE_GOODS__DESCRIPTION => json_decode($row[DB::TABLE_GOODS__DESCRIPTION], true, 512, JSON_UNESCAPED_UNICODE),
             DB::TABLE_GOODS__IMAGE_PATH => $row[DB::TABLE_GOODS__IMAGE_PATH],
             DB::TABLE_GOODS__CATEGORY => $row[DB::TABLE_GOODS__CATEGORY],
             DB::TABLE_GOODS__IMAGES => json_decode($row[DB::TABLE_GOODS__IMAGES])
@@ -251,16 +259,20 @@ class ProductsService
 
     public static function getNextGoodCode($code)
     {
-        $goodsType = new DBGoodsType();
-        $goodsType->executeRequestRegExpWithLimit(DB::TABLE_GOODS__KEY_ITEM, '^' . $code, DB::TABLE_GOODS__KEY_ITEM, DB::DESC, 0, 1);
+        $Products = new DBGoodsType();
+        $products = $Products->extractDataFromResponse($Products->executeRequestRegExpWithLimit(DB::TABLE_GOODS__KEY_ITEM, '^' . $code, DB::TABLE_GOODS__KEY_ITEM, DB::DESC, 0, 1));
         $nextCode = null;
-        while ($row = mysqli_fetch_array($goodsType->getResponse())) {
-            $key_item = $row[DB::TABLE_GOODS__KEY_ITEM];
-            preg_match('/(\d+)$/', $key_item, $matches);
-            $numericPartOfCode = intval($matches[1]);
-            ++$numericPartOfCode;
-            $nextCode = $code . sprintf("%03d", $numericPartOfCode);
-            break;
+        if (count($products) > 0) {
+            foreach ($products as $product) {
+                $key_item = $product[DB::TABLE_GOODS__KEY_ITEM];
+                preg_match('/(\d+)$/', $key_item, $matches);
+                $numericPartOfCode = intval($matches[1]);
+                ++$numericPartOfCode;
+                $nextCode = $code . sprintf("%03d", $numericPartOfCode);
+                break;
+            }
+        } else {
+            $nextCode = $code . '001';
         }
         return $nextCode;
     }
@@ -270,7 +282,7 @@ class ProductsService
         self::clearCache();
 
         $dbPref = new DBPreferencesType();
-        $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $catalogPath = $dbPref->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         $goodsType = new DBGoodsType();
         $code = $goodsType->getCode($id);
         FileUtils::removeDirRec($catalogPath . $code);
@@ -291,7 +303,7 @@ class ProductsService
         $dbGoods = new DBGoodsType();
         $data = $dbGoods->getAdminSortedForCommon(0, PHP_INT_MAX);
         $dbPref = new DBPreferencesType();
-        $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        $catalogPath = $dbPref->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         $mappings = [
             DB::TABLE_GOODS__ID => DB::TABLE_GOODS__ID,
             DB::TABLE_GOODS__KEY_ITEM => DB::TABLE_GOODS__KEY_ITEM,
@@ -328,7 +340,7 @@ class ProductsService
         $productsTotalCount = count($products);
         if (count($products) > 0) {
             $dbPref = new DBPreferencesType();
-            $catalogPath = $dbPref->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+            $catalogPath = $dbPref->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
             while (count($products) > 0) {
                 $product = array_pop($products);
                 $code = $product[DB::TABLE_GOODS__KEY_ITEM];
@@ -376,9 +388,10 @@ class ProductsService
         return null;
     }
 
-    private static function getDropboxClient() {
+    private static function getDropboxClient()
+    {
         $Preferences = new DBPreferencesType();
-        $dropboxAccessToken = $Preferences->getPreference(Constants::DROPBOX_ACCESS_TOKEN)[DB::TABLE_PREFERENCES__VALUE];
+        $dropboxAccessToken = $Preferences->getPreference(SettingsNames::DROPBOX_ACCESS_TOKEN)[DB::TABLE_PREFERENCES__VALUE];
         list($appInfo, $clientIdentifier, $userLocale) = getAppConfig();
         $accessToken = $_SESSION['access-token'];
         return new dbx\Client($accessToken, $clientIdentifier, $userLocale, $appInfo->getHost());

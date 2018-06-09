@@ -4,6 +4,8 @@
     "bartosz-maciaszek/validation": "dev-master",
     "katzgrau/klogger": "dev-master",
     "klein/klein": "^2.1",
-    "mustache/mustache": "^2.12"
+    "mustache/mustache": "^2.12",
+    "firebase/php-jwt": "^5.0",
+    "webmozart/assert": "^1.3"
   }
 }

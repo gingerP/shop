@@ -20,16 +20,6 @@ class ProductPage extends APagesCreator
         $this->setIsViewModeBlockVisible(false);
         $this->setPathLinkForMainBlock(PathLinks::getDOMForSingleItemPage());
 
-        $treeView = new TreeView();
-        $treeLabels = implode(", ", $treeView->getAllLabels());
-        $metaKeyWords = new Meta();
-        $metaKeyWords->addAttributes([
-            "name" => "keywords",
-            "content" => $treeLabels
-        ]);
-
-        $this->addMetaTags($metaKeyWords);
-
         $this->content = $this->getHtml();
     }
 

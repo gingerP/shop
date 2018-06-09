@@ -12,7 +12,7 @@ class EmailFormComponent extends AbstractComponent
 
     public function build()
     {
-        $feedbackEmail = DBPreferencesType::getPreferenceValue(Constants::FEEDBACK_MAIL);
+        $feedbackEmail = DBPreferencesType::getPreferenceValue(SettingsNames::FEEDBACK_MAIL);
         $tpl = parent::getEngine()->loadTemplate('components/emailForm/email-form.mustache');
         return $tpl->render([
             'feedbackEmail' => $feedbackEmail,

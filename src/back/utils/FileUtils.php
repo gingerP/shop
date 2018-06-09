@@ -180,14 +180,14 @@ class FileUtils
 
     public static function getTmpDir()
     {
-        return DBPreferencesType::getPreferenceValue(Constants::TEMP_DIRECTORY);
+        return DBPreferencesType::getPreferenceValue(SettingsNames::TEMP_DIRECTORY);
     }
 
     public static function getBookletImageDir()
     {
         if (self::$bookletImageDir == null || self::$bookletImageDir == '' || self::$bookletImageDirAge + self::$prefTimeout <= time()) {
             $pref = new DBPreferencesType();
-            self::$bookletImageDir = $pref->getPreference(Constants::TEMP_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
+            self::$bookletImageDir = $pref->getPreference(SettingsNames::TEMP_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
             self::$bookletImageDirAge = time();
         }
         return self::$bookletImageDir;

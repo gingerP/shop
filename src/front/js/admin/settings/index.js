@@ -1,9 +1,14 @@
 require([
+    'common/authorization',
+    'common/authorization-view',
     'common/service-entities',
     'common/services',
     'common/components',
-    'settings/photo-tab'
-], function (ServiceEntities, Services, Components, PhotoTab) {
+    'settings/common-tab'
+], function (/**@type Authorization*/
+             Authorization,
+             AuthorizationView,
+             ServiceEntities, Services, Components, CommonTab) {
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
@@ -36,11 +41,17 @@ require([
         });
     }
 
-    (function init() {
+    function init() {
         AuUtils.dhtmlxDOMPreInit(document.documentElement, document.body);
         app.layout = createLayout();
         app.tabbar = createTabbar(app.layout);
         app.menu = Components.createMenu(app.layout);
-        PhotoTab.init(app, app.tabbar.tabs('a1'));
-    })();
+        CommonTab.init(app, app.tabbar.tabs('a1'));
+    }
+
+    Authorization.authorize()
+        .then(init)
+        .catch(function () {
+            AuthorizationView.openLoginForm().then(init);
+        });
 });

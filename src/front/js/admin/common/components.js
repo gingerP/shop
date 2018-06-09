@@ -1,4 +1,7 @@
-define([], function () {
+define([
+    'common/authorization'
+], function (/**@type Authorization*/
+             Authorization) {
     if (typeof app === 'undefined') {
         app = {};
     }
@@ -110,7 +113,7 @@ define([], function () {
                 image_path: '/src/front/dhtmlx/imgs/',
                 items: [
                     {id: 'settings', text: 'Настройки', enabled: true},
-                    {id: 'goods', text: 'Товары', enabled: true},
+                    {id: 'products', text: 'Товары', enabled: true},
                     {id: 'booklets', text: 'Буклеты', enabled: true},
                     {id: 'cloud', text: 'Облако', enabled: true},
                     {id: 'tree', text: 'Дерево навигации', disabled: true},
@@ -120,6 +123,10 @@ define([], function () {
                 ]
             });
             menu.attachEvent('onClick', function (id, zoneId, cas) {
+                if (id === exitKey) {
+                    Authorization.logout();
+                    return;
+                }
                 window.open(document.location.origin + '/admin/' + id, '_self');
             });
             var exitDOM = menu.idPull[menu.idPrefix + exitKey];

@@ -18,7 +18,7 @@ class Items {
             $rowView = new Div();
             $mainTag->addChild($rowView);
             $Preferences = new DBPreferencesType();
-            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+            $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
             while ($product = array_shift($products)) {
                 $items++;
                 $indOnPage++;

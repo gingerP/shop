@@ -14,19 +14,19 @@ class AuthManager {
 
     }
 
-    public static function checkUser($user) {
+    public static function checkUser($userName) {
         $userDBType = new DBUsersType();
-        $userArr = $userDBType->getUserForName($user);
-        $result = count($userArr) > 0 && strlen($userArr[DB::TABLE_USERS__NAME]) > 0;
+        $user = $userDBType->getUserForName($userName);
+        $result = strlen($user[DB::TABLE_USERS__NAME]) > 0;
         return $result;
     }
 
-    public static function checkUserPasswd($user, $passwd) {
+    public static function checkUserPasswd($userName, $passwd) {
         $result = false;
         $userDBType = new DBUsersType();
-        $userArr = $userDBType->getUserForName($user);
-        if (count($userArr) > 0) {
-            $dbPasswd = $userArr[DB::TABLE_USERS__PASSWORD];
+        $user = $userDBType->getUserForName($userName);
+        if (!is_null($user)) {
+            $dbPasswd = $user[DB::TABLE_USERS__PASSWORD];
             $webPasswd = md5($passwd);
             if ($dbPasswd == $webPasswd) {
                 $result = true;

@@ -1,7 +1,9 @@
 define([
     'axios',
-    'common/handlers'
-], function (axios, Handlers) {
+    'common/handlers',
+    'common/authorization',
+    'lodash'
+], function (axios, Handlers, Authorization, _) {
 
     function failed(error) {
         var message = 'Unknown error';
@@ -16,7 +18,7 @@ define([
         } else {
             message = error.responseJSON && error.responseJSON.message || error.statusText;
         }
-        api.saveError(message, typeof error.stack === 'string' ? error.stack : '');
+        //api.saveError(message, typeof error.stack === 'string' ? error.stack : '');
         dhtmlx.alert({
             title: 'Alert',
             type: 'alert-error',
@@ -30,93 +32,120 @@ define([
         console.error(error);
     }
 
-    function load(apiMethod, params, handlers) {
+    function load(method, apiPath, params, handlers) {
         return axios({
-            method: 'post',
+            method: method,
             data: params || {},
             dataType: 'json',
-            headers: {contentType: 'application/json;charset=utf-8'},
-            url: '/api/' + apiMethod
-        }).then(function (data) {
-                if (handlers && typeof(handlers.success) == 'function') {
+            headers: Authorization.headers({contentType: 'application/json;charset=utf-8'}),
+            url: '/api' + apiPath
+        })
+            .then(function (data) {
+                if (handlers && typeof(handlers.success) === 'function') {
                     handlers.success(data);
                 }
                 return data;
-            }
-        ).catch(failed);
+            })
+            .catch(function (data) {
+                if (data && data.response && data.response.status === 401) {
+                    return Authorization
+                        .refreshToken()
+                        .then(function () {
+                            return load(method, apiPath, params, handlers);
+                        })
+                        .catch(Authorization.logout);
+                }
+                throw data;
+            })
+            .catch(failed);
     }
 
     function getData(response) {
         return response && response.data;
     }
 
+    function post(apiPath, params, handlers) {
+        return load('POST', '/admin' + apiPath, params, handlers).then(getData);
+    }
+
+    function get(apiPath, params, handlers) {
+        return load('GET', '/admin' + apiPath, params, handlers).then(getData);
+    }
+
+    function delete_(apiPath, params, handlers) {
+        return load('DELETE', '/admin' + apiPath, params, handlers).then(getData);
+    }
+
     var api = {
-        saveError: function(message, stack) {
-            return load('saveError', {message: message, stack: stack, pageUrl: window.location.href}).then(getData);
+        saveError: function (message, stack) {
+            return post('/errors', {message: message, stack: stack, pageUrl: window.location.href});
         },
-        getAddresses: function (id, callback) {
-            return load('getAddresses', {id: -1}, new Handlers(callback)).then(getData);
+        getAddresses: function () {
+            return get('/addresses');
         },
-        getGoods: function (id) {
-            return load('getGoods', {id: -1}).then(getData);
+        getGoods: function () {
+            return get('/products');
         },
-        saveGoodsOrder: function (data, callback) {
-            return load('saveOrder', data, new Handlers(callback)).then(getData);
+        saveGoodsOrder: function (data) {
+            return post('/products/order', data);
         },
-        getNextGoodCode: function (code, callback) {
-            return load('getNextGoodCode', {code: code}, new Handlers(callback)).then(getData);
+        getNextGoodCode: function (code) {
+            return get('/products/next_code/' + code);
         },
-        getDescriptionKeys: function (callback) {
-            return load('getDescriptionKeys', null, new Handlers(callback)).then(getData);
+        getDescriptionKeys: function () {
+            return get('/settings', null);
         },
-        getPrices: function (callback) {
-            return load('getPrices', null, new Handlers(callback)).then(getData);
+        getPrices: function () {
+            return get('getPrices', null);
         },
-        getGoodsKeys: function (callback) {
-            return load('getGoodsKeys', null, new Handlers(callback)).then(getData);
+        getGoodsKeys: function () {
+            return get('/categories');
         },
-        updateGood: function (id, data, callback) {
-            return load('updateGood', {id: id, data: data}, new Handlers(callback)).then(getData);
+        updateGood: function (data) {
+            return post('/products', data);
         },
-        getGood: function (id, callback) {
-            return load('getGood', {id: id}, new Handlers(callback)).then(getData);
+        getGood: function (id) {
+            return get('/products/' + id);
         },
-        getGoodsAdminOrder: function (callback) {
-            return load('getAdminOrder', null, new Handlers(callback)).then(getData);
+        getGoodsAdminOrder: function () {
+            return get('/products/order');
         },
-        getGoodImages: function (id, callback) {
-            return load('getGoodImages', {id: id}, new Handlers(callback)).then(getData);
+        getGoodImages: function (id) {
+            return get('/products/' + id + '/images');
         },
-        deleteGood: function (id, callback) {
-            return load('deleteGood', {id: id}, new Handlers(callback)).then(getData);
+        deleteGood: function (id) {
+            return delete_('/products/' + id);
         },
-        uploadImagesForGood: function (id, data, callback) {
-            return load('uploadImagesForGood', {id: id, data: data}, new Handlers(callback)).then(getData);
+        uploadImagesForGood: function (id, data) {
+            return post('/products/' + id + '/images', data);
         },
-        updatePrices: function (data, callback) {
-            return load('updatePrices', {data: data}, new Handlers(callback)).then(getData);
+        updatePrices: function (data) {
+            return post('updatePrices', {data: data});
         },
         readImagesFromCatalogToDb: function readImagesFromCatalogToDb() {
-            return load('readImagesFromCatalogToDb').then(getData);
+            return get('readImagesFromCatalogToDb');
         },
         getAdminSettings: function getAdminSettings() {
-            return load('getAdminSettings').then(getData);
+            return get('/settings');
         },
         /*****************************************Booklets*************************************/
         listBooklets: function (mapping) {
-            return load('listBooklets', {mapping: mapping}).then(getData);
+            return get('/booklets?mapping=' + encodeURIComponent(JSON.stringify(mapping)));
         },
         getBooklet: function (id, mapping) {
-            return load('getBooklet', {id: id, mapping: mapping}).then(getData);
+            if (mapping) {
+                return get('/booklets/' + id + '?mapping=' + encodeURIComponent(JSON.stringify(mapping)));
+            }
+            return get('/booklets/' + id);
         },
-        saveBooklet: function (data, callback) {
-            return load('saveBooklet', {data: data}, new Handlers(callback)).then(getData);
+        saveBooklet: function (data) {
+            return post('/booklets', data);
         },
         deleteBooklet: function (id) {
-            return load('deleteBooklet', {id: id}).then(getData);
+            return delete_('/booklets/' + id);
         },
         getBookletBackgrounds: function () {
-            return load('getBookletBackgrounds').then(getData);
+            return get('/booklets/backgrounds/');
         }
     };
     return api;

@@ -8,7 +8,7 @@ class DropboxService
 {
     public static function downloadFile($filePath)
     {
-        $accessToken = DBPreferencesType::getPreferenceValue(Constants::DROPBOX_ACCESS_TOKEN);
+        $accessToken = DBPreferencesType::getPreferenceValue(SettingsNames::DROPBOX_ACCESS_TOKEN);
         $params = json_encode(['path' => $filePath]);
         $opts = array('http' =>
             array(

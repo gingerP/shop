@@ -1,4 +1,6 @@
-define([], function () {
+define([
+    'lodash'
+], function (_) {
     var ServiceEntities = function ServiceEntities() {
     };
 
@@ -9,7 +11,48 @@ define([], function () {
         this.newEntities = {};
         this.idField = entityIdKey;
         this.entity = entity;
+        this.schema = null;
         return this;
+    };
+
+    ServiceEntities.prototype.initWithSchema = function (schema, entityIdKey, maxEntitiesCount) {
+        this.schema = schema;
+        this.defaults = this._getDefaultsFromSchema();
+        this.maxEntitiesCount = maxEntitiesCount;
+        this.newEntitiesCount = 0;
+        this.newEntities = {};
+        this.idField = entityIdKey;
+        this.entity = this._getDefaultsFromSchema();
+        return this;
+    };
+
+    ServiceEntities.prototype._getDefaultsFromSchema = function _getDefaultsFromSchema() {
+        var defaults = {};
+        for(var key in this.schema) {
+            if (this.schema.hasOwnProperty(key)) {
+                var schemaItem = this.schema[key];
+                var type = schemaItem[0];
+                var defaultValue = schemaItem[1];
+                switch (type) {
+                    case Number:
+                        defaults[key] = _.isUndefined(defaultValue) ? 0 : defaultValue;
+                        break;
+                    case String:
+                        defaults[key] = _.isUndefined(defaultValue) ? '' : defaultValue;
+                        break;
+                    case Date:
+                        defaults[key] = _.isUndefined(defaultValue) ? new Date() : defaultValue;
+                        break;
+                    case Array:
+                        defaults[key] = _.isUndefined(defaultValue) ? [] : defaultValue;
+                        break;
+                    case Boolean:
+                        defaults[key] = _.isUndefined(defaultValue) ? true : defaultValue;
+                        break;
+                }
+            }
+        }
+        return defaults;
     };
 
     ServiceEntities.prototype.createNewEntity = function () {

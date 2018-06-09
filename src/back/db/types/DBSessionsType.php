@@ -34,11 +34,11 @@ class DBSessionsType extends DBType {
         return [];
     }
 
-    public function getSessionForUser($user) {
+    public function getSessionForUser($userName) {
         $dbUserType = new DBUsersType();
-        $userRow = $dbUserType->getUserForName($user);
-        if ($userRow != null) {
-            $userId = $userRow[DB::TABLE_USERS__ID];
+        $user = $dbUserType->getUserForName($userName);
+        if (is_null($user)) {
+            $userId = $user[DB::TABLE_USERS__ID];
             $this->executeRequestWithLimit(DB::TABLE_SESSIONS__USER_ID, $userId, DB::TABLE_SESSIONS___ORDER, DB::ASC, 0, 1);
             while ($row = mysqli_fetch_array($this->response)) {
                 return $row;

@@ -4,6 +4,7 @@ include_once AuWebRoot.'/src/back/import/tags.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 include_once AuWebRoot.'/src/back/import/db.php';
 include_once AuWebRoot.'/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
+include_once AuWebRoot.'/src/back/views/components/catalogProduct/CatalogProductComponent.php';
 
 class MainPage extends APagesCreator
 {
@@ -14,14 +15,14 @@ class MainPage extends APagesCreator
     }
 
     public function build() {
-        $this->setPageCode("main_page");
+        $this->setPageCode('main_page');
         $this->setIsStatusBarVisible(false);
         $this->setIsViewModeBlockVisible(false);
         $this->setIsPathLinkVisible(false);
         $metaDesc = new Meta();
         $metaDesc->addAttributes([
-            "name" => "description",
-            "content" => "на augustova.by вы найдете спецодежду для вашей работы, а юридические лица смогут приобрести лакокрасочные материалы, чистящие и моющие ср-ва, канцтовары, строительный инструмент и другое "
+            'name' => 'description',
+            'content' => 'на augustova.by вы найдете спецодежду для вашей работы, а юридические лица смогут приобрести лакокрасочные материалы, чистящие и моющие ср-ва, канцтовары, строительный инструмент и другое '
         ]);
         $this->addMetaTags($metaDesc);
         $this->content = $this->getHtml();
@@ -36,7 +37,7 @@ class MainPage extends APagesCreator
     {
         $mainDiv = new Div();
         $div01 = new Div();
-        $div01->addStyleClasses(["slide_show", "gallery"]);
+        $div01->addStyleClasses(['slide_show', 'gallery']);
         $div01->addChildren($this->getPricesGallery());
         return $mainDiv->addChildren($div01, $this->getCatalogItems());
     }
@@ -45,7 +46,7 @@ class MainPage extends APagesCreator
     {
         $mainDiv = new Div();
         $map = new Div();
-        $map->addAttribute("id", "main-page-map");
+        $map->addAttribute('id', 'main-page-map');
         return [$map, (new MainPageContactsComponent())->build()];
     }
 
@@ -59,43 +60,28 @@ class MainPage extends APagesCreator
         $products = $catalogLoader->data;
         $goodIndex = 0;
         $slideShowContainer = new Div();
-        $slideShowContainer->addStyleClass("main_page_items_slideshow");
+        $slideShowContainer->addStyleClass('main_page_items_slideshow');
         $slideShow = new Div();
-        $slideShow->addStyleClasses(["slide_show", "catalog_items"]);
+        $slideShow->addStyleClasses(['slide_show', 'catalog_items']);
         if (count($products) > 0) {
             $div02 = new Div();
             $div02->addStyleClass('items_table');
-            $div02->addAttribute("style", "overflow: hidden;");
+            $div02->addAttribute('style', 'overflow: hidden;');
 
             $Preferences = new DBPreferencesType();
-            $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+            $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
 
             while ($goodIndex < count($products)) {
                 $product = $products[$goodIndex];
-                $code = $product[DB::TABLE_GOODS__KEY_ITEM];
-
-                $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
-                $images = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
-                $info = Item::getMetroItemView(
-                    $product["name"],
-                    $images,
-                    $product[DB::TABLE_GOODS__VERSION],
-                    Utils::formatClotheTitle($product["name"])
-                );
-                $productContainer = new A();
-                $productContainer->addStyleClass("catalog_good_item previews-zero-col");
-                $productContainer->addChild($info[0]);
-                $url = URLBuilder::getItemLinkForComplexType("", $product[DB::TABLE_GOODS__KEY_ITEM], 1, 48);
-                $productContainer->addAttribute('href', $url);
-                $div02->addChild($productContainer);
-                //$div02->addChild($this->renderGalleryItemWithSingleItem($goods[$goodIndex]));
+                $productView = (new CatalogProductComponent())->build($product, $catalogPath);
+                $div02->addChild($productView);
                 $goodIndex++;
             }
 
             $url = URLBuilder::getCatalogLink();
             $remainingCountLink = new A();
             $remainingCountLink->addStyleClass('catalog-more-link');
-            $remainingCountLink->addChild("Eщё ...");
+            $remainingCountLink->addChild('Eщё ...');
             $remainingCountLink->addAttribute('href', $url);
 
             $slideShowContainer->addChildren($slideShow->addChildren($div02, $remainingCountLink));
@@ -111,24 +97,24 @@ class MainPage extends APagesCreator
         $headContainer = new Div();
 
         $head = new Div();
-        $head->addStyleClasses(["slogan_container_horizontal", "z-10"]);
+        $head->addStyleClasses(['slogan_container_horizontal', 'z-10']);
         $slogan = new Div();
-        $slogan->addStyleClass("slogan");
-        $slogan->addChild("Собственное производство.");
+        $slogan->addStyleClass('slogan');
+        $slogan->addChild('Собственное производство.');
         $head->addChildren($slogan);
 
         $head2 = new Div();
-        $head2->addStyleClasses(["slogan_container_horizontal", "z-9"]);
+        $head2->addStyleClasses(['slogan_container_horizontal', 'z-9']);
         $catalogLink = new A();
-        $catalogLink->addAttribute("href", Labels::$TOP_NAVIGATION_LINKS['catalog']);
-        $catalogLink->addStyleClass("main_page_catalog_link");
-        $catalogLink->addChild("Каталог");
+        $catalogLink->addAttribute('href', Labels::$TOP_NAVIGATION_LINKS['catalog']);
+        $catalogLink->addStyleClass('main_page_catalog_link');
+        $catalogLink->addChild('Каталог');
         $head2->addChildren($catalogLink/*, $rightEarForLink*/);
 
         $headContainer->addChildren($head, $head2);
         $slogan = new Div();
         $slogan->addStyleClass('catalog_slogan');
-        $headContainer->addStyleClass("main_page_slogan_container");
+        $headContainer->addStyleClass('main_page_slogan_container');
         return $slogan->addChild($headContainer);
     }
 
@@ -147,7 +133,7 @@ class MainPage extends APagesCreator
         $container = new Div();
         $container->addStyleClass('main_page_items_slideshow categories');
         $Preferences = new DBPreferencesType();
-        $categoriesCodes = $Preferences->getPreferenceValue(Constants::SETTINGS_MAIN_PAGE_CATEGORIES);
+        $categoriesCodes = $Preferences->getPreferenceValue(SettingsNames::SETTINGS_MAIN_PAGE_CATEGORIES);
         $categoriesCodes = explode(';', $categoriesCodes);
         if (count($categoriesCodes) > 0) {
             $Categories = new DBNavKeyType();
@@ -195,25 +181,11 @@ class MainPage extends APagesCreator
         $index = 0;
 
         $Preferences = new DBPreferencesType();
-        $catalogPath = $Preferences->getPreference(Constants::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
-            while ($index < count($products)) {
+        $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
+        while ($index < count($products)) {
             $product = $products[$index];
-            $code = $product[DB::TABLE_GOODS__KEY_ITEM];
-
-            $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES]);
-            $images = ProductsUtils::normalizeImagesFromCodes($imagesCodes, $code, Constants::MEDIUM_IMAGE, $catalogPath);
-            $productCard = Item::getMetroItemView(
-                $product[DB::TABLE_GOODS__NAME],
-                $images,
-                $product[DB::TABLE_GOODS__VERSION],
-                Utils::formatClotheTitle($product[DB::TABLE_GOODS__NAME])
-            )[0];
-            $productLink = new A();
-            $productLink->addStyleClass('catalog_good_item');
-            $productLink->addChild($productCard);
-            $url = URLBuilder::getCatalogLinkForSingleItem($product[DB::TABLE_GOODS__KEY_ITEM]);
-            $productLink->addAttribute('href', $url);
-            $subSubContainer->addChild($productLink);
+            $productView = (new CatalogProductComponent())->build($product, $catalogPath);
+            $subSubContainer->addChild($productView);
             $index++;
         }
         return $container->addChild($subContainer);
@@ -234,7 +206,7 @@ class MainPage extends APagesCreator
         if ($remainingCount > 0) {
             $remainingCountLink = new A();
             $remainingCountLink->addStyleClass('category-title-postfix');
-            $remainingCountLink->addChild("ещё $remainingCount " . self::getLabelByCount($remainingCount) . "...");
+            $remainingCountLink->addChild("ещё $remainingCount " . self::getLabelByCount($remainingCount) . '...');
             $remainingCountLink->addAttribute('href', $url);
             $remainingLinkContainer = new Div();
             $remainingLinkContainer->addChild($remainingCountLink);
@@ -265,9 +237,9 @@ class MainPage extends APagesCreator
     protected function getSourceScripts()
     {
         $preferences = PreferencesService::getPublicPreferences();
-        $scripts = strtr("<script type='text/javascript'>
-            window.AugustovaApp = {googleApiKey: 'googleApiKeyValue'};
-        </script>", [
+        $scripts = strtr('<script type="text/javascript">
+            window.AugustovaApp = {googleApiKey: "googleApiKeyValue"};
+        </script>', [
             'googleApiKeyValue' => $preferences['google_maps_api_key']
         ]);
         $scripts .= parent::getSourceScripts();

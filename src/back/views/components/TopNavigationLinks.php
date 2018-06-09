@@ -152,7 +152,7 @@ class TopNavigationLinks
     public static function createPriceListLink()
     {
         $pref = new DBPreferencesType();
-        $pricesDir = $pref->getPreference(Constants::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
+        $pricesDir = $pref->getPreference(SettingsNames::PRICE_DIRECTORY)[DB::TABLE_PREFERENCES__VALUE];
         $prices = FileUtils::getFilesByDescription($pricesDir, 'xls');
         $descriptions = FileUtils::getFilesByDescription($pricesDir, 'txt');
         $mainTag = new Div();
