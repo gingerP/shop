@@ -16,13 +16,6 @@ class UserPasswordAuthenticate
         $this->logger = Server::getInstance()->logger();
     }
 
-    public function secure(&$request) {
-        if (!$request->isSecure()) {
-            throw new NotSecuredConnectionError();
-        }
-        return $this;
-    }
-
     public function authenticate(&$request, &$response)
     {
         $headers = $request->headers();

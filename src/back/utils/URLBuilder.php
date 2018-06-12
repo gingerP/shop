@@ -146,6 +146,14 @@ class URLBuilder
         );
     }
 
+    public static function getContactsLink() {
+        return '/' . UrlParameters::PAGE__CONTACTS;
+    }
+
+    public static function getDeliveryLink() {
+        return '/' . UrlParameters::PAGE__DELIVERY;
+    }
+
     public static function getCatalogLink($pageNumber = 0, $itemsCount = 0)
     {
         if ($pageNumber === 0) {

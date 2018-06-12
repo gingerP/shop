@@ -90,6 +90,17 @@ class Server
         $this->router->dispatch();
     }
 
+    public function assertIsSecure(&$request) {
+        if (!$request->isSecure()) {
+            throw new NotSecuredConnectionError();
+        }
+    }
+
+    public function redirectToSecure(&$response) {
+        $response->status(HttpStatuses::MOVED_PERMANENTLY);
+        $response->header('Location', 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    }
+
     public function router()
     {
         return $this->router;

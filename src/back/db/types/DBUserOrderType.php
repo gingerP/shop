@@ -39,7 +39,9 @@ class DBUserOrderType extends DBType{
 
     private function correctOrderData($orderData) {
         for($i = count($orderData) - 1; $i >= 0; $i--) {
-            if (!is_numeric($orderData[$i][DB::TABLE_USER_ORDER__GOOD_ID]) || !is_numeric($orderData[$i][DB::TABLE_USER_ORDER__GOOD_INDEX])) {
+            $productId = $orderData[$i][DB::TABLE_USER_ORDER__GOOD_ID];
+            $productIndex = $orderData[$i][DB::TABLE_USER_ORDER__GOOD_INDEX];
+            if (!is_numeric($productId) || !is_numeric($productIndex)) {
                 array_splice($orderData, $i, 1);
             }
         }

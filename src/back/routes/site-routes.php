@@ -8,6 +8,44 @@ $router = $server->router();
 $logger = $server->logger();
 
 $router->respond('GET', '/?', function ($request, $response) {
+    //deprecated url schema
+    $pageName = $request->param('page_name');
+    if (!is_null($pageName)) {
+        switch($pageName) {
+            case 'singleItem':
+                $pageProductCode = $request->param('page_id');
+                if (!is_null($pageName) && !is_null($pageProductCode)) {
+                    $response->status(HttpStatuses::MOVED_PERMANENTLY);
+                    $response->header('Location', URLBuilder::getCatalogLinkForSingleItem($pageProductCode));
+                    return;
+                }
+                break;
+            case 'contacts':
+                $response->status(HttpStatuses::MOVED_PERMANENTLY);
+                $response->header('Location', URLBuilder::getContactsLink());
+                return;
+            case 'catalog':
+                $category = $request->param('key');
+                $pageSize = $request->param('items_count');
+                $pageNum = $request->param('page_num');
+                if ($category === 'GN') {
+                    $response->status(HttpStatuses::MOVED_PERMANENTLY);
+                    $response->header('Location', URLBuilder::getCatalogLink($pageNum, $pageSize));
+                    return;
+                } else {
+                    $response->status(HttpStatuses::MOVED_PERMANENTLY);
+                    $response->header('Location', URLBuilder::getCatalogLinkForCategory($category, $pageNum, $pageSize));
+                    return;
+                }
+                break;
+            case 'delivery':
+                $response->status(HttpStatuses::MOVED_PERMANENTLY);
+                $response->header('Location', URLBuilder::getDeliveryLink());
+                return;
+        }
+    }
+
+    //actual url schema
     $page = new MainPage();
     $page->validate($request);
     $response->headers([

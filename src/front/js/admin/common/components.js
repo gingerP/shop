@@ -7,6 +7,48 @@ define([
     }
     app.dhtmlxImgsPath = '/src/front/dhtmlx/imgs/';
 
+    function initLogoutButton(menu, logoutBtnId) {
+        var exitDOM = menu.idPull[menu.idPrefix + logoutBtnId];
+        $('#' + exitDOM.id)
+            .css({
+                position: 'absolute',
+                right: 0,
+                'background-color': '#F04B4B',
+                display: 'inline-block',
+                cursor: 'pointer',
+                color: '#fff',
+                'font-weight': 'bold',
+                'font-size': '12px',
+                height: '32px',
+                'line-height': '29px',
+                padding: '2px 20px'
+            });
+    }
+
+    function timeLabel(timeInSeconds) {
+        var hours = Math.floor(timeInSeconds / (60 * 60));
+        var hoursSeconds = hours * 60 * 60;
+        var minutes = Math.floor((timeInSeconds - hoursSeconds) / 60);
+        var seconds = Math.floor(timeInSeconds - (hoursSeconds + (minutes * 60)));
+        return (hours < 10 ? '0' + hours : hours) + ':'
+            + (minutes < 10 ? '0' + minutes : minutes) + ':'
+            + (seconds < 10 ? '0' + seconds : seconds);
+    }
+
+    function initSessionTtlTimer(menu, sessionTtlBtnId) {
+        var exitDOM = menu.idPull[menu.idPrefix + sessionTtlBtnId];
+        $('#' + exitDOM.id).css(
+            {right: '110px', position: 'absolute', color: 'rgb(240, 75, 75)', 'line-height': '32px'}
+        );
+        var time = Authorization.getSessionTtl();
+        if (time) {
+            menu.setItemText(sessionTtlBtnId, timeLabel(time - (Date.now() / 1000)));
+            setInterval(function () {
+                menu.setItemText(sessionTtlBtnId, timeLabel(time - (Date.now() / 1000)));
+            }, 1000);
+        }
+    }
+
     var Components = {
         skin: 'material',
         reloadGrid: function (grid, list, columnKeys) {
@@ -108,6 +150,7 @@ define([
 
         createMenu: function (layout) {
             var exitKey = 'logout';
+            var sessionTtl = 'session-ttl';
             var menu = layout.attachMenu({
                 parent: 'menu',
                 image_path: '/src/front/dhtmlx/imgs/',
@@ -119,6 +162,7 @@ define([
                     {id: 'tree', text: 'Дерево навигации', disabled: true},
                     {id: 'prices', text: 'Прайс-листы', disabled: true},
                     {id: 'contacts', text: 'Контакты', disabled: true},
+                    {id: sessionTtl, text: 'Время сессии'},
                     {id: exitKey, text: 'Выход', img: '/images/icons/exit.png'}
                 ]
             });
@@ -127,21 +171,13 @@ define([
                     Authorization.logout();
                     return;
                 }
+                if (id === sessionTtl) {
+                    return;
+                }
                 window.open(document.location.origin + '/admin/' + id, '_self');
             });
-            var exitDOM = menu.idPull[menu.idPrefix + exitKey];
-            $('#' + exitDOM.id)
-                .css('position', 'absolute')
-                .css('right', '0')
-                .css('background-color', '#F04B4B')
-                .css('display', 'inline-block')
-                .css('cursor', 'pointer')
-                .css('color', '#fff')
-                .css('font-weight', 'bold')
-                .css('font-size', '12px')
-                .css('height', '32px')
-                .css('line-height', '29px')
-                .css('padding', '2px 20px');
+            initLogoutButton(menu, exitKey);
+            initSessionTtlTimer(menu, sessionTtl);
 
             return menu;
         },
@@ -165,7 +201,13 @@ define([
                         img_disabled: 'reload.png'
                     },
                     add: {type: 'button', id: 'add', text: 'Добавить', img: 'add.png', img_disabled: 'add_dis.png'},
-                    save: {type: 'button', id: 'save', text: 'Сохранить', img: 'save.png', img_disabled: 'save_dis.png'},
+                    save: {
+                        type: 'button',
+                        id: 'save',
+                        text: 'Сохранить',
+                        img: 'save.png',
+                        img_disabled: 'save_dis.png'
+                    },
                     delete: {
                         type: 'button',
                         id: 'delete',

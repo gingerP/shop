@@ -84,6 +84,15 @@ define([
         });
     }
 
+    function getSessionTtl() {
+        var token = basil.get(REFRESH_TOKEN);
+        if (token) {
+            var parts = token.split('.');
+            var jwtInfo = JSON.parse(atob(parts[1]));
+            return jwtInfo.exp;
+        }
+    }
+
     /**
      * @typedef {{
      *      isAuth: function(),
@@ -102,6 +111,7 @@ define([
         removeToken: removeToken,
         storeRefreshToken: storeRefreshToken,
         removeRefreshToken: removeRefreshToken,
-        refreshToken: refreshToken
+        refreshToken: refreshToken,
+        getSessionTtl: getSessionTtl
     };
 });

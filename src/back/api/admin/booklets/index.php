@@ -7,8 +7,9 @@ $router = $server->router();
 
 $authenticator = new UserPasswordAuthenticate();
 
-$router->respond('GET', '/api/admin/booklets/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/booklets/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $mappingString = $request->param('mapping');
     $mapping = isset($mappingString) ? json_decode($mappingString, true) : [];
@@ -17,8 +18,9 @@ $router->respond('GET', '/api/admin/booklets/?', function ($request, $response) 
     $response->json($responseData);
 });
 
-$router->respond('GET', '/api/admin/booklets/[i:id]/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/booklets/[i:id]/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $mappingString = $request->param('mapping');
     $mapping = isset($mappingString) ? json_encode($mappingString) : [];
@@ -28,8 +30,9 @@ $router->respond('GET', '/api/admin/booklets/[i:id]/?', function ($request, $res
     $response->json($responseData);
 });
 
-$router->respond('POST', '/api/admin/booklets/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('POST', '/api/admin/booklets/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $data = json_decode($request->body(), true);
     $responseData = BookletService::save($data);
@@ -37,8 +40,9 @@ $router->respond('POST', '/api/admin/booklets/?', function ($request, $response)
     $response->json($responseData);
 });
 
-$router->respond('DELETE', '/api/admin/booklets/[i:id]/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('DELETE', '/api/admin/booklets/[i:id]/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $id = intval($request->param('id'));
     $responseData = BookletService::delete($id);
@@ -46,8 +50,9 @@ $router->respond('DELETE', '/api/admin/booklets/[i:id]/?', function ($request, $
     $response->json($responseData);
 });
 
-$router->respond('GET', '/api/admin/booklets/backgrounds/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/booklets/backgrounds/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $responseData = BookletService::getBookletBackgroundImages();
 

@@ -6,10 +6,9 @@ define([
     var win;
     var WIN_ID = 'goods-order-config';
     var dataView;
-    var toolbar;
     var service = {
         save: function (data, callback) {
-            Services.saveGoodsOrder({order: data})
+            Services.saveGoodsOrder(data)
                 .then(function (result) {
                     callback(result);
                 })
@@ -20,11 +19,10 @@ define([
     function convertGoodsWithOrder(goods) {
         if (goods && goods.length) {
             goods.sort(function (goodA, goodB) {
-                if (goodA.good_index != null && goodB.good_index != null) {
+                if (goodA.good_index !== null && goodB.good_index !== null) {
                     return Number(goodA.good_index) > Number(goodB.good_index) ? 1 : -1;
-                } else {
-                    return Number(goodA.id) > Number(goodB.id) ? 1 : -1;
                 }
+                return Number(goodA.id) > Number(goodB.id) ? 1 : -1;
             });
             goods.forEach(function (good, index) {
                 good.good_index = index;
@@ -38,7 +36,7 @@ define([
     function createWin() {
         var wins = new dhtmlXWindows();
         var size = getMaxSize();
-        var win = wins.createWindow("w1", 20, 30, size.width, size.height);
+        var win = wins.createWindow('w1', 20, 30, size.width, size.height);
         win.centerOnScreen();
         win.setModal(true);
         win.setMaxDimension(size.width, size.height);
@@ -101,19 +99,19 @@ define([
     }
 
     function initDataViewEvents(view) {
-        view.attachEvent("onBeforeDrag", function (context, ev) {
+        view.attachEvent('onBeforeDrag', function (context, ev) {
             var item = $('[dhx_f_id=' + context.start + ']');
             item.addClass('dragged');
             return true;
         });
-        view.attachEvent("onBeforeDrop", function (context) {
-            if (context.target == null) {
+        view.attachEvent('onBeforeDrop', function (context) {
+            if (context.target === null) {
                 var item = $('[dhx_f_id=' + context.start + ']');
                 item.removeClass('dragged');
                 return false;
             }
         });
-        view.attachEvent("onAfterDrop", function (context, ev) {
+        view.attachEvent('onAfterDrop', function (context, ev) {
             var item = $('[dhx_f_id=' + context.start + ']');
             item.removeClass('dragged');
             return true;
@@ -128,7 +126,7 @@ define([
             win.centerOnScreen();
         };
 
-        win.attachEvent("onMaximize", function (win) {
+        win.attachEvent('onMaximize', function (win) {
             var size = getMaxSize();
             win.setMaxDimension(size.width, size.height);
             win.centerOnScreen();
@@ -153,7 +151,6 @@ define([
     }
 
     function init() {
-        var layout;
         win = createWin();
         dataView = createDataView(win);
         toolbar = createToolbar(win);

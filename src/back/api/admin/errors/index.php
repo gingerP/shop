@@ -6,8 +6,9 @@ $server = Server::getInstance();
 $router = $server->router();
 
 $authenticator = new UserPasswordAuthenticate();
-$router->respond('POST', '/api/admin/errors', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('POST', '/api/admin/errors', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $body = json_decode($request->body(), true);
     $message = $body['message'];

@@ -7,8 +7,10 @@ $router = $server->router();
 
 $authenticator = new UserPasswordAuthenticate();
 
-$router->respond('POST', '/api/admin/products/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('POST', '/api/admin/products/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
+
     $data = json_decode($request->body(), true);
     if (isset($data['id'])) {
         Assert::string($data['id']);
@@ -25,16 +27,18 @@ $router->respond('POST', '/api/admin/products/?', function ($request, $response)
     $response->json($responseData);
 });
 
-$router->respond('GET', '/api/admin/products', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/products', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $responseData = ProductsService::getGoods(-1);
 
     $response->json($responseData);
 });
 
-$router->respond('GET', '/api/admin/products/[i:id]/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/products/[i:id]/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $id = intval($request->param('id', -1));
     $responseData = ProductsService::getProduct($id);
@@ -42,8 +46,9 @@ $router->respond('GET', '/api/admin/products/[i:id]/?', function ($request, $res
     $response->json($responseData);
 });
 
-$router->respond('DELETE', '/api/admin/products/[i:id]/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('DELETE', '/api/admin/products/[i:id]/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $id = intval($request->param('id', -1));
     $responseData = ProductsService::deleteGood($id);
@@ -51,16 +56,18 @@ $router->respond('DELETE', '/api/admin/products/[i:id]/?', function ($request, $
     $response->json($responseData);
 });
 
-$router->respond('GET', '/api/admin/products/order/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/products/order/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $responseData = ProductsService::getGoodsOrder();
 
     $response->json($responseData);
 });
 
-$router->respond('POST', '/api/admin/products/order/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('POST', '/api/admin/products/order/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $data = json_decode($request->body(), true);
     $responseData = ProductsService::saveGoodsOrder($data);
@@ -68,8 +75,9 @@ $router->respond('POST', '/api/admin/products/order/?', function ($request, $res
     $response->json($responseData);
 });
 
-$router->respond('GET', '/api/admin/products/next_code/[a:code]/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/products/next_code/[a:code]/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $code = intval($request->param('code'));
     $responseData = ProductsService::getNextGoodCode($code);
@@ -77,8 +85,9 @@ $router->respond('GET', '/api/admin/products/next_code/[a:code]/?', function ($r
     $response->json($responseData);
 });
 
-$router->respond('POST', '/api/admin/products/[i:id]/images/?', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('POST', '/api/admin/products/[i:id]/images/?', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
 
     $id = intval($request->param('id'));
     $data = json_decode($request->body(), true);

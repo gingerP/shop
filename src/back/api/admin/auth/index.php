@@ -7,8 +7,8 @@ $server = Server::getInstance();
 $router = $server->router();
 $authenticator = new UserPasswordAuthenticate();
 
-$router->respond('POST', '/api/admin/auth', function ($request, $response, $service) use ($authenticator) {
-    $authenticator->secure($request);
+$router->respond('POST', '/api/admin/auth', function ($request, $response, $service) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
     $body = json_decode($request->body(), true);
 
     $service->validate($body['username'], (new UserPasswordInvalidError())->getMessage())->isLen(5, 64)->isChars('a-zA-Z0-9-');
@@ -28,8 +28,8 @@ $router->respond('POST', '/api/admin/auth', function ($request, $response, $serv
     throw new UserPasswordInvalidError();
 });
 
-$router->respond('POST', '/api/admin/auth/refresh', function ($request, $response, $service) use ($authenticator) {
-    $authenticator->secure($request);
+$router->respond('POST', '/api/admin/auth/refresh', function ($request, $response, $service) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
     $body = json_decode($request->body(), true);
     $service->validate($body['refreshToken'])->notNull();
     $refreshToken = $body['refreshToken'];
@@ -39,7 +39,8 @@ $router->respond('POST', '/api/admin/auth/refresh', function ($request, $respons
     ]);
 });
 
-$router->respond('GET', '/api/admin/auth/check', function ($request, $response) use ($authenticator) {
-    $authenticator->secure($request)->authenticate($request, $response);
+$router->respond('GET', '/api/admin/auth/check', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    $authenticator->authenticate($request, $response);
     $response->json([]);
 });

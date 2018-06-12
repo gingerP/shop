@@ -59,22 +59,55 @@ class ProductComponent extends AbstractComponent
         $descriptionStructuredList = [];
         $odd = false;
         foreach ($descriptionObject as $key => $descValue) {
-            if ($key != 'k_main' && $descValue != '' && !is_null($descValue) && count($descValue) > 0) {
+            if ($key != 'k_main' && !$this->isDescriptionListEmpty($descValue)) {
                 $odd = !$odd;
                 $descriptionStructuredList[] = [
                     'odd' => $odd ? 'odd' : 'even',
                     'name' => array_key_exists('product.description.' . $key, Localization)
                         ? Localization['product.description.' . $key]
                         : '',
-                    'value' => implode('; ', $descValue)
+                    'value' => implode('; ', $this->filterDescriptionList($descValue))
                 ];
             }
         }
 
         return [
-            'main' => $descriptionObject['k_main'],
+            'main' => $this->filterDescriptionList($descriptionObject['k_main']),
             'structuredList' => $descriptionStructuredList
         ];
+    }
+
+    private function filterDescriptionList($descValueList) {
+        if (is_array($descValueList)) {
+            $result = [];
+            foreach ($descValueList as $description) {
+                if (!is_null($description) && $description !== '') {
+                    $result[] = $description;
+                }
+            }
+            return $result;
+        }
+        return $descValueList;
+    }
+
+    private function isDescriptionListEmpty($descValueList) {
+        if ($descValueList === '' || is_null($descValueList) || count($descValueList) === 0) {
+            return true;
+        }
+        if (is_array($descValueList) && count($descValueList) > 0) {
+            $isEveryEmpty = true;
+            foreach ($descValueList as $desc) {
+                $isEveryEmpty = $isEveryEmpty && ($desc === '' || is_null($desc));
+                if (!$isEveryEmpty) {
+                    return false;
+                }
+            }
+            if ($isEveryEmpty) {
+                return true;
+            }
+
+        }
+        return false;
     }
 
 }

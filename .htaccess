@@ -10,3 +10,9 @@ RewriteEngine On
     RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 
 </IfModule>
+<IfModule mod_headers.c>
+    # One month for css and js
+    <filesMatch ".(jpg|jpeg|png|gif|ico|css|js)$">
+    Header set Cache-Control "max-age=2628000, public"
+    </filesMatch>
+</IfModule>

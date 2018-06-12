@@ -121,17 +121,8 @@
 
     FeedbackComponent.prototype.getPageProductCode = function getPageProductCode() {
         var urlParts = window.location.href.split('/');
-        if (urlParts.length) {
-            var destPart = urlParts[urlParts.length - 1];
-            var destParts = destPart.split('&');
-            if (destParts.length) {
-                while (destParts.length) {
-                    var part = destParts.pop();
-                    if (part.indexOf('page_id=') === 0) {
-                        return part.split('=')[1];
-                    }
-                }
-            }
+        if (urlParts.length && urlParts[3] === 'products') {
+            return urlParts[4];
         }
         return '';
     };
