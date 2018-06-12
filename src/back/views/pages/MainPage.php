@@ -73,7 +73,7 @@ class MainPage extends APagesCreator
 
             while ($goodIndex < count($products)) {
                 $product = $products[$goodIndex];
-                $productView = (new CatalogProductComponent())->build($product, $catalogPath);
+                $productView = (new CatalogProductComponent($product, $catalogPath))->build();
                 $div02->addChild($productView);
                 $goodIndex++;
             }
@@ -184,7 +184,7 @@ class MainPage extends APagesCreator
         $catalogPath = $Preferences->getPreference(SettingsNames::CATALOG_PATH)[DB::TABLE_PREFERENCES__VALUE];
         while ($index < count($products)) {
             $product = $products[$index];
-            $productView = (new CatalogProductComponent())->build($product, $catalogPath);
+            $productView = (new CatalogProductComponent($product, $catalogPath))->build();
             $subSubContainer->addChild($productView);
             $index++;
         }
