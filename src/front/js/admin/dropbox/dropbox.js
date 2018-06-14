@@ -5,8 +5,10 @@ define([
     'dropboxSdk',
     'common/dialog',
     'filesize',
-    'dropbox/dropbox-upload-manager'
-], function (_, Observable, Services, DropboxSdk, Dialog, filesize, AuDropboxUploadManager) {
+    'dropbox/dropbox-upload-manager',
+    'dropbox/dropbox-file-download'
+], function (_, Observable, Services, DropboxSdk, Dialog, filesize, AuDropboxUploadManager, AuDropboxFileDownloader) {
+    'use strict';
     function getMaxSize() {
         var ratio = 0.9;
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -124,6 +126,7 @@ define([
                     self._onUploadProgress.bind(self),
                     self._onFilesBatchUploaded.bind(self)
                 );
+                self._downloader = new AuDropboxFileDownloader(self._client);
                 self._createClientDefered = null;
             })
             .catch(function (error) {
@@ -211,6 +214,8 @@ define([
                 case 'clear_permanently':
                     self._clearAllUploads();
                     break;
+                default:
+                    break;
             }
         });
         self._uploadTollbar = toolbar;
@@ -273,6 +278,13 @@ define([
                     img: 'upload.png',
                     img_disabled: 'upload_dis.png'
                 },
+                {
+                    id: 'download',
+                    type: 'button',
+                    text: 'Скачать',
+                    img: 'upload.png',
+                    img_disabled: 'upload_dis.png'
+                },
                 {id: 'sep1', type: 'separator'},
                 {id: 'add-to-product', type: 'button', text: 'Выбрать', img: 'add.png', img_disabled: 'add_dis.png'}
             ]
@@ -300,6 +312,11 @@ define([
                         break;
                     case 'add-to-product':
                         self._addToProduct();
+                        break;
+                    case 'download':
+                        self._downloadDialog();
+                        break;
+                    default:
                         break;
                 }
             });
@@ -351,7 +368,6 @@ define([
                 self._openPreview(data.path, data.name);
             }
         });
-
     };
 
     AuDropboxDir.prototype._renderRawItems = function _renderItems(items) {
@@ -477,7 +493,7 @@ define([
                     .catch(function (error) {
                         cell.progressOff();
                         Dialog.error(error);
-                    })
+                    });
             }
         }
     };
@@ -493,6 +509,18 @@ define([
             $('.dropbox-upload-input').html('');
         });
         self._$uploadInput.trigger('click');
+    };
+
+    AuDropboxDir.prototype._downloadDialog = function _downloadDialog() {
+        var self = this;
+        var selected = this._view.getSelected(true);
+        if (selected.length) {
+            var itemId = selected[0];
+            var itemInfo = self._view.get(itemId);
+            if (self._downloader) {
+                self._downloader.download(itemInfo.path, itemInfo.tag);
+            }
+        }
     };
 
     AuDropboxDir.prototype._addToProduct = function _addToProduct() {
