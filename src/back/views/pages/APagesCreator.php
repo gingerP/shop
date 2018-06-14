@@ -90,6 +90,7 @@ abstract class APagesCreator
         $head->addChild($this->getTitleTag());
         $head->addChild('
             <link rel="stylesheet" type="text/css" href="/dist/style.css" title="main"/>
+            <link rel="manifest" href="/manifest.webmanifest">            
             <link rel="apple-touch-icon" href="images/system/favicon-200.png">
             <meta name="apple-mobile-web-app-capable" content="yes">
             <meta name="apple-mobile-web-app-status-bar-style" content="black">

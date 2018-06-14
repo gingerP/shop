@@ -1,6 +1,6 @@
 define([
     'common/dialog'
-], function(Dialog) {
+], function (Dialog) {
     'use strict';
 
     function AuDropboxFileUpload(client, id, inputFile, path) {
@@ -57,12 +57,12 @@ define([
 
     AuDropboxFileUpload.prototype._readFileToBase64 = function _readFileToBase64() {
         var self = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var reader = new FileReader();
             reader.onload = function (event) {
                 resolve(event.target.result);
             };
-            reader.onerror = function(error) {
+            reader.onerror = function (error) {
                 reject(error);
             };
             reader.readAsArrayBuffer(self._inputFile);
@@ -78,7 +78,7 @@ define([
         self._progressChanged();
         self._uploadStartedTime = Date.now();
         return self._readFileToBase64()
-            .then(function(base64) {
+            .then(function (base64) {
                 return self._client.filesUpload({
                     contents: base64,
                     path: self._path,
@@ -86,14 +86,14 @@ define([
                     autorename: true
                 });
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 Dialog.error(error);
                 self._uploadFailedTime = Date.now();
                 self._statusDescription = error;
                 self._status = self._statuses.failed;
                 self._progressChanged();
             })
-            .then(function(response) {
+            .then(function (response) {
                 self._uploadFinishedTime = Date.now();
                 self._statusDescription = response;
                 self._status = self._statuses.finished;
@@ -107,8 +107,8 @@ define([
 
     AuDropboxFileUpload.prototype._progressChanged = function _progressChanged() {
         var self = this;
-        setTimeout(function() {
-            self._progress.forEach(function(listener) {
+        setTimeout(function () {
+            self._progress.forEach(function (listener) {
                 if (typeof listener === 'function') {
                     listener(self._id, {
                         status: self._status,

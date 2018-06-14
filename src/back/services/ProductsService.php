@@ -213,6 +213,10 @@ class ProductsService
         self::saveImageFromBase64($largeImageName, $base64,
             ['width' => Constants::LARGE_IMAGE_WIDTH, 'height' => Constants::LARGE_IMAGE_HEIGHT]
         );
+        $xmImageName = FileUtils::buildPath($catalogPath, $productCode, Constants::XM_IMAGE . $imageName . '.jpg');
+        self::saveImageFromBase64($xmImageName, $base64,
+            ['width' => Constants::XM_IMAGE_WIDTH, 'height' => Constants::XM_IMAGE_HEIGHT]
+        );
         return $imageName;
     }
 
@@ -388,12 +392,20 @@ class ProductsService
         return null;
     }
 
-    private static function getDropboxClient()
+    public static function resizeImages($width, $height)
     {
-        $Preferences = new DBPreferencesType();
-        $dropboxAccessToken = $Preferences->getPreference(SettingsNames::DROPBOX_ACCESS_TOKEN)[DB::TABLE_PREFERENCES__VALUE];
-        list($appInfo, $clientIdentifier, $userLocale) = getAppConfig();
-        $accessToken = $_SESSION['access-token'];
-        return new dbx\Client($accessToken, $clientIdentifier, $userLocale, $appInfo->getHost());
+        $Products = new DBGoodsType();
+        $products = $Products->extractDataFromResponse($Products->getList());
+        $catalogPath = DBPreferencesType::getPreferenceValue(SettingsNames::CATALOG_PATH);
+        foreach ($products as $product) {
+            $productCode = $product[DB::TABLE_GOODS__KEY_ITEM];
+            $images = json_decode($product[DB::TABLE_GOODS__IMAGES], true);
+            foreach ($images as $imageName) {
+                $largeImageName = FileUtils::buildPath(AuWebRoot . '/' . $catalogPath, $productCode, Constants::LARGE_IMAGE . $imageName . '.jpg');
+                $xmImageName = FileUtils::buildPath(AuWebRoot . '/' . $catalogPath, $productCode, Constants::XM_IMAGE . $imageName . '.jpg');
+                $imageBinary = file_get_contents($largeImageName);
+                self::saveImageFromBinary($xmImageName, $imageBinary, ['width' => $width, 'height' => $height]);
+            }
+        }
     }
 }
