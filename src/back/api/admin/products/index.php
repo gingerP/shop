@@ -95,3 +95,15 @@ $router->respond('POST', '/api/admin/products/[i:id]/images/?', function ($reque
 
     $response->json([]);
 });
+
+$router->respond('POST', '/api/admin/images/resize/[xm:size]', function ($request, $response) use ($authenticator, $server) {
+    $server->assertIsSecure($request);
+    //$authenticator->authenticate($request, $response);
+
+    $sizeCode = $request->param('size');
+    if ($sizeCode === 'xm') {
+        ProductsService::resizeImages(Constants::XM_IMAGE_WIDTH, Constants::XM_IMAGE_HEIGHT);
+    }
+
+    $response->json([]);
+});

@@ -29,6 +29,11 @@ class Constants
     const LARGE_IMAGE = 'l_';
     const LARGE_IMAGE_WIDTH = 1200;
     const LARGE_IMAGE_HEIGHT = 2000;
+
+    const XM_IMAGE = 'xm_';
+    const XM_IMAGE_WIDTH = 300;
+    const XM_IMAGE_HEIGHT = 500;
+
     static $BOOKLET_IMAGE_SIZE_X1 = [700, 1000];
     static $BOOKLET_IMAGE_SIZE_X2 = [700, 1000];
     static $BOOKLET_IMAGE_SIZE_X3 = [700, 1000];
