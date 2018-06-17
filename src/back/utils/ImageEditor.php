@@ -89,7 +89,7 @@ Class ImageEditor
         return $this->fileName;
     }
 
-    public function resizeImage($newWidth, $newHeight, $option = "auto")
+    public function resizeImage($newWidth, $newHeight, $option = 'exact')
     {
 
         // *** Get optimal width and height - based on $option

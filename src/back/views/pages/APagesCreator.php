@@ -388,7 +388,9 @@ abstract class APagesCreator
                 '<script type="text/javascript" src="/dist/vendor1.js"></script>
             <script type="text/javascript" src="/dist/vendor2.js"></script>
             <script type="text/javascript" src="/dist/bundle1.js"></script>
-            <script type="text/javascript" src="/dist/bundle2.js"></script>';
+            <script type="text/javascript" src="/dist/bundle2.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
+            <script>new LazyLoad();</script>';
         }
         return '
             <script type="text/javascript" src="/src/front/js/ext/jquery-2.1.4.min.js"></script>
@@ -398,6 +400,8 @@ abstract class APagesCreator
             <script type="text/javascript" src="/src/front/js/components/email-form/email-form.component.js"></script>
             <script type="text/javascript" src="/node_modules/mustache/mustache.min.js"></script>
             <script type="text/javascript" src="/src/front/js/utils.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
+            <script>new LazyLoad();</script>
         ';
     }
 }
