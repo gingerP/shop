@@ -19,7 +19,7 @@ class ContactsPage extends APagesCreator
         $this->setIsViewModeBlockVisible(false);
         $this->setIsPathLinkVisible(false);
         $this->setPathLinkForTree(PathLinks::getDOMForContacts());
-        $this->updateTitleTagChildren(["Контакты - "]);
+        $this->updateTitleTagChildren('Контакты');
 
         $metaDesc = new Meta();
         $metaDesc->addAttributes([

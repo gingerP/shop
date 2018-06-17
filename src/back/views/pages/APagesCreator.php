@@ -1,9 +1,9 @@
 <?php
 
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/pages.php';
-include_once AuWebRoot.'/src/back/import/tags.php';
-include_once AuWebRoot.'/src/back/views/components/topPanel/TopPanelComponent.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/pages.php';
+include_once AuWebRoot . '/src/back/import/tags.php';
+include_once AuWebRoot . '/src/back/views/components/topPanel/TopPanelComponent.php';
 include_once AuWebRoot . '/src/back/views/components/categories/CategoriesComponent.php';
 
 use Katzgrau\KLogger\Logger as Logger;
@@ -91,10 +91,10 @@ abstract class APagesCreator
         $head->addChild('
             <link rel="stylesheet" type="text/css" href="/dist/style.css" title="main"/>
             <link rel="manifest" href="/manifest.webmanifest">            
-            <link rel="apple-touch-icon" href="images/system/favicon-200.png">
+            <link rel="apple-touch-icon" href="/images/system/favicon-200.png">
             <meta name="apple-mobile-web-app-capable" content="yes">
             <meta name="apple-mobile-web-app-status-bar-style" content="black">
-            <link rel="shortcut icon" href="images/system/favicon.png" type="image/x-icon"/>');
+            <link rel="shortcut icon" href="/images/system/favicon.png" type="image/x-icon"/>');
         $head->addChild(SearchEngines::getGoogleAnalyticScript());
         $head->addChild(SearchEngines::getYandexMetricScript());
         return $head;
@@ -349,13 +349,18 @@ abstract class APagesCreator
         $this->titleTag = $titleTag;
     }
 
-    public function updateTitleTagChildren($children)
+    public function updateTitleTagChildren($title)
     {
         if (!$this->titleTag) {
             $this->titleTag = new Title();
         }
-        array_push($children, $this->permanentTitle);
-        $this->titleTag->replaceChildren($children);
+        if (is_null($title) || $title == '') {
+            $this->permanentTitle = [];
+            $this->titleTag->replaceChildren([Localization['company.name.short']]);
+        } else {
+            $this->permanentTitle = [$title . ' - '];
+            $this->titleTag->replaceChildren([$title . ' - ' . Localization['company.name.short']]);
+        }
         return $this->titleTag;
     }
 
@@ -365,7 +370,7 @@ abstract class APagesCreator
     public function getTitleTag()
     {
         if (!$this->titleTag) {
-            $this->updateTitleTagChildren([]);
+            $this->updateTitleTagChildren('');
         }
         return $this->titleTag;
     }

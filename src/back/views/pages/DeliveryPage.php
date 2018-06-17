@@ -15,7 +15,7 @@ class DeliveryPage extends APagesCreator
         $this->setIsViewModeBlockVisible(false);
         $this->setIsPathLinkVisible(false);
         $this->setPathLinkForTree(PathLinks::getDOMForContacts());
-        $this->updateTitleTagChildren(["Доставка почтой - "]);
+        $this->updateTitleTagChildren('Доставка почтой');
 
         $metaDesc = new Meta();
         $metaDesc->addAttributes([

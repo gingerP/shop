@@ -24,7 +24,7 @@ class CatalogPage extends APagesCreator
 
     public function build()
     {
-        $this->updateTitleTagChildren(["Каталог - "]);
+        $this->updateTitleTagChildren('Каталог');
         $this->setPageCode("catalog_page");
         $this->setIsTreeVisible(true);
         $this->setIsStatusBarVisible(true);

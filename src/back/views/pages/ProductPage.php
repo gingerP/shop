@@ -34,6 +34,7 @@ class ProductPage extends APagesCreator
         $Products = new DBGoodsType();
         $product = $Products->findByCode($this->productCode);
         $path = new ProductPathComponent($product[DB::TABLE_GOODS__CATEGORY]);
+        $this->updateTitleTagChildren($product[DB::TABLE_GOODS__NAME]);
         return $path->build(['path' => $path]);
     }
 
