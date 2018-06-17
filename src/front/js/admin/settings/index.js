@@ -4,11 +4,11 @@ require([
     'common/service-entities',
     'common/services',
     'common/components',
-    'settings/common-tab'
+    'settings/photo/index'
 ], function (/**@type Authorization*/
              Authorization,
              AuthorizationView,
-             ServiceEntities, Services, Components, CommonTab) {
+             ServiceEntities, Services, Components, PhotoTab) {
 
     function initTabbar(layout) {
         return layout.cells('b').attachTabbar();
@@ -36,7 +36,7 @@ require([
             align: 'left',
             mode: 'top',
             tabs: [
-                {id: 'a1', text: 'Фото', active: true}
+                {id: 'photo', text: 'Фото', active: true}
             ]
         });
     }
@@ -46,7 +46,7 @@ require([
         app.layout = createLayout();
         app.tabbar = createTabbar(app.layout);
         app.menu = Components.createMenu(app.layout);
-        CommonTab.init(app, app.tabbar.tabs('a1'));
+        PhotoTab.init(app, app.tabbar.tabs('photo'));
     }
 
     Authorization.authorize()

@@ -109,7 +109,7 @@ define([
     }
 
     function reloadGoodsKeysTree(form) {
-        Services.getGoodsKeys()
+        Services.getCategories()
             .then(
                 /**
                  * @typedef {{

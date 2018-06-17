@@ -3,7 +3,9 @@ define([
 ], function(_) {
 
     function initGrid(layout) {
-        var grid = layout.cells('a').attachGrid();
+        var tabbar = layout.cells('a').attachTabbar();
+        tabbar.addTab('a', 'Tовары', null, null, true);
+        var grid = tabbar.tabs('a').attachGrid();
         grid.setImagePath(app.dhtmlxImgsPath);
         grid.setHeader('#, Код, Название');
         grid.setInitWidths('40,100,290');

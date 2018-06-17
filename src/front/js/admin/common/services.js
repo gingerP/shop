@@ -98,9 +98,6 @@ define([
         getPrices: function () {
             return get('getPrices', null);
         },
-        getGoodsKeys: function () {
-            return get('/categories');
-        },
         updateGood: function (data) {
             return post('/products', data);
         },
@@ -127,6 +124,9 @@ define([
         },
         getAdminSettings: function getAdminSettings() {
             return get('/settings');
+        },
+        getCategories: function getCategories() {
+            return get('/categories');
         },
         /*****************************************Booklets*************************************/
         listBooklets: function (mapping) {

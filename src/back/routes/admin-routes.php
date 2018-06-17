@@ -4,6 +4,7 @@ include_once AuWebRoot . '/src/back/views/admin/AdminPageProducts.php';
 include_once AuWebRoot . '/src/back/views/admin/AdminPageCloud.php';
 include_once AuWebRoot . '/src/back/views/admin/AdminPageBooklets.php';
 include_once AuWebRoot . '/src/back/views/admin/AdminPageSettingsPage.php';
+include_once AuWebRoot . '/src/back/views/admin/AdminPageCategories.php';
 include_once AuWebRoot . '/src/back/authenticate/UserPasswordAuthenticate.php';
 
 $server = Server::getInstance();
@@ -65,6 +66,19 @@ $router->respond('GET', '/admin/booklets/?', function ($request, $response) use 
 $router->respond('GET', '/admin/settings/?', function ($request, $response) use ($server) {
     if ($request->isSecure()) {
         $page = new AdminPageSettingsPage();
+        $response->headers([
+            'Content-Type' => 'text/html; charset=utf-8'
+        ]);
+        $response->body($page->build()->getContent());
+        $response->send();
+    } else {
+        $server->redirectToSecure($response);
+    }
+});
+
+$router->respond('GET', '/admin/categories/?', function ($request, $response) use ($server) {
+    if ($request->isSecure()) {
+        $page = new AdminPageCategories();
         $response->headers([
             'Content-Type' => 'text/html; charset=utf-8'
         ]);
