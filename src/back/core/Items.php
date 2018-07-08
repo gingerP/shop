@@ -41,8 +41,10 @@ class Items {
                     $images =  [$capImage];
                 }
                 $item = null;
+
+
                 $info = Item::getMetroItemView(
-                    $product['name'],
+                    $product,
                     $images,
                     $product[DB::TABLE_GOODS__VERSION],
                     Utils::formatClotheTitle($product['name'])

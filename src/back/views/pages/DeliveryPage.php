@@ -3,7 +3,7 @@ include_once AuWebRoot.'/src/back/import/import.php';
  AuWebRoot.'/src/back/import/tags.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 
-class DeliveryPage extends APagesCreator
+class DeliveryPage extends AbstractPage
 {
 
     public function __construct()

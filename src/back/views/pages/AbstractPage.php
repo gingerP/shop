@@ -8,7 +8,7 @@ include_once AuWebRoot . '/src/back/views/components/categories/CategoriesCompon
 
 use Katzgrau\KLogger\Logger as Logger;
 
-abstract class APagesCreator
+abstract class AbstractPage
 {
     private $pagePrefix = "<!doctype html> <!-- HTML5 -->";
     private $isTreeVisible = false;
@@ -73,6 +73,7 @@ abstract class APagesCreator
                 $main->addChildList([$mainContainer]),
                 $this->getPreBottom(),
                 $this->isBottomNavigationLinksFillingWidth ? $bottomNavigationLinks : null,
+                $this->getCopyright(),
                 $this->getSourceScripts()
             ])
         ]);
@@ -103,6 +104,10 @@ abstract class APagesCreator
     public function getContent()
     {
         return $this->content;
+    }
+
+    public function getCopyright() {
+        return '<div id="copyright">'.Localization['copyright'].'</div>';
     }
 
     public function createBody()

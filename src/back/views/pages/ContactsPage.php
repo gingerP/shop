@@ -2,7 +2,7 @@
 
 include_once AuWebRoot.'/src/back/views/components/contacts/ContactsComponent.php';
 
-class ContactsPage extends APagesCreator
+class ContactsPage extends AbstractPage
 {
 
     public function __construct()

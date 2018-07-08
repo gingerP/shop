@@ -3,7 +3,7 @@ include_once AuWebRoot.'/src/back/import/import.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 include_once AuWebRoot.'/src/back/import/db.php';
 
-class CatalogPage extends APagesCreator
+class CatalogPage extends AbstractPage
 {
 
     private $key = "";

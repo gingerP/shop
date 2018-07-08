@@ -11,7 +11,7 @@ include_once AuWebRoot.'/src/back/views/components/BottomPanel.php';
 include_once AuWebRoot.'/src/back/views/components/SearchEngines.php';
 include_once AuWebRoot.'/src/back/views/components/StoreMode.php';
 include_once AuWebRoot.'/src/back/views/components/TopNavigationLinks.php';
-include_once AuWebRoot.'/src/back/views/pages/APagesCreator.php';
+include_once AuWebRoot.'/src/back/views/pages/AbstractPage.php';
 include_once AuWebRoot.'/src/back/views/pages/CatalogPage.php';
 include_once AuWebRoot.'/src/back/views/pages/MainPage.php';
 include_once AuWebRoot.'/src/back/views/pages/ContactsPage.php';

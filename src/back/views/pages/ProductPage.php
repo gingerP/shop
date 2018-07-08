@@ -6,7 +6,7 @@ include_once AuWebRoot . '/src/back/views/components/productPath/ProductPathComp
 
 const PREVIEW_IMAGE_FULL_WIDTH = 150;
 
-class ProductPage extends APagesCreator
+class ProductPage extends AbstractPage
 {
     private $productCode;
 
