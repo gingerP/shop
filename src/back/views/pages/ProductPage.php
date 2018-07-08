@@ -3,6 +3,7 @@ include_once AuWebRoot . '/src/back/import/import.php';
 include_once AuWebRoot . '/src/back/import/db.php';
 include_once AuWebRoot . '/src/back/views/components/products/ProductComponent.php';
 include_once AuWebRoot . '/src/back/views/components/productPath/ProductPathComponent.php';
+include_once AuWebRoot . '/src/back/tags/Meta.php';
 
 const PREVIEW_IMAGE_FULL_WIDTH = 150;
 
@@ -25,7 +26,17 @@ class ProductPage extends AbstractPage
 
     protected function createGeneralContent()
     {
-        $product = new ProductComponent($this->productCode);
+        $Products = new DBGoodsType();
+        $productInfo = $Products->findByCode($this->productCode);
+        $this->addMetaTags(
+            (new Meta())->addAttributes(
+                [
+                    'name' => 'description',
+                    'content' => $productInfo[DB::TABLE_GOODS__NAME]
+                ]
+            )
+        );
+        $product = new ProductComponent($productInfo);
         return $product->build();
     }
 

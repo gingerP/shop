@@ -6,27 +6,25 @@ include_once AuWebRoot . '/src/back/views/components/emailForm/EmailFormComponen
 class ProductComponent extends AbstractComponent
 {
 
-    private $productCode;
+    private $product;
 
-    public function __construct($productCode)
+    public function __construct($product)
     {
         parent::__construct();
-        $this->productCode = $productCode;
+        $this->product = $product;
     }
 
     public function build()
     {
-        $Products = new DBGoodsType();
-        $product = $Products->findByCode($this->productCode);
         $engine = parent::getEngine();
         $engine->getPartialsLoader()->setTemplate('emailForm', (new EmailFormComponent())->build());
         $tpl = $engine->loadTemplate('components/products/product.mustache');
-        $productCode = $this->productCode;
-        $imagesCodes = json_decode($product[DB::TABLE_GOODS__IMAGES], false);
+        $productCode = $this->product[DB::TABLE_GOODS__KEY_ITEM];
+        $imagesCodes = json_decode($this->product[DB::TABLE_GOODS__IMAGES], false);
         $imagesCatalogRoot = DBPreferencesType::getPreferenceValue(SettingsNames::CATALOG_PATH);
         $preparedProduct = [
-            'name' => $product[DB::TABLE_GOODS__NAME],
-            'description' => $this->prepareDescription($product[DB::TABLE_GOODS__DESCRIPTION]),
+            'name' => $this->product[DB::TABLE_GOODS__NAME],
+            'description' => $this->prepareDescription($this->product[DB::TABLE_GOODS__DESCRIPTION]),
             'images' => [],
             'imagesNum' => count($imagesCodes),
             'smallImagesTotalWidth' => count($imagesCodes) * 130,

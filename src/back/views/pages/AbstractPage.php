@@ -386,7 +386,7 @@ abstract class AbstractPage
         for ($argIndex = 0; $argIndex < $argsCount; $argIndex++) {
             $tag = func_get_arg($argIndex);
             if ($tag instanceof Tag || is_string($tag) || is_numeric($tag)) {
-                array_push($this->metaTags, $tag);
+                $this->metaTags[] = $tag;
             }
         }
     }
