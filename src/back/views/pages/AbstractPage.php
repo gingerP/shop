@@ -90,7 +90,7 @@ abstract class AbstractPage
             <meta http-equiv="X-UA-Compatible" content="IE=edge">' . "\n");
         $head->addChild($this->getTitleTag());
         $head->addChild('
-            <link rel="stylesheet" type="text/css" href="/dist/style.css" title="main"/>
+            <link rel="stylesheet" type="text/css" href="/dist/style.css?v=1" title="main"/>
             <link rel="manifest" href="/manifest.webmanifest">            
             <link rel="apple-touch-icon" href="/images/system/favicon-200.png">
             <meta name="apple-mobile-web-app-capable" content="yes">
@@ -395,10 +395,10 @@ abstract class AbstractPage
     {
         if ($this->isJsUglify) {
             return
-                '<script type="text/javascript" src="/dist/vendor1.js"></script>
-            <script type="text/javascript" src="/dist/vendor2.js"></script>
-            <script type="text/javascript" src="/dist/bundle1.js"></script>
-            <script type="text/javascript" src="/dist/bundle2.js"></script>
+                '<script type="text/javascript" src="/dist/vendor1.js?v=1"></script>
+            <script type="text/javascript" src="/dist/vendor2.js?v=1"></script>
+            <script type="text/javascript" src="/dist/bundle1.js?v=1"></script>
+            <script type="text/javascript" src="/dist/bundle2.js?v=1"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
             <script>new LazyLoad();</script>';
         }

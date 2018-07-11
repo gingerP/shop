@@ -1,0 +1,36 @@
+<div class="pagination-bar f-15 ">
+    <span class="pagination-links f-15 ">
+        {{#pagination}}
+            {{#isPrevious}}
+                <a class="pagination-link pagination-link-previous f-16 text_non_select link_style input_hover pagination-item"
+                   href="{{url}}">
+                    <div class="arrow"></div>
+                    <div class="text">{{i18n.pagination.previous}}</div>
+                </a>
+            {{/isPrevious}}
+
+            {{#isNumeric}}
+                <a class="pagination-link cursor_pointer text_non_select f-15 input_hover pagination-item"
+                   href="{{url}}">
+                    {{label}}
+                </a>
+            {{/isNumeric}}
+
+            {{#isEmpty}}
+                <div class="pagination-link-empty text_non_select pagination-item f-16 ">{{label}}</div>
+            {{/isEmpty}}
+
+            {{#isDots}}
+                <div class="pagination-link-dots f-15 pagination-item ">...</div>
+            {{/isDots}}
+
+            {{#isNext}}
+                <a class="pagination-link pagination-link-next f-16 text_non_select link_style input_hover pagination-item"
+                   href="{{url}}">
+                    <div class="text">{{i18n.pagination.next}}</div>
+                    <div class="arrow"></div>
+                </a>
+            {{/isNext}}
+        {{/pagination}}
+    </span>
+</div>
