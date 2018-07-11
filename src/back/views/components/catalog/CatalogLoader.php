@@ -50,6 +50,7 @@ class CatalogLoader
         $this->dataTotalCount = $Products->getTotalCount();
         $limitBegin = ($pageNumber - 1) * $num;
         $limitEnd = $num;
+        $Products = new DBGoodsType();
         if ($this->isAdminOrderEnabled()) {
             $Products->getUserSortedForMenu($keys, $limitBegin, $limitEnd);
         } else {

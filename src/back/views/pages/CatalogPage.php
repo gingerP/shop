@@ -57,13 +57,6 @@ class CatalogPage extends AbstractPage
         if ($this->category !== '') {
             $loader = new CatalogLoader();
             $loader->getItemsForCategory($this->pageNumber, $this->itemsCount, $this->category);
-            $paginationParams = [
-                'pageNum' => $this->pageNumber,
-                'itemsCount' => $this->itemsCount,
-                'totalCount' => $loader->dataTotalCount,
-                'category' => $this->category,
-                'position' => 'top'
-            ];
             $paginationView = (new PaginationComponent())->buildForCategory(
                 $this->category, $this->pageNumber, $this->itemsCount, $loader->dataTotalCount
             );

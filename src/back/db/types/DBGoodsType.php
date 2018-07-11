@@ -38,16 +38,16 @@ class DBGoodsType extends DBType
             }
         }
         $row = mysqli_fetch_row($this->execute($countRequest));
-        $this->totalCount = $row[0];
+        $this->totalCount = is_string($row[0]) ? intval($row[0]) : $row[0];
         $this->logger->debug("DBConnection.getGoodsSearchCount: " . $countRequest . " TOTALCOUNT: " . $this->totalCount);
     }
 
     public function getGoodsKeyCount($keys)
     {
         $pattern = "^(" . implode("|", $keys) . "){1}[0-9]{0,3}$";
-        $countRequest = "SELECT COUNT(t." . DB::TABLE_ID . ") FROM " . $this->getTable() . " AS t WHERE t." . DB::TABLE_GOODS__KEY_ITEM . " REGEXP '" . $pattern . "'";
+        $countRequest = "SELECT COUNT(t." . DB::TABLE_ID . ") FROM " . $this->getTable() . " AS t WHERE t." . DB::TABLE_GOODS__CATEGORY . " REGEXP '" . $pattern . "'";
         $row = mysqli_fetch_row($this->execute($countRequest));
-        $this->totalCount = $row[0];
+        $this->totalCount = is_string($row[0]) ? intval($row[0]) : $row[0];
         $this->logger->debug("DBConnection.getGoodsKeyCount: " . $countRequest . " TOTALCOUNT: " . $this->totalCount);
     }
 
@@ -92,7 +92,7 @@ class DBGoodsType extends DBType
             $keyItemParent = $itemInfo[1][0];
             $this->request = "SELECT COUNT(*) FROM $tableGoods_NAME WHERE $tableGoods_keyItem REGEXP '^($keyItemParent){1}[0-9]{1,3}$' AND $sort_column <= (SELECT $sort_column FROM $tableGoods_NAME WHERE $tableGoods_keyItem='$itemId')";
             $row = mysqli_fetch_row($this->execute($this->request));
-            $this->totalCount = $row[0];
+            $this->totalCount = is_string($row[0]) ? intval($row[0]) : $row[0];;
             $this->logger->debug("goods DBConnection.getCatalogItemPosition: $this->request | totalcount: $this->totalCount");
         }
         return $this->totalCount;
