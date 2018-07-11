@@ -2,7 +2,7 @@
 
 include_once AuWebRoot.'/src/back/views/components/contacts/ContactsComponent.php';
 
-class ContactsPage extends APagesCreator
+class ContactsPage extends AbstractPage
 {
 
     public function __construct()
@@ -19,7 +19,7 @@ class ContactsPage extends APagesCreator
         $this->setIsViewModeBlockVisible(false);
         $this->setIsPathLinkVisible(false);
         $this->setPathLinkForTree(PathLinks::getDOMForContacts());
-        $this->updateTitleTagChildren(["Контакты - "]);
+        $this->updateTitleTagChildren('Контакты');
 
         $metaDesc = new Meta();
         $metaDesc->addAttributes([

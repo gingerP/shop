@@ -40,7 +40,7 @@
 
     ContactComponent.prototype.initMapEvents = function initMapEvents() {
         var self = this;
-        self.mapButton = self.$contactDocument.find('.view_in_map_button');
+        self.mapButton = self.$contactDocument.find('.view_in_map_button, .contact-title-marker');
         if (self.mapButton.length) {
             self.mapButton.on('click', function click() {
                 self._processMapClick();

@@ -1,9 +1,10 @@
 <?php
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/pages.php';
-include_once AuWebRoot.'/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/pages.php';
+include_once AuWebRoot . '/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/views/components/pagination/PaginationComponent.php';
 
-class CatalogPage extends APagesCreator
+class CatalogPage extends AbstractPage
 {
 
     private $key = "";
@@ -24,7 +25,7 @@ class CatalogPage extends APagesCreator
 
     public function build()
     {
-        $this->updateTitleTagChildren(["Каталог - "]);
+        $this->updateTitleTagChildren('Каталог');
         $this->setPageCode("catalog_page");
         $this->setIsTreeVisible(true);
         $this->setIsStatusBarVisible(true);
@@ -53,9 +54,22 @@ class CatalogPage extends APagesCreator
     {
         $mainTag = new Div();
         $items = new Items();
-        $catalogLinks = new CatalogLinks();
+        if ($this->category !== '') {
+            $loader = new CatalogLoader();
+            $loader->getItemsForCategory($this->pageNumber, $this->itemsCount, $this->category);
+            $paginationView = (new PaginationComponent())->buildForCategory(
+                $this->category, $this->pageNumber, $this->itemsCount, $loader->dataTotalCount
+            );
 
-        if ($this->searchValue !== '') {
+            $mainTag->addChild($paginationView);
+            $mainTag->addChild($items->getItemsTable($loader->data));
+            $paginationParams['position'] = 'bottom';
+            $mainTag->addChild($paginationView);
+        } else {
+            $Categories = new CategoriesComponent();
+            $mainTag->addChild($Categories->build());
+        }
+        /*if ($this->searchValue !== '') {
             $loader = new CatalogLoader();
             $loader->getItemSearchData($this->pageNumber, $this->itemsCount, $this->searchValue);
             if ($loader->dataTotalCount == 0) {
@@ -89,7 +103,7 @@ class CatalogPage extends APagesCreator
         } else {
             $Categories = new CategoriesComponent();
             $mainTag->addChild($Categories->build());
-/*            $loader = new CatalogLoader();
+            $loader = new CatalogLoader();
             $loader->getItemsMainData($this->pageNumber, $this->itemsCount);
             $paginationParams = [
                 'pageNum' => $this->pageNumber,
@@ -100,8 +114,8 @@ class CatalogPage extends APagesCreator
             $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
             $mainTag->addChild($items->getItemsTable($loader->data));
             $paginationParams['position'] = 'bottom';
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));*/
-        }
+            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
+    }*/
         return $mainTag;
     }
 

@@ -13,8 +13,8 @@
                         <img id="img_effect"
                              src="{{images.0.m}}"
                              style="display: block; opacity: 1;">
-                        <div class="image-gallery-position-label ">1 / {{imagesNum}}</div>
                         {{#images.1}}
+                            <div class="image-gallery-position-label ">1 / {{imagesNum}}</div>
                             <div class="gallery_left_arrow icon_viewPort " style="display: block;">
                                 <div class="icon ">
                                     <svg fill="#414141" height="30" viewBox="0 0 24 24" width="30"
@@ -54,7 +54,7 @@
                             <div class="s_images overview ">
                                 {{#images}}
                                     <div class="blackout image_preview" data-image-medium="{{m}}" data-image-large="{{l}}">
-                                        <img src="{{s}}">
+                                        <img data-src="{{s}}">
                                     </div>
                                 {{/images}}
                             </div>

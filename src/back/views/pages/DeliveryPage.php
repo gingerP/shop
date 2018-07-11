@@ -3,7 +3,7 @@ include_once AuWebRoot.'/src/back/import/import.php';
  AuWebRoot.'/src/back/import/tags.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 
-class DeliveryPage extends APagesCreator
+class DeliveryPage extends AbstractPage
 {
 
     public function __construct()
@@ -15,7 +15,7 @@ class DeliveryPage extends APagesCreator
         $this->setIsViewModeBlockVisible(false);
         $this->setIsPathLinkVisible(false);
         $this->setPathLinkForTree(PathLinks::getDOMForContacts());
-        $this->updateTitleTagChildren(["Доставка почтой - "]);
+        $this->updateTitleTagChildren('Доставка почтой');
 
         $metaDesc = new Meta();
         $metaDesc->addAttributes([

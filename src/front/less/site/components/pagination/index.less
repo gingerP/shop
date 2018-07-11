@@ -1,53 +1,17 @@
 @import (reference) "./../../variables";
 
-.pagination_bar {
-  margin: 5px;
+.pagination-bar {
+  margin: 15px 0 20px 0;
   position: relative;
   width: 100%;
-  .next_link {
-    height: 31px;
-    line-height: 31px;
-    background-repeat: no-repeat;
-    float: left;
-    padding: 0 !important;
-    > div {
-      float: left;
+  clear: both;
+
+  .pagination {
+    &-links {
+      margin: 0 auto;
+      display: table;
     }
-    .arrow {
-      background-position: 50% 50%;
-      background-repeat: no-repeat;
-      width: 31px;
-      height: 31px;
-      background-image: url(/images/icons/next.svg);
-    }
-    .text {
-      margin: 0 0 0 8px;
-    }
-  }
-  .prev_link {
-    height: 31px;
-    line-height: 31px;
-    background-repeat: no-repeat;
-    float: left;
-    padding: 0 !important;
-    > div {
-      float: left;
-    }
-    .arrow {
-      background-position: 50% 50%;
-      background-repeat: no-repeat;
-      width: 31px;
-      height: 31px;
-      background-image: url(/images/icons/prev.svg);
-    }
-    .text {
-      margin: 0 8px 0 0;
-    }
-  }
-  .numeric_links {
-    margin: 0 auto;
-    display: table;
-    .empty_link_style {
+    &-link {
       text-decoration: none;
       padding: 0 15px;
       height: 31px;
@@ -57,35 +21,79 @@
       float: left;
       color: @color_1;
       border-radius: 2px;
-      cursor: default;
-      font-size: 17px;
-      background: #117361;
-      color: @color_1;
-      font-weight: 700;
-    }
-    .link_style {
-      text-decoration: none;
-      padding: 0 15px;
-      height: 31px;
-      line-height: 31px;
-      background-color: @background_color_2;
-      margin: 0 9px 0 0;
-      float: left;
-      color: @color_1;
-      border-radius: 2px;
-    }
-    .three_dots_style {
-      text-decoration: none;
-      padding: 0 15px;
-      height: 31px;
-      line-height: 31px;
-      background-color: @background_color_2;
-      margin: 0 9px 0 0;
-      float: left;
-      border-radius: 2px;
-      color: @color_2;
-      font-weight: 700;
-      background: 0 0;
+
+      &-empty {
+        text-decoration: none;
+        padding: 0 15px;
+        height: 31px;
+        line-height: 31px;
+        margin: 0 9px 0 0;
+        float: left;
+        color: @color_1;
+        border-radius: 2px;
+        cursor: default;
+        font-size: 17px;
+        background: #117361;
+        font-weight: 700;
+      }
+
+      &-dots {
+        text-decoration: none;
+        padding: 0 15px;
+        height: 31px;
+        line-height: 31px;
+        background-color: @background_color_2;
+        margin: 0 9px 0 0;
+        float: left;
+        border-radius: 2px;
+        color: @color_2;
+        font-weight: 700;
+        background: 0 0;
+      }
+
+      &-previous {
+        height: 31px;
+        line-height: 31px;
+        background-repeat: no-repeat;
+        float: left;
+        padding: 0 !important;
+        > div {
+          float: left;
+        }
+        .arrow {
+          background-size: 35%;
+          background-position: 50% 50%;
+          background-repeat: no-repeat;
+          width: 31px;
+          height: 31px;
+          background-image: url(/images/icons/prev.svg);
+        }
+        .text {
+          margin: 0 8px 0 0;
+        }
+      }
+
+      &-next {
+        height: 31px;
+        line-height: 31px;
+        background-repeat: no-repeat;
+        float: left;
+        padding: 0 !important;
+        > div {
+          float: left;
+        }
+        .arrow {
+          background-size: 35%;
+          background-position: 50% 50%;
+          background-repeat: no-repeat;
+          width: 31px;
+          height: 31px;
+          background-image: url(/images/icons/next.svg);
+        }
+        .text {
+          margin: 0 0 0 8px;
+        }
+      }
     }
   }
 }

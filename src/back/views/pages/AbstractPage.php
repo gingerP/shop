@@ -1,14 +1,14 @@
 <?php
 
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/pages.php';
-include_once AuWebRoot.'/src/back/import/tags.php';
-include_once AuWebRoot.'/src/back/views/components/topPanel/TopPanelComponent.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/pages.php';
+include_once AuWebRoot . '/src/back/import/tags.php';
+include_once AuWebRoot . '/src/back/views/components/topPanel/TopPanelComponent.php';
 include_once AuWebRoot . '/src/back/views/components/categories/CategoriesComponent.php';
 
 use Katzgrau\KLogger\Logger as Logger;
 
-abstract class APagesCreator
+abstract class AbstractPage
 {
     private $pagePrefix = "<!doctype html> <!-- HTML5 -->";
     private $isTreeVisible = false;
@@ -73,6 +73,7 @@ abstract class APagesCreator
                 $main->addChildList([$mainContainer]),
                 $this->getPreBottom(),
                 $this->isBottomNavigationLinksFillingWidth ? $bottomNavigationLinks : null,
+                $this->getCopyright(),
                 $this->getSourceScripts()
             ])
         ]);
@@ -89,12 +90,12 @@ abstract class APagesCreator
             <meta http-equiv="X-UA-Compatible" content="IE=edge">' . "\n");
         $head->addChild($this->getTitleTag());
         $head->addChild('
-            <link rel="stylesheet" type="text/css" href="/dist/style.css" title="main"/>
+            <link rel="stylesheet" type="text/css" href="/dist/style.css?v=1" title="main"/>
             <link rel="manifest" href="/manifest.webmanifest">            
-            <link rel="apple-touch-icon" href="images/system/favicon-200.png">
+            <link rel="apple-touch-icon" href="/images/system/favicon-200.png">
             <meta name="apple-mobile-web-app-capable" content="yes">
             <meta name="apple-mobile-web-app-status-bar-style" content="black">
-            <link rel="shortcut icon" href="images/system/favicon.png" type="image/x-icon"/>');
+            <link rel="shortcut icon" href="/images/system/favicon.png" type="image/x-icon"/>');
         $head->addChild(SearchEngines::getGoogleAnalyticScript());
         $head->addChild(SearchEngines::getYandexMetricScript());
         return $head;
@@ -103,6 +104,10 @@ abstract class APagesCreator
     public function getContent()
     {
         return $this->content;
+    }
+
+    public function getCopyright() {
+        return '<div id="copyright">'.Localization['copyright'].'</div>';
     }
 
     public function createBody()
@@ -349,13 +354,18 @@ abstract class APagesCreator
         $this->titleTag = $titleTag;
     }
 
-    public function updateTitleTagChildren($children)
+    public function updateTitleTagChildren($title)
     {
         if (!$this->titleTag) {
             $this->titleTag = new Title();
         }
-        array_push($children, $this->permanentTitle);
-        $this->titleTag->replaceChildren($children);
+        if (is_null($title) || $title == '') {
+            $this->permanentTitle = [];
+            $this->titleTag->replaceChildren([Localization['company.name.short']]);
+        } else {
+            $this->permanentTitle = [$title . ' - '];
+            $this->titleTag->replaceChildren([$title . ' - ' . Localization['company.name.short']]);
+        }
         return $this->titleTag;
     }
 
@@ -365,7 +375,7 @@ abstract class APagesCreator
     public function getTitleTag()
     {
         if (!$this->titleTag) {
-            $this->updateTitleTagChildren([]);
+            $this->updateTitleTagChildren('');
         }
         return $this->titleTag;
     }
@@ -376,7 +386,7 @@ abstract class APagesCreator
         for ($argIndex = 0; $argIndex < $argsCount; $argIndex++) {
             $tag = func_get_arg($argIndex);
             if ($tag instanceof Tag || is_string($tag) || is_numeric($tag)) {
-                array_push($this->metaTags, $tag);
+                $this->metaTags[] = $tag;
             }
         }
     }
@@ -385,10 +395,12 @@ abstract class APagesCreator
     {
         if ($this->isJsUglify) {
             return
-                '<script type="text/javascript" src="/dist/vendor1.js"></script>
-            <script type="text/javascript" src="/dist/vendor2.js"></script>
-            <script type="text/javascript" src="/dist/bundle1.js"></script>
-            <script type="text/javascript" src="/dist/bundle2.js"></script>';
+                '<script type="text/javascript" src="/dist/vendor1.js?v=1"></script>
+            <script type="text/javascript" src="/dist/vendor2.js?v=1"></script>
+            <script type="text/javascript" src="/dist/bundle1.js?v=1"></script>
+            <script type="text/javascript" src="/dist/bundle2.js?v=1"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
+            <script>new LazyLoad();</script>';
         }
         return '
             <script type="text/javascript" src="/src/front/js/ext/jquery-2.1.4.min.js"></script>
@@ -398,6 +410,8 @@ abstract class APagesCreator
             <script type="text/javascript" src="/src/front/js/components/email-form/email-form.component.js"></script>
             <script type="text/javascript" src="/node_modules/mustache/mustache.min.js"></script>
             <script type="text/javascript" src="/src/front/js/utils.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
+            <script>new LazyLoad();</script>
         ';
     }
 }

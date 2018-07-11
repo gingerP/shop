@@ -6,7 +6,7 @@ include_once AuWebRoot.'/src/back/import/db.php';
 include_once AuWebRoot.'/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
 include_once AuWebRoot.'/src/back/views/components/catalogProduct/CatalogProductComponent.php';
 
-class MainPage extends APagesCreator
+class MainPage extends AbstractPage
 {
 
     public function __construct()
@@ -86,9 +86,9 @@ class MainPage extends APagesCreator
 
             $slideShowContainer->addChildren($slideShow->addChildren($div02, $remainingCountLink));
 
-            array_push($result, $slideShowContainer);
+            $result[] = $slideShowContainer;
         }
-        array_push($result, $this->getCategoriesGroupsDom());
+        $result[] = $this->getCategoriesGroupsDom();
         return $result;
     }
 

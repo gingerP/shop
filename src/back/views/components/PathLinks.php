@@ -80,7 +80,7 @@ class PathLinks {
             );
         }
         $keys = array_reverse($keys);
-        $pageInstance->updateTitleTagChildren($keys);
+        $pageInstance->updateTitleTagChildren($keys[0]);
         return $mainTag->addChildList(self::buildPathLink($data));
     }
 

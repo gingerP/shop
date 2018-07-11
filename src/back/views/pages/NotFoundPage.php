@@ -2,7 +2,7 @@
 include_once AuWebRoot.'/src/back/import/db.php';
 include_once AuWebRoot.'/src/back/import/pages.php';
 
-class NotFoundPage extends APagesCreator
+class NotFoundPage extends AbstractPage
 {
     private $search_value = "";
 
