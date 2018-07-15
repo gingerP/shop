@@ -1,122 +1,123 @@
-define([
-    'common/dialog',
-    'common/services',
-    'common/components'
-], function (Dialog, Services, Components) {
-    return function (layout, list, details, serviceEntities) {
-        var handlers = {
-            reload: function () {
-                list.clearSelection();
-                list.clearAll();
-                list.reloadGrid();
-                details.lock();
-            },
-            add: function () {
-                if (serviceEntities.canCreateNewEntity()) {
-                    details.unlock();
-                    details.oldGoodCode = null;
-                    var entity = serviceEntities.createNewEntity();
-                    var array = Components.prepareEntityToGrid(entity, ['id', 'key_item', 'value', 'image']);
-                    entity._idLabel = '<генерируется автоматически>';
-                    list.addRow(entity.id, array, 0);
-                    list.setUserData(entity.id, 'entity', entity);
-                    details.clear();
-                    list.selectRowById(entity.id);
-                }
-            },
-            save: function () {
-                var rowId = App.grid.getSelectedRowId();
-                var entity = App.grid.getUserData(rowId, 'entity');
-                var oldRowId = rowId;
-                Components.updateEntity(App.form, entity, updater);
-                App.layout.progressOn();
+define(
+    [
+        'common/dialog',
+        'common/services',
+        'common/components',
+        'dropbox/dropbox'
+    ],
+    function (Dialog, Services, Components) {
+        'use strict';
+        return function (layout, list, details, cloud, serviceEntities) {
 
-                if (entity._isNew === true) {
-                    delete entity.id;
-                    delete entity.key_item;
+            function onError(error) {
+                var message = 'Unknown error';
+                if (typeof error === 'string') {
+                    message = error;
+                } else if (error.message) {
+                    message = error.message;
+                } else if (error.response && error.response.statusText) {
+                    message = error.response.statusText;
                 }
+                dhtmlx.alert({
+                    title: 'Alert',
+                    type: 'alert-error',
+                    text: '<span style="word-break: break-all">' + message + '</span>'
+                });
+                console.error(error);
+            }
 
-                Components.prepareEntity(entity);
-                return Services.updateGood(entity)
-                    .then(function callback(product) {
-                        App.layout.progressOff();
-                        id = product.id;
-                        App.serviceEntities.removeAll();
-                        dhtmlx.message({
-                            text: 'Товар успешно сохранен.',
-                            expire: 3000,
-                            type: 'dhx-message-success'
+            var handlers = {
+                reload: function () {
+                    serviceEntities.removeAll();
+                    list.callEvent('onSelectClear');
+                    list.clearAll();
+                    list.reloadGrid();
+                    details.lock();
+                },
+                add: function () {
+                    if (serviceEntities.canCreateNewEntity()) {
+                        details.unlock();
+                        details.oldGoodCode = null;
+                        var entity = serviceEntities.createNewEntity();
+                        var array = Components.prepareEntityToGrid(entity, ['id', 'key_item', 'value', 'image']);
+                        entity._idLabel = '<генерируется автоматически>';
+                        list.addRow(entity.id, array, 0);
+                        list.setUserData(entity.id, 'entity', entity);
+                        details.clear();
+                        list.selectRowById(entity.id);
+                    }
+                },
+                save: function () {
+                    var oldRowId = list.getSelectedRowId();
+                    if (!oldRowId) {
+                        return null;
+                    }
+                    var entity = details.getEntity();
+                    layout.progressOn();
+                    return Services.saveCategory(entity)
+                        .then(function callback(savedEntity) {
+                            serviceEntities.removeAll();
+                            layout.progressOff();
+                            list.reloadRow(oldRowId, savedEntity);
+                            layout.progressOff();
+                            dhtmlx.message({
+                                text: 'Категория успешно сохранена.',
+                                expire: 3000,
+                                type: 'dhx-message-success'
+                            });
+                        })
+                        .catch(function (error) {
+                            layout.progressOff();
+                            onError(error);
                         });
-                        return App.images.saveImages(product.id);
-                    })
-                    .then(function () {
-                        return Services.getGood(id);
-                    })
-                    .then(function (product) {
-                        reloadRow(oldRowId, product);
-                    })
-                    .catch(function (error) {
-                        App.layout.progressOff();
-                        onError(error);
-                    });
-            },
-            saveOrder: function () {
-                function show() {
-                    App.goodsOrder.show();
-                }
+                },
+                delete: function () {
+                    var oldRowId = list.getSelectedRowId();
+                    if (!oldRowId) {
+                        return;
+                    }
 
-                if (!App.goodsOrder) {
-                    initGoodsOrder(show);
-                } else {
-                    show();
-                }
-            },
-            delete: function () {
-                var name = App.form.getItemValue('name');
-                if (!name) {
-                    name = App.form.getItemValue('key_item');
-                }
-                dhtmlx.confirm({
-                    title: "Удаление товара",
-                    ok: "Да", cancel: "Отмена",
-                    text: "Вы уверены что хотите удалить <br>'" + name + "' ?",
-                    callback: function (result) {
-                        if (result === true) {
-                            var rowId = App.grid.getSelectedRowId();
-                            var entity = App.grid.getUserData(rowId, 'entity');
-
-                            function callback() {
-                                App.grid.deleteRow(rowId);
-                                App.serviceEntities.removeAll();
-                                App.form.clear();
-                                App.form.lock();
-                                handlers.reload();
-                            }
-
-                            if (entity.hasOwnProperty('_isNew')) {
-                                callback();
-                            } else {
-                                Services.deleteGood(entity.id)
-                                    .then(function (result) {
-                                        if (result > 0) {
-                                            callback();
-                                        } else {
-                                            console.info('nothing to delete!');
-                                        }
-                                    });
-                            }
+                    var name = details.getItemValue('value');
+                    if (!name) {
+                        name = details.getItemValue('key_item');
+                    }
+                    if (!name) {
+                        var oldEntity = list.getUserData(oldRowId, 'entity');
+                        if (oldEntity._isNew) {
+                            name = 'новый товар';
                         }
                     }
-                });
-            },
-            storage: function storage() {
-                app.storage.open();
-                app.storage.hideAddToProductButton();
-            }
+                    dhtmlx.confirm({
+                        title: 'Удаление категории товаров',
+                        ok: 'Да', cancel: 'Отмена',
+                        text: 'Вы уверены что хотите удалить <br>"' + name + '" ?',
+                        callback: function (result) {
+                            if (result) {
+                                var rowId = list.getSelectedRowId();
+                                var entity = list.getUserData(rowId, 'entity');
+
+                                if (entity.hasOwnProperty('_isNew')) {
+                                    handlers.reload();
+                                } else {
+                                    Services.deleteCategory(entity.id)
+                                        .then(function () {
+                                            serviceEntities.removeAll();
+                                            handlers.reload();
+                                        });
+                                }
+                            }
+                        }
+                    });
+                },
+                storage: function storage() {
+                    cloud.open();
+                    cloud.showAddToProductButton();
+                }
+            };
+            Components.createToolbar(layout, handlers, [
+                'reload', 'add', 'save', 'delete', 'separator',
+                {type: 'button', id: 'storage', text: 'Облако', img: 'storage.png', img_disabled: 'storage.png'}
+            ]);
         };
-        Components.createToolbar(layout, handlers, [
-            'reload', 'add', 'save', 'delete', 'separator',
-            {type: 'button', id: 'storage', text: 'Облако', img: 'storage.png', img_disabled: 'storage.png'}
-        ]);
-    };
-});
+    }
+);

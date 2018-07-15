@@ -3,7 +3,6 @@ include_once AuWebRoot.'/src/back/services/PriceService.php';
 include_once AuWebRoot.'/src/back/services/AddressService.php';
 include_once AuWebRoot.'/src/back/services/EmailService.php';
 include_once AuWebRoot.'/src/back/services/ProductsService.php';
-include_once AuWebRoot.'/src/back/services/GoodsKeysService.php';
 include_once AuWebRoot.'/src/back/services/BookletService.php';
 include_once AuWebRoot.'/src/back/services/NewsService.php';
 include_once AuWebRoot.'/src/back/services/PreferencesService.php';

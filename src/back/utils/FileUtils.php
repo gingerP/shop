@@ -232,4 +232,14 @@ class FileUtils
         }
     }
 
+    public static function getFileExtensionFromName($fileName)
+    {
+        $parts = explode('.', $fileName);
+        $length = count($parts);
+        if ($length > 1) {
+            return $parts[$length - 1];
+        }
+        return '';
+    }
+
 }

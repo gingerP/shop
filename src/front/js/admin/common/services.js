@@ -41,7 +41,7 @@ define([
             url: '/api' + apiPath
         })
             .then(function (data) {
-                if (handlers && typeof(handlers.success) === 'function') {
+                if (handlers && typeof (handlers.success) === 'function') {
                     handlers.success(data);
                 }
                 return data;
@@ -125,10 +125,7 @@ define([
         getAdminSettings: function getAdminSettings() {
             return get('/settings');
         },
-        getCategories: function getCategories() {
-            return get('/categories');
-        },
-        /*****************************************Booklets*************************************/
+        /* ****************************************Booklets*************************************/
         listBooklets: function (mapping) {
             return get('/booklets?mapping=' + encodeURIComponent(JSON.stringify(mapping)));
         },
@@ -146,6 +143,16 @@ define([
         },
         getBookletBackgrounds: function () {
             return get('/booklets/backgrounds/');
+        },
+        /* ****************************************Categories*************************************/
+        saveCategory: function saveCategory(data) {
+            return post('/categories', data);
+        },
+        getCategories: function getCategories() {
+            return get('/categories');
+        },
+        deleteCategory: function removeCategory(id) {
+            return delete_('/categories/' + id);
         }
     };
     return api;

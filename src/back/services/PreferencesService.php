@@ -11,6 +11,7 @@ class PreferencesService {
 
     public static function getAdminPreferences() {
         return [
+            'categories_images_path' => DBPreferencesType::getPreferenceValue(SettingsNames::CATEGORIES_IMAGES_PATH),
             'dropbox_access_token' => DBPreferencesType::getPreferenceValue(SettingsNames::DROPBOX_ACCESS_TOKEN),
             'dropbox_root_directory' => DBPreferencesType::getPreferenceValue(SettingsNames::DROPBOX_ROOT_DIRECTORY),
             'description' => $responseData = DescriptionKeys::$keys

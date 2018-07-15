@@ -10,14 +10,9 @@ class SettingsNames
     const MAX_IMAGE_COUNT_METRO_VIEW = 5;
     const FEEDBACK_MAIL = 'FEEDBACK_EMAIL';
     const PUBLIC_URL = 'PUBLIC_URL';
-    const CATALOG_PATH = 'CATALOG_PATH';
-    const CATEGORIES_IMAGES_PATH = 'categories_images_path';
     const SYSTEM_MAIL = 'SYSTEM_EMAIL';
     const WATERMARK_MEDIUM_PATH = 'WATERMARK_MEDIUM_PATH';
     const WATERMARK_LARGE_PATH = 'WATERMARK_LARGE_PATH';
-    const PRICE_DIRECTORY = 'PRICE_DIRECTORY';
-    const BOOKLET_IMAGE_PATH = 'BOOKLET_IMAGE_PATH';
-    const TEMP_DIRECTORY = 'TEMP_DIRECTORY';
     const BOOKLET_BACKGROUND_IMAGES_PATH = 'BOOKLET_BACKGROUND_IMAGES_PATH';
     const CONTACTS_GROUPS = 'CONTACTS_GROUPS';
     const GOOGLE_MAPS_API_KEY = 'google_maps_api_key';
@@ -30,6 +25,13 @@ class SettingsNames
     const CONTACTS_STYLES = 'contacts_styles';
     const VIBER_CHAT_URI = 'viber_chat_uri';
     const VIBER_PHONE_NUMBER = 'viber_phone_number';
+
+    const CATALOG_PATH = 'CATALOG_PATH';
+    const CATEGORIES_IMAGES_PATH = 'categories_images_path';
+    const BOOKLET_IMAGE_PATH = 'BOOKLET_IMAGE_PATH';
+    const PRICE_DIRECTORY = 'PRICE_DIRECTORY';
+    const TEMP_DIRECTORY = 'TEMP_DIRECTORY';
+
 
     const JWT_PUBLIC_KEY = 'jwt_public_key';
     const JWT_PRIVATE_KEY = 'jwt_private_key';

@@ -14,6 +14,7 @@ class DB {
     const TABLE_NAV_KEY__IMAGE = 'image';
     const TABLE_NAV_KEY__KEY_ITEM = 'key_item';
     const TABLE_NAV_KEY__PARENT_KEY = 'parent_key';
+    const TABLE_NAV_KEY__ORDER = 'order';
     const TABLE_NAV_KEY__HOME_VIEW = 'home_view';
     const TABLE_NAV_KEY___ORDER = self::TABLE_NAV_KEY__ID;
 

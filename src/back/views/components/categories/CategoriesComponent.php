@@ -12,7 +12,7 @@ class CategoriesComponent extends AbstractComponent
     public function build()
     {
         $Categories = new DBNavKeyType();
-        $categories = $Categories->extractDataFromResponse($Categories->getList());
+        $categories = $Categories->extractDataFromResponse($Categories->getList(null, ['order', 'ASC']));
         $categoriesImagesCatalog = DBPreferencesType::getPreferenceValue(SettingsNames::CATEGORIES_IMAGES_PATH);
         foreach ($categories as &$category) {
             $category['link'] = URLBuilder::getCatalogLinkForTree($category[DB::TABLE_NAV_KEY__KEY_ITEM]);
