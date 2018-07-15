@@ -2,8 +2,7 @@ require([
     'common/authorization',
     'common/authorization-view',
     'dropbox/dropbox',
-    'common/components',
-    'settings/common-tab'
+    'common/components'
 ], function (/**@type Authorization*/
              Authorization,
              AuthorizationView,
