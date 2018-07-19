@@ -1,10 +1,10 @@
 <?php
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/tags.php';
-include_once AuWebRoot.'/src/back/import/pages.php';
-include_once AuWebRoot.'/src/back/import/db.php';
-include_once AuWebRoot.'/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
-include_once AuWebRoot.'/src/back/views/components/catalogProduct/CatalogProductComponent.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/tags.php';
+include_once AuWebRoot . '/src/back/import/pages.php';
+include_once AuWebRoot . '/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
+include_once AuWebRoot . '/src/back/views/components/catalogProduct/CatalogProductComponent.php';
 
 class MainPage extends AbstractPage
 {
@@ -14,7 +14,8 @@ class MainPage extends AbstractPage
         parent::__construct(UrlParameters::PAGE__MAIN);
     }
 
-    public function build() {
+    public function build()
+    {
         $this->setPageCode('main_page');
         $this->setIsStatusBarVisible(false);
         $this->setIsViewModeBlockVisible(false);
@@ -29,7 +30,8 @@ class MainPage extends AbstractPage
         return $this;
     }
 
-    public function validate() {
+    public function validate()
+    {
         return $this;
     }
 
@@ -120,16 +122,18 @@ class MainPage extends AbstractPage
 
     private function getCategoriesGroupsDom()
     {
-        function normalizeCategories($categories) {
+        function normalizeCategories($categories)
+        {
             $result = [];
             $index = count($categories) - 1;
-            while($index >= 0) {
+            while ($index >= 0) {
                 $category = $categories[$index];
                 $result[$category[DB::TABLE_NAV_KEY__KEY_ITEM]] = $category;
                 $index--;
             }
             return $result;
         }
+
         $container = new Div();
         $container->addStyleClass('main_page_items_slideshow categories');
         $Preferences = new DBPreferencesType();
@@ -217,12 +221,14 @@ class MainPage extends AbstractPage
         return $container;
     }
 
-    private static function getLabelByCount($productsCount) {
-        $lastStringNumber = $productsCount.'';
+    private static function getLabelByCount($productsCount)
+    {
+        $lastStringNumber = $productsCount . '';
         $lastStringNumber = $lastStringNumber[strlen($lastStringNumber) - 1];
         $label = 'товар';
         if ($productsCount > 1 && $productsCount <= 4
-            || $productsCount > 20 && ($lastStringNumber == '2' || $lastStringNumber == '4')) {
+            || $productsCount > 20 && ($lastStringNumber == '2' || $lastStringNumber == '4')
+        ) {
             $label = 'товара';
         } else if ($productsCount > 4 && $productsCount <= 20) {
             $label = 'товаров';
@@ -244,6 +250,10 @@ class MainPage extends AbstractPage
         if ($this->isJsUglify) {
             return $scripts . '<script type="text/javascript" src="/dist/main-page.js"></script>';
         }
+        $scripts .= '
+            <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>
+            <script type="text/javascript" src="/src/front/js/components/main-page-contacts/mainPageContacts.component.js"></script>
+            ';
         return $scripts;
     }
 
