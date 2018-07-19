@@ -5,7 +5,7 @@
         '			{{#isEmpty}}',
         '				<div class="search-result-empty">',
         '                   К сожаление, ничего не найдено.',
-        '                   <a href="">Очистить поиск</a>',
+        '                   <a href="#">Очистить поиск</a>',
         '               </div>',
         '			{{/isEmpty}}',
         '			{{#contacts.0}}',
@@ -159,23 +159,26 @@
     };
 
     SearchInput.prototype.hasChanged = function hasChanged() {
-        var self = this;
-        return self.value !== self.$input.val();
+        return this.value !== this.$input.val();
     };
 
     SearchInput.prototype.applySearchResults = function () {
-        var self = this;
-        self.$placeholder.html(
+        var isEmpty = !this.products.length && !this.navKeys.length && !this.contacts.length;
+        this.$placeholder.html(
             Mustache.render(searchResultTemplate, {
-                isEmpty: !self.products.length && !self.navKeys.length && !self.contacts.length,
-                products: self.products,
-                navs: self.navKeys,
-                contacts: self.contacts,
-                productsTotalCount: self.productsTotalCount
+                isEmpty: isEmpty,
+                products: this.products,
+                navs: this.navKeys,
+                contacts: this.contacts,
+                productsTotalCount: this.productsTotalCount
             })
         );
-        var $scroller = self.$placeholder.find('.search-result-container');
+        if (isEmpty) {
+            this.bindClearResultAction();
+        }
+        var $scroller = this.$placeholder.find('.search-result-container');
         var $scrolling = $scroller.find('.search-result-scrolling');
+        var self = this;
         $scroller.scroll(function () {
             if ($scroller.height() + $scroller.scrollTop() > $scrolling.height() - 100) {
                 self.loadNext();
@@ -252,6 +255,14 @@
         self.hideResults(false);
         self.$parent.removeClass('input-opened');
         self.deactivateBlackout();
+    };
+
+    SearchInput.prototype.bindClearResultAction = function bindClearResultAction() {
+        var self = this;
+        $('.search-result-empty').click(function () {
+            self.$input.val('');
+            self.$input.focus();
+        });
     };
 
     new SearchInput().initialize();

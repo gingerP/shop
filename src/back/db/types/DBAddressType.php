@@ -1,7 +1,7 @@
 <?php
-include_once AuWebRoot.'/src/back/import/import.php';
-include_once AuWebRoot.'/src/back/import/db.php';
-include_once AuWebRoot.'/src/back/import/models.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/db.php';
+include_once AuWebRoot . '/src/back/import/models.php';
 
 class DBAddressType extends DBType
 {
@@ -61,13 +61,12 @@ class DBAddressType extends DBType
                     if ($numberIndex < count($numbers)) {
                         $value = $numbers[$numberIndex];
                     }
-                    array_push($address['mobileNumbers'],
+                    $address['mobileNumbers'][] =
                         [
                             'number' => $value,
                             'provider' => $key,
                             'title' => Localization['phone_providers.' . $key]
-                        ]
-                    );
+                        ];
                 }
             } else {
                 $address['mobileNumbers'] = [];
@@ -90,7 +89,7 @@ class DBAddressType extends DBType
                 json_decode($contact[DB::TABLE_ADDRESS__IMAGES])
             );
             $address['toString'] = json_encode($address);
-            array_push($ret, $address);
+            $ret[] = $address;
         }
         return $ret;
     }

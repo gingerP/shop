@@ -29,7 +29,6 @@ class DeliveryPage extends AbstractPage
 
     protected function createGeneralContent()
     {
-        $NUMBER = '+375(29) 559-46-51';
         $mainTag = new Div();
         $mainTag->addChild("
             <div class='delivery-block f-15'>
@@ -82,6 +81,15 @@ class DeliveryPage extends AbstractPage
             
             ");
         return $mainTag;
+    }
+
+    protected function getSourceScripts()
+    {
+        $scripts = parent::getSourceScripts();
+        if ($this->isJsUglify) {
+            return $scripts . '<script type="text/javascript" src="/dist/delivery-page.js"></script>';
+        }
+        return $scripts;
     }
 
 }

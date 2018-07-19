@@ -53,12 +53,7 @@ class ProductPage extends AbstractPage
     {
         $scripts = parent::getSourceScripts();
         if ($this->isJsUglify) {
-            return $scripts . '
-                <script type="text/javascript" src="/dist/vendor1.js"></script>
-                <script type="text/javascript" src="/dist/vendor2.js"></script>
-                <script type="text/javascript" src="/dist/bundle1.js"></script>
-                <script type="text/javascript" src="/dist/bundle2.js"></script>
-            ';
+            return $scripts . '<script type="text/javascript" src="/dist/product-page.js"></script>';
         }
         return $scripts . '
             <script type="text/javascript" src="/src/front/js/utils.js"></script>

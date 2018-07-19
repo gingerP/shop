@@ -69,53 +69,6 @@ class CatalogPage extends AbstractPage
             $Categories = new CategoriesComponent();
             $mainTag->addChild($Categories->build());
         }
-        /*if ($this->searchValue !== '') {
-            $loader = new CatalogLoader();
-            $loader->getItemSearchData($this->pageNumber, $this->itemsCount, $this->searchValue);
-            if ($loader->dataTotalCount == 0) {
-                return "";
-            }
-            $paginationParams = [
-                'pageNum' => $this->pageNumber,
-                'itemsCount' => $this->itemsCount,
-                'totalCount' => $loader->dataTotalCount,
-                'searchValue' => $this->searchValue,
-                'position' => 'top'
-            ];
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
-            $mainTag->addChild($items->getItemsTable($loader->data));
-            $paginationParams['position'] = 'bottom';
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
-        } else if ($this->category !== '') {
-            $loader = new CatalogLoader();
-            $loader->getItemsForCategory($this->pageNumber, $this->itemsCount, $this->category);
-            $paginationParams = [
-                'pageNum' => $this->pageNumber,
-                'itemsCount' => $this->itemsCount,
-                'totalCount' => $loader->dataTotalCount,
-                'category' => $this->category,
-                'position' => 'top'
-            ];
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
-            $mainTag->addChild($items->getItemsTable($loader->data));
-            $paginationParams['position'] = 'bottom';
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
-        } else {
-            $Categories = new CategoriesComponent();
-            $mainTag->addChild($Categories->build());
-            $loader = new CatalogLoader();
-            $loader->getItemsMainData($this->pageNumber, $this->itemsCount);
-            $paginationParams = [
-                'pageNum' => $this->pageNumber,
-                'itemsCount' => $this->itemsCount,
-                'totalCount' => $loader->dataTotalCount,
-                'position' => 'top'
-            ];
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
-            $mainTag->addChild($items->getItemsTable($loader->data));
-            $paginationParams['position'] = 'bottom';
-            $mainTag->addChild($catalogLinks->getPaginationLinks($paginationParams));
-    }*/
         return $mainTag;
     }
 
@@ -132,6 +85,15 @@ class CatalogPage extends AbstractPage
         }
 
         return "<a href='$link' class='category-title'>$categoryLabel</a>";
+    }
+
+    protected function getSourceScripts()
+    {
+        $scripts = parent::getSourceScripts();
+        if ($this->isJsUglify) {
+            return $scripts . '<script type="text/javascript" src="/dist/catalog-page.js"></script>';
+        }
+        return $scripts;
     }
 
     public static function getCatalogDOM()

@@ -4,7 +4,7 @@ include_once AuWebRoot . '/src/back/import/import.php';
 class Item
 {
 
-    public static function getMetroItemView($name, $images, $version, $trimName)
+    public static function getMetroItemView($product, $images, $version, $trimName)
     {
         $previewsColsNum = 2;
         $previewsNum = 0;
@@ -43,7 +43,7 @@ class Item
                         'data-src' => '/' . addslashes($images[$imgIndex]),
                         'width' => '',
                         'height' => '',
-                        'alt' => $name
+                        'alt' => $product['name']
                     ])
                 ->addStyleClass($imgIndex > 0 ? 'simple_item_image_half' : 'simple_item_image');
             $placeholderImage = (new Img())

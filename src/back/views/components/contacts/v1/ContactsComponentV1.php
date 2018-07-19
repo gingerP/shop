@@ -2,7 +2,7 @@
 
 include_once AuWebRoot.'/src/back/views/components/AbstractComponent.php';
 
-class ContactsComponent extends AbstractComponent {
+class ContactsComponentV1 extends AbstractComponent {
 
     function __construct()
     {
@@ -12,7 +12,7 @@ class ContactsComponent extends AbstractComponent {
     public function build() {
         $contacts = AddressService::getAddresses()['contacts'];
 
-        $tpl = parent::getEngine()->loadTemplate('components/contacts/contacts.mustache');
+        $tpl = parent::getEngine()->loadTemplate('components/contacts/v1/contacts.mustache');
         return $tpl->render(['contacts' => $contacts]);
     }
 }

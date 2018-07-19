@@ -232,22 +232,17 @@ class MainPage extends AbstractPage
         return $label;
     }
 
-
-
     protected function getSourceScripts()
     {
+        $scripts = parent::getSourceScripts();
         $preferences = PreferencesService::getPublicPreferences();
-        $scripts = strtr('<script type="text/javascript">
-            window.AugustovaApp = {googleApiKey: "googleApiKeyValue"};
-        </script>', [
+        $scripts .= strtr("<script type='text/javascript'>
+            window.AugustovaApp = {googleApiKey: 'googleApiKeyValue'};
+        </script>", [
             'googleApiKeyValue' => $preferences['google_maps_api_key']
         ]);
-        $scripts .= parent::getSourceScripts();
-        if (!$this->isJsUglify) {
-            $scripts .=
-                '
-                <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>
-                <script type="text/javascript" src="/src/front/js/components/main-page-contacts/mainPageContacts.component.js"></script>';
+        if ($this->isJsUglify) {
+            return $scripts . '<script type="text/javascript" src="/dist/main-page.js"></script>';
         }
         return $scripts;
     }
