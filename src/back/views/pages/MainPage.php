@@ -5,6 +5,7 @@ include_once AuWebRoot . '/src/back/import/pages.php';
 include_once AuWebRoot . '/src/back/import/db.php';
 include_once AuWebRoot . '/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
 include_once AuWebRoot . '/src/back/views/components/catalogProduct/CatalogProductComponent.php';
+include_once AuWebRoot . '/src/back/views/components/slogan/SloganComponent.php';
 
 class MainPage extends AbstractPage
 {
@@ -52,8 +53,6 @@ class MainPage extends AbstractPage
         return [$map, (new MainPageContactsComponent())->build()];
     }
 
-    //TODO check next method for performance (работоспособность)
-
     private function getCatalogItems()
     {
         $result = [$this->getCatalogItemsTitle()];
@@ -96,28 +95,7 @@ class MainPage extends AbstractPage
 
     private function getCatalogItemsTitle()
     {
-        $headContainer = new Div();
-
-        $head = new Div();
-        $head->addStyleClasses(['slogan_container_horizontal', 'z-10']);
-        $slogan = new Div();
-        $slogan->addStyleClass('slogan');
-        $slogan->addChild('Собственное производство.');
-        $head->addChildren($slogan);
-
-        $head2 = new Div();
-        $head2->addStyleClasses(['slogan_container_horizontal', 'z-9']);
-        $catalogLink = new A();
-        $catalogLink->addAttribute('href', Labels::$TOP_NAVIGATION_LINKS['catalog']);
-        $catalogLink->addStyleClass('main_page_catalog_link');
-        $catalogLink->addChild('Каталог');
-        $head2->addChildren($catalogLink/*, $rightEarForLink*/);
-
-        $headContainer->addChildren($head, $head2);
-        $slogan = new Div();
-        $slogan->addStyleClass('catalog_slogan');
-        $headContainer->addStyleClass('main_page_slogan_container');
-        return $slogan->addChild($headContainer);
+        return (new SloganComponent())->build();
     }
 
     private function getCategoriesGroupsDom()

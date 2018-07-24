@@ -74,8 +74,6 @@ class TagUtils
         if (strlen($link) > 0) {
             $note->addAttribute("href", $link);
             $note->addStyleClasses(["hover_text_underline"]);
-        } else {
-            $note->addStyleClasses(["cursor_default"]);
         }
         return $note;
     }

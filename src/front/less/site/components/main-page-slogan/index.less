@@ -1,0 +1,42 @@
+.main {
+  &-page {
+    &-delivery,
+    &-contacts,
+    &-catalog {
+      &-link {
+        font-family: BebasNeueBold;
+        font-size: 3em;
+        color: #414141;
+        position: relative;
+        display: block;
+        &:hover {
+          color: #396fbd;
+        }
+      }
+    }
+    &-slogan {
+      font-family: BebasNeueBold;
+      font-size: 3em;
+      text-align: right;
+      float: left;
+      position: relative;
+      padding: 30px;
+      box-sizing: border-box;
+      width: 50%;
+      background: #396fbd;
+      color: #ffffff;
+
+      &-links {
+        float: left;
+        padding: 30px;
+      }
+
+      &-container {
+        overflow: hidden;
+        width: 100%;
+      }
+    }
+  }
+}
+
+@import "./media";
