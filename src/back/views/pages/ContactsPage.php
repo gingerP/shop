@@ -74,7 +74,7 @@ class ContactsPage extends AbstractPage
         ]);
 
         if ($this->isJsUglify) {
-            return $scripts . '<script type="text/javascript" src="/dist/contacts-page.js"></script>';
+            return $scripts . '<script type="text/javascript" src="/dist/contacts-page.js?v=1"></script>';
         }
         $scripts .= '
             <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>

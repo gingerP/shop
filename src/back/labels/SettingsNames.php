@@ -21,8 +21,10 @@ class SettingsNames
     const DROPBOX_ACCESS_TOKEN = 'DROPBOX_ACCESS_TOKEN';
     const DROPBOX_ROOT_DIRECTORY = 'DROPBOX_ROOT_DIRECTORY';
     const SETTINGS_MAIN_PAGE_CATEGORIES = 'SETTINGS_MAIN_PAGE_CATEGORIES';
+
     const CONTACTS_IMAGES = 'contacts_images';
     const CONTACTS_STYLES = 'contacts_styles';
+    const CONTACTS_GROUPS_STYLES = 'contacts_groups_styles';
     const VIBER_CHAT_URI = 'viber_chat_uri';
     const VIBER_PHONE_NUMBER = 'viber_phone_number';
 

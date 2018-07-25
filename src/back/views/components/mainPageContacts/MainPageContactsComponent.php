@@ -16,6 +16,7 @@ class MainPageContactsComponent extends AbstractComponent
     {
         $contacts = AddressService::getAddresses()['contacts'];
         $contactsMap = [];
+        $groupsTitles = [];
 
         foreach ($contacts as $contact) {
             $contactInfo = [
@@ -24,21 +25,24 @@ class MainPageContactsComponent extends AbstractComponent
                 'id' => Utils::uuid()
             ];
             $contact['info'] = json_encode($contactInfo);
-            $contactsMap[$contact['city']][] = $contact;
+            $contactsMap[$contact['group']][] = $contact;
+            $groupsTitles[$contact['group']] = $contact['title'];
         }
+
+        $contactsGroupsStyles = DBPreferencesType::getPreferenceValue(SettingsNames::CONTACTS_GROUPS_STYLES);
 
         $openedClass = 'opened';
         $prepareContacts = [];
         $groupsIds = [];
         $index = 0;
-        foreach ($contactsMap as $contactCity => $contactsGroup) {
+        foreach ($contactsMap as $contactGroupCode => $contactsGroup) {
             $contactsInfo = [];
-            $groupId = Utils::uuid();
+            $groupId = $contactGroupCode;
             $contactsInfo['openedClass'] = $openedClass;
-            $contactsInfo['title'] = $contactCity;
+            $contactsInfo['title'] = $groupsTitles[$contactGroupCode];
             $contactsInfo['contacts'] = $contactsGroup;
             $contactsInfo['groupId'] = $groupId;
-            $contactsInfo['backgroundClass'] = $this->backgroundClasses[$index];
+            $contactsInfo['backgroundClass'] = $contactsGroupsStyles[$contactGroupCode];
 
             $prepareContacts[] = $contactsInfo;
             $groupsIds[] = $groupId;

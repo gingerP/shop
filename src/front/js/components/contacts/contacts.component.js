@@ -7,6 +7,7 @@
         this.$contactsList = $('#contacts-list');
         this.$tabs = this.$contactsList.find('.contacts-tabs');
         this.$contactsContentsList = this.$contactsList.find('.contact-tab-content');
+        this.$contactsGroups = this.$contactsList.find('.contact-group');
         this.$tabsContentContainer = this.$contactsList.find('.contacts-tabs-content');
         this.allMarkersPositions = this.$contactsList.data('positions');
         this.initEvents(this.map);
@@ -24,11 +25,10 @@
                     self.$tabs.hide();
                     self.$contactsContentsList.hide();
                     self.$tabsContentContainer.show();
+                    self.$contactsList.find('.contact-group:not(.contact-group-' + data.group + ')').hide();
                     tabContent.show();
                     if (self.map) {
-                        var contactsWidth = self.$contactsList.width();
-                        var shift = Math.floor(contactsWidth / 2);
-                        self.map.focusOnMarkerPosition([data.lat, data.lng], {shift: [-shift, 0]});
+                        self.map.focusOnMarkerPosition([data.lat, data.lng]);
                     }
                 });
             });
@@ -38,9 +38,7 @@
                 var link = $(this);
                 var data = link.data();
                 if (self.map) {
-                    var contactsWidth = self.$contactsList.width();
-                    var shift = Math.floor(contactsWidth / 2);
-                    self.map.focusOnMarkerPosition([data.lat, data.lng], {shift: [-shift, 0]});
+                    self.map.focusOnMarkerPosition([data.lat, data.lng]);
                 }
                 if ($(document).width() > MOBILE_PAGE_WIDTH) {
                     event.preventDefault();
@@ -50,6 +48,7 @@
             .find('.contact-tab-content-close')
             .click(function () {
                 self.$tabs.show();
+                self.$contactsGroups.show();
                 self.$tabsContentContainer.hide();
                 self.showAllMarkers();
             });
@@ -57,23 +56,11 @@
 
     ContactComponentV2.prototype.showAllMarkers = function showAllMarkers() {
         if (this.allMarkersPositions && this.allMarkersPositions.length) {
-            var contactsWidth = this.$contactsList.width();
-            var shift = Math.floor(contactsWidth / 2);
-            this.map.focusOnMarkersPositions(
-                this.allMarkersPositions,
-                {shift: [-shift, 0], zoom: 7}
-            );
+            this.map.focusOnMarkersPositions(this.allMarkersPositions, {zoom: 7});
         }
     };
 
     var googleMap = new GoogleMapComponent(document.querySelector('#google-map'));
-    googleMap.preInit(function (map, google, mapOptions) {
-        mapOptions.mapTypeControl = true;
-        mapOptions.mapTypeControlOptions = {
-            style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-            position: google.maps.ControlPosition.RIGHT_TOP
-        };
-    });
     googleMap.postInit(function () {
         var contacts = new ContactComponentV2(googleMap);
         contacts.showAllMarkers();

@@ -1,97 +1,99 @@
 <div id="contacts-list" data-positions="{{markers}}">
-
-    <div class="contacts-tabs">
-        {{# contacts }}
-            <div class="contact-tab">
-                <div class="contact-address">{{{address}}}</div>
-                <ul class="contact-address-numbers-list">
-                    {{#mobileNumbers}}
-                        <li class="contact-address-number">
-                            <span class="contact-tab-content-item-label">{{title}}  </span>
-                            <a href="tel:{{number}}" class="contact-tab-content-item-value">{{number}}</a>
-                        </li>
-                    {{/mobileNumbers}}
-                </ul>
-                <div style="overflow: hidden">
-                    <div style="display: table;float: right;">
-                        <a target="_blank" rel="noopener noreferrer"
-                           href="https://www.google.com/maps/search/?api=1&query={{map.0}},{{map.1}}"
-                           class="contact-show-on-map" data-lat="{{map.0}}"
-                           data-lng="{{map.1}}">{{i18n.contacts.show_on_map}}</a>
-                        <a href="#" data-id="{{id}}" data-lat="{{map.0}}" data-lng="{{map.1}}"
-                           class="contact-more">{{i18n.contacts.more}}</a>
-                    </div>
-                </div>
-            </div>
-            <div class="horizontal-delimiter"></div>
-        {{/ contacts }}
-    </div>
-    <div class="contacts-tabs-content">
-        {{# contacts }}
-            <div data-id="{{id}}" class="contact-tab-content">
-                <div class="contact-tab-content-address">{{{address}}}</div>
-                {{#images.0}}
-                    <div class="contact-delimiter"></div>
-                    <div class="contact-tab-content-images">
-                        <div class="contact-tab-content-image">
-                            <img src="{{.}}">
+    {{# contacts }}
+        <div class="contact-group contact-group-{{group}}">
+            <div class="contact-title">{{title}}</div>
+            <div class="contacts-tabs">
+                {{# contactsList }}
+                    <div class="contact-tab">
+                        <div class="contact-address">{{{address}}}</div>
+                        <ul class="contact-address-numbers-list">
+                            {{#mobileNumbers}}
+                                <li class="contact-address-number">
+                                    <span class="contact-tab-content-item-label">{{title}}  </span>
+                                    <a href="tel:{{number}}" class="contact-tab-content-item-value">{{number}}</a>
+                                </li>
+                            {{/mobileNumbers}}
+                        </ul>
+                        <div style="overflow: hidden;padding: 10px 0 10px 20px;">
+                            <a target="_blank" rel="noopener noreferrer"
+                               href="https://www.google.com/maps/search/?api=1&query={{map.0}},{{map.1}}"
+                               class="contact-show-on-map"
+                               data-lat="{{map.0}}"
+                               data-lng="{{map.1}}">{{i18n.contacts.show_on_map}}</a>
+                            <a href="#" data-id="{{id}}"
+                               data-lat="{{map.0}}"
+                               data-lng="{{map.1}}"
+                               data-group="{{group}}"
+                               class="contact-more">{{i18n.contacts.more}}</a>
                         </div>
                     </div>
-                {{/images.0}}
-                {{#prices.0}}
-                    <div class="contact-tab-content-delimiter"></div>
-                    <div class="contact-tab-content-prices">
-                        <ul>
-                            {{#prices}}
-                                <li>{{.}}</li>
-                            {{/prices}}
-                        </ul>
-                    </div>
-                {{/prices.0}}
-                {{#email}}
-                    <div class="contact-tab-content-item contact-email">
-                        <span class="contact-tab-content-item-label">{{i18n.contacts.email}}: </span>
-                        <span class="contact-tab-content-item-value">
+                {{/ contactsList }}
+            </div>
+            <div class="contacts-tabs-content">
+                {{# contactsList }}
+                    <div data-id="{{id}}" class="contact-tab-content">
+                        <div class="contact-tab-content-address">{{{address}}}</div>
+                        {{#images.0}}
+                            <div class="contact-delimiter"></div>
+                            <div class="contact-tab-content-images">
+                                <div class="contact-tab-content-image">
+                                    <img src="{{.}}">
+                                </div>
+                            </div>
+                        {{/images.0}}
+                        {{#prices.0}}
+                            <div class="contact-tab-content-delimiter"></div>
+                            <div class="contact-tab-content-prices">
+                                <ul>
+                                    {{#prices}}
+                                        <li>{{.}}</li>
+                                    {{/prices}}
+                                </ul>
+                            </div>
+                        {{/prices.0}}
+                        {{#email}}
+                            <div class="contact-tab-content-item contact-email">
+                                <span class="contact-tab-content-item-label">{{i18n.contacts.email}}: </span>
+                                <span class="contact-tab-content-item-value">
                             <a href="mailto:{{email}}?subject=Сообщение с сайта для ЧТУП&quot;Августово-Компани&quot;">
                                 {{email}}
                             </a>
                         </span>
-                    </div>
-                {{/email}}
-                {{#workingHours.0}}
-                    <div class="contact-tab-content-item contact-working-hours">
-                        <span class="contact-tab-content-item-label">{{i18n.contacts.working_hours}}: </span>
-                        <span class="contact-tab-content-item-value">{{i18n.contacts.working_hours_from}}
-                            {{workingHours.0}} {{i18n.contacts.working_hours_to}} {{workingHours.1}}</span>
-                    </div>
-                {{/workingHours.0}}
-                {{#weekend.0}}
-                    <div class="contact-tab-content-item contact-weekend">
-                        <span class="contact-tab-content-item-label">{{i18n.contacts.weekend}}: </span>
-                        <span class="contact-tab-content-item-value">{{weekend | array.join}}</span>
-                    </div>
-                {{/weekend.0}}
-                {{#mobileNumbers.0}}
-                    <div class="contact-delimiter"></div>
-                    {{#mobileNumbers}}
-                        <span class="contact-tab-content-item">
+                            </div>
+                        {{/email}}
+                        {{#workingHours.0}}
+                            <div class="contact-tab-content-item contact-working-hours">
+                                <span class="contact-tab-content-item-label">{{i18n.contacts.working_hours}}: </span>
+                                <span class="contact-tab-content-item-value">{{i18n.contacts.working_hours_from}}
+                                    {{workingHours.0}} {{i18n.contacts.working_hours_to}} {{workingHours.1}}</span>
+                            </div>
+                        {{/workingHours.0}}
+                        {{#weekend.0}}
+                            <div class="contact-tab-content-item contact-weekend">
+                                <span class="contact-tab-content-item-label">{{i18n.contacts.weekend}}: </span>
+                                <span class="contact-tab-content-item-value">{{weekend | array.join}}</span>
+                            </div>
+                        {{/weekend.0}}
+                        {{#mobileNumbers.0}}
+                            <div class="contact-delimiter"></div>
+                            {{#mobileNumbers}}
+                                <span class="contact-tab-content-item">
                             <span class="contact-tab-content-item-label">{{title}}  </span>
                             <a href="tel:{{number}}" class="contact-tab-content-item-value">{{number}}</a>
                         </span>
-                    {{/mobileNumbers}}
-                {{/mobileNumbers.0}}
-                <div style="overflow: hidden">
-                    <div style="display: table;float: right;">
-                        <a target="_blank" rel="noopener noreferrer"
-                           href="https://www.google.com/maps/search/?api=1&query={{map.0}},{{map.1}}"
-                           class="contact-show-on-map" data-lat="{{map.0}}"
-                           data-lng="{{map.1}}">{{i18n.contacts.show_on_map}}
-                        </a>
+                            {{/mobileNumbers}}
+                        {{/mobileNumbers.0}}
+                        <div style="overflow: hidden;padding: 10px 0 10px 10px;">
+                            <a target="_blank" rel="noopener noreferrer"
+                               href="https://www.google.com/maps/search/?api=1&query={{map.0}},{{map.1}}"
+                               class="contact-show-on-map" data-lat="{{map.0}}"
+                               data-lng="{{map.1}}">{{i18n.contacts.show_on_map}}
+                            </a>
+                        </div>
+                        <div class="contact-tab-content-close"></div>
                     </div>
-                </div>
-                <div class="contact-tab-content-close"></div>
+                {{/ contactsList }}
             </div>
-        {{/ contacts }}
-
-    </div>
+        </div>
+    {{/contacts}}
 </div>
