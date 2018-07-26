@@ -1,0 +1,45 @@
+[
+  {
+    "category": "MD",
+    "column": 0,
+    "width_percentage": 100,
+    "style_class": "title-2_5em"
+  },
+  {
+    "category": "MH",
+    "column": 1,
+    "width_percentage": 50
+  },
+  {
+    "category": "MK",
+    "column": 1,
+    "width_percentage": 50
+  },
+  {
+    "category": "SC",
+    "column": 1,
+    "width_percentage": 50,
+    "style_class": "title-2em"
+  },
+  {
+    "category": "TS",
+    "column": 1,
+    "width_percentage": 50
+  },
+  {
+    "category": "KS",
+    "column": 2,
+    "width_percentage": 50
+  },
+  {
+    "category": "CS",
+    "column": 2,
+    "width_percentage": 50
+  },
+  {
+    "category": "CC",
+    "column": 2,
+    "width_percentage": 50,
+    "style_class": "title-2em"
+  }
+]

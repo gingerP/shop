@@ -1,0 +1,17 @@
+<div class="categories-mosaic">
+    {{#columns}}
+        <div class="categories-column categories-column-width-{{column.width_percentage}}">
+            {{#categoriesParams}}
+                <a href="{{& category.link}}" class="categories-item category-width-{{style.width_percentage}} {{style.style_class}}">
+                    <img alt="{{category.value}}"
+                         class="categories-item-image categories-item-placeholder" rel="preload"
+                         src="/images/placeholder.png">
+                    <img alt="{{category.value}}"
+                         class="categories-item-image" data-src="{{category.image}}"
+                         src=""/>
+                    <span class="categories-item-link">{{category.value}}</span>
+                </a>
+            {{/categoriesParams}}
+        </div>
+    {{/columns}}
+</div>

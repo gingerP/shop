@@ -1,0 +1,51 @@
+@media (max-width: 800px) {
+  .categories-mosaic {
+    .categories {
+      &-item {
+        &-image {
+          position: absolute;
+          width: 100%;
+          max-width: 100%;
+          top: 0;
+          left: 0;
+        }
+        &-placeholder {
+          position: relative;
+        }
+      }
+      &-column {
+        float: inherit;
+        &-width {
+          &-33 {
+            width: inherit;
+          }
+        }
+      }
+    }
+    .category {
+      &-width {
+        &-50 {
+          width: inherit;
+        }
+        &-100 {
+          width: inherit;
+        }
+      }
+    }
+
+    .categories {
+      &-item {
+        width: ~'calc(50% - 20px)';
+        margin: 10px;
+        &-link {
+          /*position: relative;*/
+        }
+        &-image {
+          /*display: none;*/
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}

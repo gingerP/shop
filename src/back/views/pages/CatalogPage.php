@@ -3,6 +3,7 @@ include_once AuWebRoot . '/src/back/import/import.php';
 include_once AuWebRoot . '/src/back/import/pages.php';
 include_once AuWebRoot . '/src/back/import/db.php';
 include_once AuWebRoot . '/src/back/views/components/pagination/PaginationComponent.php';
+include_once AuWebRoot . '/src/back/views/components/categoriesMosaic/CategoriesMosaicComponent.php';
 
 class CatalogPage extends AbstractPage
 {
@@ -66,8 +67,7 @@ class CatalogPage extends AbstractPage
             $paginationParams['position'] = 'bottom';
             $mainTag->addChild($paginationView);
         } else {
-            $Categories = new CategoriesComponent();
-            $mainTag->addChild($Categories->build());
+            $mainTag->addChild((new CategoriesMosaicComponent())->build());
         }
         return $mainTag;
     }
