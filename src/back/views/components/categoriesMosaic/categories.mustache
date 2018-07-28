@@ -2,13 +2,16 @@
     {{#columns}}
         <div class="categories-column categories-column-width-{{column.width_percentage}}">
             {{#categoriesParams}}
-                <a href="{{& category.link}}" class="categories-item category-width-{{style.width_percentage}} {{style.style_class}}">
+                <a href="{{& category.link}}"
+                   class="categories-item category-width-{{style.width_percentage}} {{style.style_class}} shadow-yellow">
                     <img alt="{{category.value}}"
                          class="categories-item-image categories-item-placeholder" rel="preload"
                          src="/images/placeholder.png">
                     <img alt="{{category.value}}"
                          class="categories-item-image" data-src="{{category.image}}"
                          src=""/>
+                    <div class="categories-item-shadow"></div>
+                    <div class="categories-item-look-more f-17 input_hover ">{{i18n.categories.look_all}}</div>
                     <span class="categories-item-link">{{category.value}}</span>
                 </a>
             {{/categoriesParams}}

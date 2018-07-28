@@ -52,6 +52,9 @@ class CategoriesMosaicComponent extends AbstractComponent
         }
 
         $tpl = parent::getEngine()->loadTemplate('components/categoriesMosaic/categories.mustache');
-        return $tpl->render(['columns' => $preparedCategories]);
+        return $tpl->render([
+            'columns' => $preparedCategories,
+            'i18n' => Localization
+        ]);
     }
 }

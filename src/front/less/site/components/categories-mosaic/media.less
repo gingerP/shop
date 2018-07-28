@@ -1,4 +1,4 @@
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .categories-mosaic {
     .categories {
       &-item {
@@ -16,7 +16,19 @@
       &-column {
         float: inherit;
         &-width {
+          &-25 {
+            width: inherit;
+          }
+          &-30 {
+            width: inherit;
+          }
           &-33 {
+            width: inherit;
+          }
+          &-35 {
+            width: inherit;
+          }
+          &-37 {
             width: inherit;
           }
         }
@@ -32,19 +44,72 @@
         }
       }
     }
-
     .categories {
       &-item {
-        width: ~'calc(50% - 20px)';
+        width: ~'calc(33% - 20px)';
         margin: 10px;
         &-link {
-          /*position: relative;*/
+          font-size: 1.7em;
+          word-break: break-all;
         }
         &-image {
           /*display: none;*/
           width: 100%;
           max-width: 100%;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .categories-mosaic {
+    .categories {
+      &-item {
+        width: ~'calc(50% - 20px)';
+        margin: 10px;
+        &-link {
+          font-size: 1.7em;
+        }
+        &-image {
+          /*display: none;*/
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .categories-mosaic {
+    .categories {
+      &-item {
+        width: ~'calc(100% - 20px)';
+        margin: 10px;
+        &-link {
+          font-size: 1.7em;
+        }
+        &-image {
+          /*display: none;*/
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  .categories-mosaic {
+    .title-2_5em {
+      .categories-item-link {
+        font-size: 1.7em;
+      }
+    }
+    .title-2em {
+      .categories-item-link {
+        font-size: 1.7em;
       }
     }
   }

@@ -49,12 +49,16 @@ class ContactsPage extends AbstractPage
     {
         $mainTag = new Div();
         $mainTag->addStyleClass('map_viewport');
+        $header = new A();
+        $header->addAttribute('href', URLBuilder::getContactsLink());
+        $header->addChild(Localization['contacts.header.title']);
+        $header->addStyleClass('contacts-header-title');
         $map = new Div();
         $map->updateId('google-map');
 
         $mainTag->addStyleClasses(['map_page'/*, 'float_left'*/]);
         $mainTag->addChildList([$this->getInfoBlock()]);
-        return $mainTag->addChildren($map, (new ContactsComponentV2())->build());
+        return $mainTag->addChildren($header, $map, (new ContactsComponentV2())->build());
     }
 
 

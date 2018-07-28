@@ -8,38 +8,43 @@
   {
     "category": "MH",
     "column": 1,
-    "width_percentage": 50
+    "width_percentage": 50,
+    "style_class": ""
   },
   {
     "category": "MK",
     "column": 1,
-    "width_percentage": 50
+    "width_percentage": 50,
+    "style_class": ""
   },
   {
     "category": "SC",
     "column": 1,
     "width_percentage": 50,
-    "style_class": "title-2em"
+    "style_class": ""
   },
   {
     "category": "TS",
     "column": 1,
-    "width_percentage": 50
+    "width_percentage": 50,
+    "style_class": "shadow-red"
   },
   {
     "category": "KS",
     "column": 2,
-    "width_percentage": 50
+    "width_percentage": 50,
+    "style_class": "shadow-red"
   },
   {
     "category": "CS",
     "column": 2,
-    "width_percentage": 50
+    "width_percentage": 50,
+    "style_class": "shadow-red"
   },
   {
     "category": "CC",
     "column": 2,
     "width_percentage": 50,
-    "style_class": "title-2em"
+    "style_class": ""
   }
 ]

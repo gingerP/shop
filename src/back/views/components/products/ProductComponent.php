@@ -46,6 +46,7 @@ class ProductComponent extends AbstractComponent
 
         $preparedProduct['shouldPrintImages'] = count($preparedProduct['images']) > 1;
         $preparedProduct['topDescriptionClass'] = count($preparedProduct['images']) <= 1 ? 'no-border' : '';
+        $preparedProduct['contactsLink'] = URLBuilder::getContactsLink();
 
 
         return $tpl->render($preparedProduct);
