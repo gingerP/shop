@@ -1,7 +1,7 @@
 <?php
-include_once AuWebRoot.'/src/back/import/import.php';
- AuWebRoot.'/src/back/import/tags.php';
-include_once AuWebRoot.'/src/back/import/pages.php';
+include_once AuWebRoot . '/src/back/import/import.php';
+AuWebRoot . '/src/back/import/tags.php';
+include_once AuWebRoot . '/src/back/import/pages.php';
 
 class DeliveryPage extends AbstractPage
 {
@@ -30,7 +30,9 @@ class DeliveryPage extends AbstractPage
     protected function createGeneralContent()
     {
         $mainTag = new Div();
+        $title = Localization['panel.top.delivery'];
         $mainTag->addChild("
+            <div class='page-title'>$title</div>
             <div class='delivery-block f-15'>
                 <div class='delivery-placeholder'>
                     <!--<div class='number-separator'></div>-->
@@ -87,7 +89,7 @@ class DeliveryPage extends AbstractPage
     {
         $scripts = parent::getSourceScripts();
         if ($this->isJsUglify) {
-            return $scripts . '<script type="text/javascript" src="/dist/delivery-page.js"></script>';
+            return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/delivery-page.js') . '</script>';
         }
         return $scripts;
     }

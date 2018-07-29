@@ -7,6 +7,46 @@ $server = Server::getInstance();
 $router = $server->router();
 $logger = $server->logger();
 
+$router->respond('GET', '/' . UrlParameters::PAGE__CATALOG . '/[:category]?/?', function ($request, $response) {
+    $page = new CatalogPage($request);
+    $page->validate($request);
+    $response->headers([
+        'Content-Type' => 'text/html; charset=utf-8'
+    ]);
+    $response->body($page->build()->getContent());
+    $response->send();
+});
+
+$router->respond('GET', '/' . UrlParameters::PAGE__CONTACTS . '/?[:contactCode]?/?', function ($request, $response) {
+    $page = new ContactsPage($request);
+    $page->validate($request);
+    $response->headers([
+        'Content-Type' => 'text/html; charset=utf-8'
+    ]);
+    $response->body($page->build()->getContent());
+    $response->send();
+});
+
+$router->respond('GET', '/' . UrlParameters::PAGE__DELIVERY . '/?', function ($request, $response) {
+    $page = new DeliveryPage($request);
+    $page->validate($request);
+    $response->headers([
+        'Content-Type' => 'text/html; charset=utf-8'
+    ]);
+    $response->body($page->build()->getContent());
+    $response->send();
+});
+
+$router->respond('GET', '/' . UrlParameters::PAGE__PRODUCTS . '/[:productCode]/?', function ($request, $response) {
+    $page = new ProductPage($request);
+    $page->validate($request);
+    $response->headers([
+        'Content-Type' => 'text/html; charset=utf-8'
+    ]);
+    $response->body($page->build()->getContent());
+    $response->send();
+});
+
 $router->respond('GET', '/?', function ($request, $response) {
     //deprecated url schema
     $pageName = $request->param('page_name');
@@ -55,42 +95,10 @@ $router->respond('GET', '/?', function ($request, $response) {
     $response->send();
 });
 
-$router->respond('GET', '/' . UrlParameters::PAGE__CATALOG . '/[:category]?/?', function ($request, $response) {
-    $page = new CatalogPage($request);
-    $page->validate($request);
-    $response->headers([
-        'Content-Type' => 'text/html; charset=utf-8'
-    ]);
-    $response->body($page->build()->getContent());
-    $response->send();
-});
-
-$router->respond('GET', '/' . UrlParameters::PAGE__CONTACTS, function ($request, $response) {
-    $page = new ContactsPage($request);
-    $page->validate($request);
-    $response->headers([
-        'Content-Type' => 'text/html; charset=utf-8'
-    ]);
-    $response->body($page->build()->getContent());
-    $response->send();
-});
-
-$router->respond('GET', '/' . UrlParameters::PAGE__DELIVERY, function ($request, $response) {
-    $page = new DeliveryPage($request);
-    $page->validate($request);
-    $response->headers([
-        'Content-Type' => 'text/html; charset=utf-8'
-    ]);
-    $response->body($page->build()->getContent());
-    $response->send();
-});
-
-$router->respond('GET', '/' . UrlParameters::PAGE__PRODUCTS . '/[:productCode]/?', function ($request, $response) {
-    $page = new ProductPage($request);
-    $page->validate($request);
-    $response->headers([
-        'Content-Type' => 'text/html; charset=utf-8'
-    ]);
-    $response->body($page->build()->getContent());
-    $response->send();
+$router->respond('GET', '*', function ($request, $response) {
+    if (!$response->isLocked()) {
+        $response->body((new NotFoundPage())->getHtml());
+        $response->code(HttpStatuses::NOT_FOUND);
+        $response->send();
+    }
 });

@@ -37,6 +37,7 @@ class DB {
 
     const TABLE_ADDRESS___NAME = 'address';
     const TABLE_ADDRESS__ID = 'address_id';
+    const TABLE_ADDRESS__CODE = 'code';
     const TABLE_ADDRESS__GROUP = 'group';
     const TABLE_ADDRESS__STATUS = 'status';
     const TABLE_ADDRESS__DESCRIPTION = 'description';

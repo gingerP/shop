@@ -12,6 +12,16 @@ class PaginationComponent extends AbstractComponent
         $this->groupSize = $groupSize;
     }
 
+    public function buildForAll($currentPage, $pageSize, $totalCount)
+    {
+        $tpl = parent::getEngine()->loadTemplate('components/pagination/pagination.mustache');
+        $paginationItems = $this->getPaginationItems($currentPage, $pageSize, $totalCount);
+        return $tpl->render([
+            'pagination' => $paginationItems,
+            'i18n' => Localization
+        ]);
+    }
+
     public function buildForCategory($categoryCode, $currentPage, $pageSize, $totalCount)
     {
         $tpl = parent::getEngine()->loadTemplate('components/pagination/pagination.mustache');
@@ -20,6 +30,59 @@ class PaginationComponent extends AbstractComponent
             'pagination' => $paginationItems,
             'i18n' => Localization
         ]);
+    }
+
+    private function getPaginationItems($currentPage, $pageSize, $totalCount)
+    {
+        $dots = false;
+        $paginationItems = [];
+        if ($totalCount != 0 && $totalCount >= $pageSize) {
+            $amountPages = ceil($totalCount / $pageSize);
+            if ($currentPage > 0 && $currentPage <= $amountPages) {
+                if ($currentPage != 1) {
+                    $paginationItems[] = [
+                        'isPrevious' => true,
+                        'url' => URLBuilder::getCatalogLinkPrev($currentPage, $pageSize)
+                    ];
+                }
+
+                for ($page = 1; $page <= $amountPages; $page++) {
+                    if (
+                        $page < 2
+                        || ($page > $currentPage - $this->groupSize && $page < $currentPage + $this->groupSize)
+                        || ($page > $amountPages - 1)
+                    ) {
+                        $dots = false;
+                        if ($page != $currentPage) {
+                            $paginationItems[] = [
+                                'isNumeric' => true,
+                                'url' => URLBuilder::getCatalogLink($page, $pageSize),
+                                'label' => $page
+                            ];
+                        } else {
+                            $paginationItems[] = [
+                                'isEmpty' => true,
+                                'label' => $page
+                            ];
+                        }
+                    } else if (!$dots) {
+                        $dots = true;
+                        $paginationItems[] = [
+                            'isDots' => true,
+                            'url' => ''
+                        ];
+                    }
+                }
+
+                if ($currentPage != $amountPages) {
+                    $paginationItems[] = [
+                        'isNext' => true,
+                        'url' => URLBuilder::getCatalogLinkNext($currentPage, $pageSize)
+                    ];
+                }
+            }
+        }
+        return $paginationItems;
     }
 
     private function getPaginationItemsForCategory($categoryCode, $currentPage, $pageSize, $totalCount)

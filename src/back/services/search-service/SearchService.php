@@ -85,7 +85,7 @@ class SearchService
             while ($contact = array_shift($contacts)) {
                 array_push($normalized, [
                     'name' => $contact[DB::TABLE_ADDRESS__TITLE] . ', ' . $contact[DB::TABLE_ADDRESS__ADDRESS],
-                    'url' => '?page_name=contacts'
+                    'url' => URLBuilder::getContactsLink($contact[DB::TABLE_ADDRESS__CODE])
                 ]);
             }
         }

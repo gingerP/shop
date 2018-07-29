@@ -58,4 +58,13 @@ class NotFoundPage extends AbstractPage
         $link->addChild('каталоге.');
         return $container->addChildren($text, $link);
     }
+
+    protected function getSourceScripts()
+    {
+        $scripts = parent::getSourceScripts();
+        if ($this->isJsUglify) {
+            return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/not-found-page.js') . '</script>';
+        }
+        return $scripts;
+    }
 }

@@ -44,6 +44,7 @@ class DBAddressType extends DBType
             $contact = array_shift($contacts);
             $address = [];
             $address['id'] = $contact[DB::TABLE_ADDRESS__ID];
+            $address['code'] = $contact[DB::TABLE_ADDRESS__CODE];
             $address['group'] = $contact[DB::TABLE_ADDRESS__GROUP];
             $address['description'] = $contact[DB::TABLE_ADDRESS__DESCRIPTION];
             $address['map'] = json_decode($contact[DB::TABLE_ADDRESS__MAP]);

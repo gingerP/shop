@@ -146,8 +146,8 @@ class URLBuilder
         );
     }
 
-    public static function getContactsLink() {
-        return '/' . UrlParameters::PAGE__CONTACTS;
+    public static function getContactsLink($code = '') {
+        return '/' . UrlParameters::PAGE__CONTACTS . '/' . $code;
     }
 
     public static function getDeliveryLink() {

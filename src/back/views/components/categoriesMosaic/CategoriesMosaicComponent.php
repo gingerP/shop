@@ -4,8 +4,11 @@ include_once AuWebRoot . '/src/back/views/components/AbstractComponent.php';
 
 class CategoriesMosaicComponent extends AbstractComponent
 {
-    public function __construct()
+    private $type;
+
+    public function __construct($type = 'common')
     {
+        $this->type = $type;
         parent::__construct();
     }
 
@@ -25,8 +28,9 @@ class CategoriesMosaicComponent extends AbstractComponent
             ];
         }
 
-        $categoriesStyles = json_decode(file_get_contents(__DIR__ . '/categories.json'), true);
-        $categoriesColumnsSettings = json_decode(file_get_contents(__DIR__ . '/categories-columns.json'), true);
+        $dir = __DIR__;
+        $categoriesStyles = json_decode(file_get_contents($dir . '/' . $this->type . '/categories.json'), true);
+        $categoriesColumnsSettings = json_decode(file_get_contents($dir . '/' . $this->type . '/categories-columns.json'), true);
 
         $categoriesGroupedByColumns = [];
         foreach ($categoriesStyles as $categoryStyle) {
@@ -34,6 +38,16 @@ class CategoriesMosaicComponent extends AbstractComponent
             $column = $categoryStyle['column'];
             if (!isset($categoriesGroupedByColumns[$column])) {
                 $categoriesGroupedByColumns[$column] = [];
+            }
+            $categoryStyleData = $categoryStyle['data'];
+            $categoryStyle['data'] = [];
+            if (isset($categoryStyleData)) {
+                foreach ($categoryStyleData as $key => $value) {
+                    $categoryStyle['data'][] = [
+                        'key' => $key,
+                        'value' => $value
+                    ];
+                }
             }
             $categoriesGroupedByColumns[$column][] = [
                 'style' => $categoryStyle,

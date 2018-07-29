@@ -9,7 +9,6 @@ class CatalogPage extends AbstractPage
 {
 
     private $key = "";
-    private $urlParams;
     private $pageNumber;
     private $itemsCount;
     private $searchValue;
@@ -19,8 +18,24 @@ class CatalogPage extends AbstractPage
     {
         parent::__construct(UrlParameters::PAGE__CATALOG);
         $this->category = $request->param('category', '');
-        $this->pageNumber = intval($request->param(UrlParameters::PAGE_NUM, 1));
-        $this->itemsCount = intval($request->param(UrlParameters::ITEMS_COUNT, Labels::VIEW_MODE_NUMERIC_DEF));
+        $this->pageNumber = $request->param(UrlParameters::PAGE_NUM, 1);
+        if (!ctype_digit($this->pageNumber)) {
+            $this->pageNumber = 1;
+        } else {
+            $this->pageNumber = intval($this->pageNumber);
+        }
+        if ($this->pageNumber < 1) {
+            $this->pageNumber = 1;
+        }
+        $this->itemsCount = $request->param(UrlParameters::ITEMS_COUNT, Labels::VIEW_MODE_NUMERIC_DEF);
+        if (!ctype_digit($this->itemsCount)) {
+            $this->itemsCount = Labels::VIEW_MODE_NUMERIC_DEF;
+        } else {
+            $this->itemsCount = intval($this->itemsCount);
+        }
+        if ($this->itemsCount < 1) {
+            $this->pageNumber = Labels::VIEW_MODE_NUMERIC_DEF;
+        }
         $this->searchValue = $request->param(UrlParameters::SEARCH_VALUE, '');
     }
 
@@ -55,7 +70,7 @@ class CatalogPage extends AbstractPage
     {
         $mainTag = new Div();
         $items = new Items();
-        if ($this->category !== '') {
+        if ($this->category !== '' && !is_null($this->category)) {
             $loader = new CatalogLoader();
             $loader->getItemsForCategory($this->pageNumber, $this->itemsCount, $this->category);
             $paginationView = (new PaginationComponent())->buildForCategory(
@@ -67,7 +82,19 @@ class CatalogPage extends AbstractPage
             $paginationParams['position'] = 'bottom';
             $mainTag->addChild($paginationView);
         } else {
-            $mainTag->addChild((new CategoriesMosaicComponent())->build());
+            if ($this->pageNumber === 1) {
+                $mainTag->addChild((new CategoriesMosaicComponent())->build());
+            }
+            $loader = new CatalogLoader();
+            $loader->getItemsMainData($this->pageNumber, $this->itemsCount);
+            $paginationView = (new PaginationComponent())->buildForAll(
+                $this->pageNumber, $this->itemsCount, $loader->dataTotalCount
+            );
+
+            $mainTag->addChild($paginationView);
+            $mainTag->addChild($items->getItemsTable($loader->data));
+            $paginationParams['position'] = 'bottom';
+            $mainTag->addChild($paginationView);
         }
         return $mainTag;
     }
@@ -84,14 +111,16 @@ class CatalogPage extends AbstractPage
             $link = URLBuilder::getCatalogLinkForTree($this->category);
         }
 
-        return "<a href='$link' class='category-title'>$categoryLabel</a>";
+        return "<a href='$link' class='category-title page-title'>$categoryLabel</a>";
     }
 
     protected function getSourceScripts()
     {
         $scripts = parent::getSourceScripts();
         if ($this->isJsUglify) {
-            return $scripts . '<script type="text/javascript" src="/dist/catalog-page.js"></script>';
+            return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/catalog-page.js') . '</script>';
+        } else {
+            return $scripts . '<script type="text/javascript" src="/src/front/js/components/cactegories-component/categories.component.js"></script>';
         }
         return $scripts;
     }

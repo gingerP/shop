@@ -89,13 +89,13 @@ abstract class AbstractPage
             <meta name="robots" content="index, follow">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">' . "\n");
         $head->addChild($this->getTitleTag());
+        $head->addChild('<style type="text/css">' . file_get_contents(AuWebRoot . '/dist/style.css') . ' </style> ');
         $head->addChild('
-            <link rel="stylesheet" type="text/css" href="/dist/style.css?v=6" title="main"/>
-            <link rel="manifest" href="/manifest.webmanifest">            
-            <link rel="apple-touch-icon" href="/images/system/favicon-200.png">
-            <meta name="apple-mobile-web-app-capable" content="yes">
-            <meta name="apple-mobile-web-app-status-bar-style" content="black">
-            <link rel="shortcut icon" href="/images/system/favicon.png" type="image/x-icon"/>');
+            <link rel = "manifest" href = "/manifest.webmanifest">            
+            <link rel = "apple-touch-icon" href = "/images/system/favicon-200.png">
+            <meta name = "apple-mobile-web-app-capable" content = "yes">
+            <meta name = "apple-mobile-web-app-status-bar-style" content = "black">
+            <link rel = "shortcut icon" href = "/images/system/favicon.png" type = "image/x-icon" />');
         $head->addChild(SearchEngines::getGoogleAnalyticScript());
         $head->addChild(SearchEngines::getYandexMetricScript());
         return $head;
@@ -106,8 +106,9 @@ abstract class AbstractPage
         return $this->content;
     }
 
-    public function getCopyright() {
-        return '<div id="copyright">'.Localization['copyright'].'</div>';
+    public function getCopyright()
+    {
+        return '<div id = "copyright" > ' . Localization['copyright'] . ' </div > ';
     }
 
     public function createBody()
@@ -395,19 +396,19 @@ abstract class AbstractPage
     {
         if ($this->isJsUglify) {
             return
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
-            <script>new LazyLoad();</script>';
+                '<script src = "https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
+            <script > new LazyLoad();</script > ';
         }
         return '
-            <script type="text/javascript" src="/src/front/js/ext/jquery-2.1.4.min.js"></script>
-            <script type="text/javascript" src="/src/front/js/components/core/keyboard/keyboard.component.js"></script>
-            <script type="text/javascript" src="/src/front/js/components/search-input/search-input.component.js"></script>
-            <script type="text/javascript" src="/src/front/js/components/top-menu/top-menu.component.js"></script>
-            <script type="text/javascript" src="/src/front/js/components/email-form/email-form.component.js"></script>
-            <script type="text/javascript" src="/node_modules/mustache/mustache.min.js"></script>
-            <script type="text/javascript" src="/src/front/js/utils.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
-            <script>new LazyLoad();</script>
-        ';
+            <script type = "text/javascript" src = "/src/front/js/ext/jquery-2.1.4.min.js"></script>
+            <script type = "text/javascript" src = "/src/front/js/components/core/keyboard/keyboard.component.js"></script>
+            <script type = "text/javascript" src = "/src/front/js/components/search-input/search-input.component.js"></script>
+            <script type = "text/javascript" src = "/src/front/js/components/top-menu/top-menu.component.js"></script>
+            <script type = "text/javascript" src = "/src/front/js/components/email-form/email-form.component.js"></script>
+            <script type = "text/javascript" src = "/node_modules/mustache/mustache.min.js"></script>
+            <script type = "text/javascript" src = "/src/front/js/utils.js"></script>
+            <script src = "https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.7.1/lazyload.min.js"></script>
+            <script > new LazyLoad();</script >
+    ';
     }
 }

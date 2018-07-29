@@ -1,5 +1,6 @@
 <?php
 include_once AuWebRoot . '/src/back/import/import.php';
+include_once AuWebRoot . '/src/back/import/errors.php';
 include_once AuWebRoot . '/src/back/import/db.php';
 include_once AuWebRoot . '/src/back/views/components/products/ProductComponent.php';
 include_once AuWebRoot . '/src/back/views/components/productPath/ProductPathComponent.php';
@@ -28,6 +29,9 @@ class ProductPage extends AbstractPage
     {
         $Products = new DBGoodsType();
         $productInfo = $Products->findByCode($this->productCode);
+        if (is_null($productInfo)) {
+            throw new PageNotFoundError();
+        }
         $this->addMetaTags(
             (new Meta())->addAttributes(
                 [
@@ -53,7 +57,7 @@ class ProductPage extends AbstractPage
     {
         $scripts = parent::getSourceScripts();
         if ($this->isJsUglify) {
-            return $scripts . '<script type="text/javascript" src="/dist/product-page.js"></script>';
+            return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/product-page.js') . '</script>';
         }
         return $scripts . '
             <script type="text/javascript" src="/src/front/js/utils.js"></script>

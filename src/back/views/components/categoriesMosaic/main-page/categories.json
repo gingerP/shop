@@ -1,0 +1,68 @@
+[
+  {
+    "column": 1,
+    "category": "MD",
+    "width_percentage": 100,
+    "title_class": "title-3em",
+    "data": {
+      "height-to-width-ratio": 1.07
+    }
+  },
+  {
+    "column": 1,
+    "category": "MH",
+    "width_percentage": 50,
+    "style_class": ""
+  },
+  {
+    "column": 1,
+    "category": "MK",
+    "width_percentage": 50,
+    "style_class": ""
+  },
+  {
+    "column": 2,
+    "category": "SC",
+    "width_percentage": 100,
+    "title_class": "title-2_5em",
+    "data": {
+      "height-to-width-ratio": 1.37
+    }
+  },
+  {
+    "column": 2,
+    "category": "TS",
+    "width_percentage": 100,
+    "title_class": "title-2_5em",
+    "data": {
+      "height-to-width-ratio": 1.4
+    }
+  },
+  {
+    "column": 3,
+    "category": "CC",
+    "width_percentage": 100,
+    "title_class": "title-2_5em",
+    "data": {
+      "height-to-width-ratio": 1.1
+    }
+  },
+  {
+    "column": 3,
+    "category": "KS",
+    "width_percentage": 100,
+    "style_class": "shadow-red",
+    "data": {
+      "height-to-width-ratio": 0.8
+    }
+  },
+  {
+    "column": 3,
+    "category": "CS",
+    "width_percentage": 100,
+    "style_class": "shadow-red",
+    "data": {
+      "height-to-width-ratio": 0.8
+    }
+  }
+]

@@ -12,7 +12,7 @@
         '				<div class="search-result-contacts">',
         '					<div class="search-result-title">Контакты (найдено {{contacts.length}})</div>',
         '					{{#contacts}}',
-        '						<a class="search-result-contact" href="{{url}}">{{name}}</a>',
+        '						<a class="search-result-contact" href="{{url}}">{{{name}}}</a>',
         '					{{/contacts}}',
         '				</div>',
         '			{{/contacts.0}}',

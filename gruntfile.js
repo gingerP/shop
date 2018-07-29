@@ -51,6 +51,7 @@ grunt.initConfig({
                     'src/front/js/components/top-menu/top-menu.component.js',
                     'src/front/js/components/google-map/google-map.component.js',
                     'src/front/js/components/main-page-contacts/mainPageContacts.component.js',
+                    'src/front/js/components/cactegories-component/categories.component.js',
                     'src/front/js/components/vCore*.js',
                     'src/front/js/utils.js'
                 ],
@@ -60,6 +61,7 @@ grunt.initConfig({
                     'src/front/js/components/core/keyboard/keyboard.component.js',
                     'src/front/js/components/search-input/search-input.component.js',
                     'src/front/js/components/top-menu/top-menu.component.js',
+                    'src/front/js/components/cactegories-component/categories.component.js',
                     'src/front/js/components/vCore*.js',
                     'src/front/js/utils.js'
                 ],
@@ -81,6 +83,7 @@ grunt.initConfig({
                     'node_modules/mustache/mustache.js',
                     'src/front/js/components/core/keyboard/keyboard.component.js',
                     'src/front/js/components/search-input/search-input.component.js',
+                    'src/front/js/components/top-menu/top-menu.component.js',
                     'src/front/js/components/google-map/google-map.component.js',
                     'src/front/js/components/contacts/contacts.component.js',
                     'src/front/js/components/vCore*.js',
@@ -90,6 +93,16 @@ grunt.initConfig({
                     'src/front/js/ext/jquery-2.1.4.min.js',
                     'node_modules/mustache/mustache.js',
                     'src/front/js/components/core/keyboard/keyboard.component.js',
+                    'src/front/js/components/top-menu/top-menu.component.js',
+                    'src/front/js/components/search-input/search-input.component.js',
+                    'src/front/js/components/vCore*.js',
+                    'src/front/js/utils.js'
+                ],
+                'dist/not-found-page.js': [
+                    'src/front/js/ext/jquery-2.1.4.min.js',
+                    'node_modules/mustache/mustache.js',
+                    'src/front/js/components/core/keyboard/keyboard.component.js',
+                    'src/front/js/components/top-menu/top-menu.component.js',
                     'src/front/js/components/search-input/search-input.component.js',
                     'src/front/js/components/vCore*.js',
                     'src/front/js/utils.js'

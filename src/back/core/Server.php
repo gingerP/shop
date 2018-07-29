@@ -1,6 +1,7 @@
 <?php
 
 include_once AuWebRoot . '/src/back/utils/LocalizationHelpers.php';
+include_once AuWebRoot . '/src/back/views/pages/NotFoundPage.php';
 use Katzgrau\KLogger\Logger as Logger;
 
 class Server
@@ -58,8 +59,10 @@ class Server
         $this->router->respond(function ($request, $response, $service, $app) {
             // Handle exceptions => flash the message and redirect to the referrer
             $this->router->onError(function ($klein, $errorMessage, $type, $error) use ($response) {
-                if ($error instanceof ProductNotFoundError) {
-                    //sendNotFoundPage();
+                if ($error instanceof PageNotFoundError) {
+                    $response->body((new NotFoundPage())->getHtml());
+                    $response->code(HttpStatuses::NOT_FOUND);
+                    $response->send();
                     return;
                 } else if ($error instanceof BaseError) {
                     $response->code($error->status);

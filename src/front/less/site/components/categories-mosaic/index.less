@@ -17,7 +17,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        font-family: BebasNeueBold, Helvetica;
+        font-family: @primaryTitleFont, Helvetica;
         font-size: 1.7em;
         width: 100%;
         background: #ffffff;
@@ -39,7 +39,7 @@
         .categories {
           &-item {
             &-shadow {
-              background-color: rgba(236, 177, 75, 0.9);
+              background-color: rgba(57, 111, 189, 0.9);
             }
             &-link {
               text-decoration: none;
@@ -61,7 +61,7 @@
               position: absolute;
               padding: 10px 10px 5px;
               line-height: 40px;
-              font-family: BebasNeueBold,Helvetica;
+              font-family: @primaryTitleFont,Helvetica;
               font-size: 1.4em;
               box-sizing: border-box;
               border-radius: 2px;
@@ -76,23 +76,7 @@
 
     &-column {
       float: left;
-      &-width {
-        &-25 {
-          width: 25%;
-        }
-        &-30 {
-          width: 30%;
-        }
-        &-33 {
-          width: 33%;
-        }
-        &-35 {
-          width: 35%;
-        }
-        &-37 {
-          width: 37%;
-        }
-      }
+      min-height: 1px;
     }
   }
 
@@ -107,17 +91,33 @@
     }
   }
 
+  .title-3em {
+    font-size: 3em;
+  }
+
   .title-2_5em {
-    .categories-item-link {
-      font-size: 2.5em;
-    }
+    font-size: 2.5em;
   }
 
   .title-2em {
-    .categories-item-link {
-      font-size: 2em;
-    }
+    font-size: 2em;
   }
 }
+
+
+@iterations: 100;
+.span-loop (@i) when (@i > 0) {
+  .categories-mosaic {
+    .categories {
+      &-column {
+        &-width-@{i} {
+          width: ~"@{i}%";
+        }
+      }
+    }
+  }
+  .span-loop(@i - 1);
+}
+.span-loop (@iterations);
 
 @import "./media";

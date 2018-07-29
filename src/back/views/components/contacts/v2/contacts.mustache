@@ -1,8 +1,9 @@
 <div id="contacts-list" data-positions="{{markers}}">
     {{# contacts }}
-        <div class="contact-group contact-group-{{group}}">
-            <div class="contact-title">{{title}}</div>
-            <div class="contacts-tabs">
+        <div class="contact-group contact-group-{{group}} {{tabsGroupSelectedClass}}">
+            <a href="{{contactsLink}}" class="contact-title" data-markers="{{markers}}">{{title}}</a>
+            <a href="{{contactsLink}}" class="contact-tab-content-close">{{i18n.contacts.show_all_contacts}}</a>
+            <div class="contacts-tabs {{tabsSelectedClass}}">
                 {{# contactsList }}
                     <div class="contact-tab">
                         <div class="contact-address">{{{address}}}</div>
@@ -20,7 +21,7 @@
                                class="contact-show-on-map"
                                data-lat="{{map.0}}"
                                data-lng="{{map.1}}">{{i18n.contacts.show_on_map}}</a>
-                            <a href="#" data-id="{{id}}"
+                            <a href="{{link}}" data-code="{{code}}"
                                data-lat="{{map.0}}"
                                data-lng="{{map.1}}"
                                data-group="{{group}}"
@@ -29,15 +30,15 @@
                     </div>
                 {{/ contactsList }}
             </div>
-            <div class="contacts-tabs-content">
+            <div class="contacts-tabs-content {{tabsContentSelectedClass}}">
                 {{# contactsList }}
-                    <div data-id="{{id}}" class="contact-tab-content">
+                    <div data-code="{{code}}" class="contact-tab-content {{selectedClass}}">
                         <div class="contact-tab-content-address">{{{address}}}</div>
                         {{#images.0}}
                             <div class="contact-delimiter"></div>
                             <div class="contact-tab-content-images">
                                 <div class="contact-tab-content-image">
-                                    <img src="{{.}}">
+                                    <img src="/{{.}}">
                                 </div>
                             </div>
                         {{/images.0}}
@@ -89,8 +90,10 @@
                                class="contact-show-on-map" data-lat="{{map.0}}"
                                data-lng="{{map.1}}">{{i18n.contacts.show_on_map}}
                             </a>
+                            <a href="{{contactsLink}}" target="_blank" rel="noopener noreferrer"
+                               class="contact-back">{{i18n.contacts.back}}
+                            </a>
                         </div>
-                        <div class="contact-tab-content-close"></div>
                     </div>
                 {{/ contactsList }}
             </div>

@@ -5,6 +5,7 @@ include_once AuWebRoot . '/src/back/import/pages.php';
 include_once AuWebRoot . '/src/back/import/db.php';
 include_once AuWebRoot . '/src/back/views/components/mainPageContacts/MainPageContactsComponent.php';
 include_once AuWebRoot . '/src/back/views/components/catalogProduct/CatalogProductComponent.php';
+include_once AuWebRoot . '/src/back/views/components/categoriesMosaic/CategoriesMosaicComponent.php';
 include_once AuWebRoot . '/src/back/views/components/slogan/SloganComponent.php';
 
 class MainPage extends AbstractPage
@@ -61,7 +62,8 @@ class MainPage extends AbstractPage
         $products = $catalogLoader->data;
         $goodIndex = 0;
         $slideShowContainer = new Div();
-        $slideShowContainer->addStyleClass('main_page_items_slideshow');
+        $slideShowContainer->addStyleClass('main_page_items_slideshow categories-links');
+        $slideShowContainer->addChild((new CategoriesMosaicComponent('main-page'))->build());
         $slideShow = new Div();
         $slideShow->addStyleClasses(['slide_show', 'catalog_items']);
         if (count($products) > 0) {
@@ -226,11 +228,12 @@ class MainPage extends AbstractPage
             'googleApiKeyValue' => $preferences['google_maps_api_key']
         ]);
         if ($this->isJsUglify) {
-            return $scripts . '<script type="text/javascript" src="/dist/main-page.js"></script>';
+            return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/main-page.js') . '</script>';
         }
         $scripts .= '
             <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>
             <script type="text/javascript" src="/src/front/js/components/main-page-contacts/mainPageContacts.component.js"></script>
+            <script type="text/javascript" src="/src/front/js/components/cactegories-component/categories.component.js"></script>
             ';
         return $scripts;
     }

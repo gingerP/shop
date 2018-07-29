@@ -4,11 +4,12 @@ include_once AuWebRoot . '/src/back/views/components/contacts/v2/ContactsCompone
 
 class ContactsPage extends AbstractPage
 {
+    private $contactCode;
 
-    public function __construct()
+    public function __construct($request)
     {
         parent::__construct(UrlParameters::PAGE__CONTACTS);
-
+        $this->contactCode = $request->param('contactCode', '');
     }
 
     public function build()
@@ -52,13 +53,13 @@ class ContactsPage extends AbstractPage
         $header = new A();
         $header->addAttribute('href', URLBuilder::getContactsLink());
         $header->addChild(Localization['contacts.header.title']);
-        $header->addStyleClass('contacts-header-title');
+        $header->addStyleClass('contacts-header-title page-title');
         $map = new Div();
         $map->updateId('google-map');
 
         $mainTag->addStyleClasses(['map_page'/*, 'float_left'*/]);
         $mainTag->addChildList([$this->getInfoBlock()]);
-        return $mainTag->addChildren($header, $map, (new ContactsComponentV2())->build());
+        return $mainTag->addChildren($header, $map, (new ContactsComponentV2($this->contactCode))->build());
     }
 
 
@@ -78,7 +79,7 @@ class ContactsPage extends AbstractPage
         ]);
 
         if ($this->isJsUglify) {
-            return $scripts . '<script type="text/javascript" src="/dist/contacts-page.js?v=1"></script>';
+            return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/contacts-page.js') . '</script>';
         }
         $scripts .= '
             <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>

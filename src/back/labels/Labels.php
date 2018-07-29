@@ -28,7 +28,7 @@ class Labels {
         "main" => "/images/icons/home.svg"
     );
     public static $VIEW_MODE_NUMERIC = array(10, 30, 100);
-    const VIEW_MODE_NUMERIC_DEF = 10;
+    const VIEW_MODE_NUMERIC_DEF = 50;
     /*public static $VIEW_MODE_COMPACT = array("list" => "список", "compact" => "компактный", "extend" => "расширенный");*/
     public static $VIEW_MODE_COMPACT = array("compact" => "компактный", "extend" => "расширенный", "metro" => "metro");
     const VIEW_MODE_COMPACT_DEF = "metro";
