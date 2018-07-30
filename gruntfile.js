@@ -51,9 +51,10 @@ grunt.initConfig({
                     'src/front/js/components/top-menu/top-menu.component.js',
                     'src/front/js/components/google-map/google-map.component.js',
                     'src/front/js/components/main-page-contacts/mainPageContacts.component.js',
-                    'src/front/js/components/cactegories-component/categories.component.js',
+                    'src/front/js/components/categories-component/categories.component.js',
                     'src/front/js/components/vCore*.js',
-                    'src/front/js/utils.js'
+                    'src/front/js/utils.js',
+                    'src/front/js/components/vk/index.js'
                 ],
                 'dist/catalog-page.js': [
                     'src/front/js/ext/jquery-2.1.4.min.js',
@@ -61,9 +62,10 @@ grunt.initConfig({
                     'src/front/js/components/core/keyboard/keyboard.component.js',
                     'src/front/js/components/search-input/search-input.component.js',
                     'src/front/js/components/top-menu/top-menu.component.js',
-                    'src/front/js/components/cactegories-component/categories.component.js',
+                    'src/front/js/components/categories-component/categories.component.js',
                     'src/front/js/components/vCore*.js',
-                    'src/front/js/utils.js'
+                    'src/front/js/utils.js',
+                    'src/front/js/components/vk/index.js'
                 ],
                 'dist/product-page.js': [
                     'src/front/js/ext/jquery-2.1.4.min.js',
@@ -76,7 +78,8 @@ grunt.initConfig({
                     'src/front/js/components/email-form/email-form.component.js',
                     'src/front/js/components/products/product.component.js',
                     'src/front/js/components/vCore*.js',
-                    'src/front/js/utils.js'
+                    'src/front/js/utils.js',
+                    'src/front/js/components/vk/index.js'
                 ],
                 'dist/contacts-page.js': [
                     'src/front/js/ext/jquery-2.1.4.min.js',
@@ -87,7 +90,8 @@ grunt.initConfig({
                     'src/front/js/components/google-map/google-map.component.js',
                     'src/front/js/components/contacts/contacts.component.js',
                     'src/front/js/components/vCore*.js',
-                    'src/front/js/utils.js'
+                    'src/front/js/utils.js',
+                    'src/front/js/components/vk/index.js'
                 ],
                 'dist/delivery-page.js': [
                     'src/front/js/ext/jquery-2.1.4.min.js',
@@ -96,7 +100,8 @@ grunt.initConfig({
                     'src/front/js/components/top-menu/top-menu.component.js',
                     'src/front/js/components/search-input/search-input.component.js',
                     'src/front/js/components/vCore*.js',
-                    'src/front/js/utils.js'
+                    'src/front/js/utils.js',
+                    'src/front/js/components/vk/index.js'
                 ],
                 'dist/not-found-page.js': [
                     'src/front/js/ext/jquery-2.1.4.min.js',
@@ -105,7 +110,8 @@ grunt.initConfig({
                     'src/front/js/components/top-menu/top-menu.component.js',
                     'src/front/js/components/search-input/search-input.component.js',
                     'src/front/js/components/vCore*.js',
-                    'src/front/js/utils.js'
+                    'src/front/js/utils.js',
+                    'src/front/js/components/vk/index.js'
                 ]
             }
         }

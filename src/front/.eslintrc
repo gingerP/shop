@@ -14,7 +14,8 @@
     "define": true,
     "$": true,
     "Handlebars": true,
-    "dhtmlx": true
+    "dhtmlx": true,
+    "VK": true
   },
   "env": {
     "browser": true,

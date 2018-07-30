@@ -233,7 +233,7 @@ class MainPage extends AbstractPage
         $scripts .= '
             <script type="text/javascript" src="/src/front/js/components/google-map/google-map.component.js"></script>
             <script type="text/javascript" src="/src/front/js/components/main-page-contacts/mainPageContacts.component.js"></script>
-            <script type="text/javascript" src="/src/front/js/components/cactegories-component/categories.component.js"></script>
+            <script type="text/javascript" src="/src/front/js/components/categories-component/categories.component.js"></script>
             ';
         return $scripts;
     }

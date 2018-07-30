@@ -223,6 +223,8 @@ require([
                 case '3-col':
                     app.booklet.setTemplate('3c2c');
                     break;
+                default:
+                    break;
             }
         });
 
@@ -235,8 +237,19 @@ require([
         return booklet;
     }
 
-    if (AuUtils.hasContent(URL_PARAMS.id)) {
-        FullPagePreview.render(URL_PARAMS.id);
+    var query = window.location.search;
+    var parts = query.replace(/^\?/g, '').split('&');
+    var id;
+    for (var i = 0; i < query.length; i++) {
+        var params = parts[i].split('=');
+        if (params && params[0] === 'id') {
+            id = params[1];
+            break;
+        }
+    }
+
+    if (AuUtils.hasContent(id)) {
+        FullPagePreview.render(id);
     } else {
         Authorization.authorize()
             .then(initPage)

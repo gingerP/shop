@@ -93,19 +93,12 @@ class BottomPanel
 
     private function bottomTreeRender(Tree &$tree, $isRoot)
     {
-        $children = count($tree->childrens);
         $span = new Li();
-        $mainDiv = new Div();
         $span->addStyleClass($isRoot);
-        /*if ($children == 0) {*/
         $mainDiv = new A();
         $span->addChild($mainDiv);
         $mainDiv->addStyleClasses(['f-17', 'cursor_pointer', 'bottom_tree_hover', 'label']);
         $mainDiv->addAttribute(TagLabels::HREF, URLBuilder::getCatalogLinkForTree($tree->key));
-        /*} else {
-            $span->addChild($mainDiv);
-            $mainDiv->addStyleClasses(['f-17', 'label']);
-        }*/
         $mainDiv->addChild($tree->value);
         return $span;
     }
@@ -114,14 +107,7 @@ class BottomPanel
     {
         $mainDiv = new Div();
         $mainDiv->addStyleClasses(['f-17', 'cursor_pointer', 'bottom_panel_item_placeholder', 'label']);
-        $mainDiv->addChild('
-            <script type="text/javascript" src="//vk.com/js/api/openapi.js?144"></script>
-                <!-- VK Widget -->
-                <div id="vk_groups" style="height: 320px;"></div>
-                <script type="text/javascript">
-                VK.Widgets.Group("vk_groups", {mode: 0, width: "auto"}, 143927701);
-            </script>
-        ');
+        $mainDiv->addChild('<div id="vk_groups" style="height: 320px;"></div>');
         $tag->addChild($mainDiv);
         return $mainDiv;
     }

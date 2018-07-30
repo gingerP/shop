@@ -120,9 +120,8 @@ class CatalogPage extends AbstractPage
         if ($this->isJsUglify) {
             return $scripts . '<script type="text/javascript">' . file_get_contents(AuWebRoot . '/dist/catalog-page.js') . '</script>';
         } else {
-            return $scripts . '<script type="text/javascript" src="/src/front/js/components/cactegories-component/categories.component.js"></script>';
+            return $scripts . '<script type="text/javascript" src="/src/front/js/components/categories-component/categories.component.js"></script>';
         }
-        return $scripts;
     }
 
     public static function getCatalogDOM()
