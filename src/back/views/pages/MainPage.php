@@ -43,12 +43,15 @@ class MainPage extends AbstractPage
         $div01 = new Div();
         $div01->addStyleClasses(['slide_show', 'gallery']);
         $div01->addChildren($this->getPricesGallery());
-        return $mainDiv->addChildren($div01, $this->getCatalogItems());
+        return $mainDiv->addChildren(
+            (new SloganComponent())->build(),
+            $div01,
+            $this->getCatalogItems()
+        );
     }
 
     private function getPricesGallery()
     {
-        $mainDiv = new Div();
         $map = new Div();
         $map->addAttribute('id', 'main-page-map');
         return [$map, (new MainPageContactsComponent())->build()];
@@ -63,7 +66,6 @@ class MainPage extends AbstractPage
         $goodIndex = 0;
         $slideShowContainer = new Div();
         $slideShowContainer->addStyleClass('main_page_items_slideshow categories-links');
-        $slideShowContainer->addChild((new CategoriesMosaicComponent('main-page'))->build());
         $slideShow = new Div();
         $slideShow->addStyleClasses(['slide_show', 'catalog_items']);
         if (count($products) > 0) {
@@ -91,13 +93,19 @@ class MainPage extends AbstractPage
 
             $result[] = $slideShowContainer;
         }
+        $categoriesTitle = new A();
+        $categoriesTitle->addChild(Localization['main_page.categories.title']);
+        $categoriesTitle->addStyleClass('main-page-categories-title');
+        $categoriesTitle->addAttribute('href', URLBuilder::getCatalogLink());
+        $slideShowContainer->addChild($categoriesTitle);
+        $slideShowContainer->addChild((new CategoriesMosaicComponent('main-page'))->build());
         $result[] = $this->getCategoriesGroupsDom();
         return $result;
     }
 
     private function getCatalogItemsTitle()
     {
-        return (new SloganComponent())->build();
+        return '';
     }
 
     private function getCategoriesGroupsDom()
